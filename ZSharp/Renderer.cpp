@@ -48,7 +48,7 @@ void Renderer::Stop() {
 
 void Renderer::MainLoop() {
   using namespace std::chrono_literals;
-  int32_t foo = 12;
+  int32_t foo(12);
 
   // Run as long as the renderer is not told to stop.
   while (mRunState == RUN_STATE::RUNNING) {
