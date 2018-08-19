@@ -11,24 +11,24 @@
 #include "GDIWrapper.h"
 
 // Global variables.
-static const int32_t WIDTH = 640;
-static const int32_t HEIGHT = 480;
-static GDIWrapper* GDI_WRAPPER = nullptr;
+static Config mConfig;
+static GDIWrapper* mGdiWrapper = nullptr;
 static HINSTANCE mInstance;
 static const wchar_t CLASS_NAME[] = L"Sample Window Class";
 static const wchar_t WINDOW_TEXT[] = L"Learn To Program Windows";
 
-static int32_t* mpBackBuffer;
-
 // Functions.
 LRESULT static CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-void CopyPixels();
-void DrawFrame();
+void RendererDrawCallback(uint8_t* frameData);
 
 // Main entry point for the application
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mInstance = hInstance;
+
+  mConfig.bytesPerPixel = 4;
+  mConfig.viewportWidth = 640;
+  mConfig.viewportHeight = 480;
+  mConfig.viewportStride = mConfig.viewportWidth * 4;
   
   WNDCLASS wc = {};
   wc.lpfnWndProc = MessageLoop;
@@ -49,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     WINDOW_TEXT, // Window text.
     WS_OVERLAPPEDWINDOW, // Window style.
     // Size and position.
-    CW_USEDEFAULT, CW_USEDEFAULT, WIDTH, HEIGHT,
+    CW_USEDEFAULT, CW_USEDEFAULT, mConfig.viewportWidth, mConfig.viewportHeight,
     NULL, // Parent window.
     NULL, // Menu.
     mInstance, // Instance handle.
@@ -63,10 +63,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   ShowWindow(hwnd, nCmdShow);
 
   // Setup bitmap display on the window.
-  GDI_WRAPPER = new GDIWrapper(hwnd, WIDTH, HEIGHT);
+  mGdiWrapper = new GDIWrapper(hwnd, mConfig.viewportWidth, mConfig.viewportHeight);
 
   // Launch the renderer.
-  Renderer swRenderer(CopyPixels);
+  Renderer swRenderer(RendererDrawCallback, &mConfig);
   swRenderer.Start();
 
   // Run the message loop.
@@ -74,6 +74,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   MSG  msg;
   msg.message = WM_NULL;
   PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
+
+  // For sleeping.
+  using namespace std::chrono_literals;
 
   while (WM_QUIT != msg.message) {
     // Process window events.
@@ -86,24 +89,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
       DispatchMessage(&msg);
     }
 
-    // TODO: Add a sleep here to stop spinning on the CPU.
+    // Sleep to avoid busy spinning.
+    std::this_thread::sleep_for(10ms);
   }
 
-  delete GDI_WRAPPER;
+  delete mGdiWrapper;
 
   return 0;
 }
 
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   switch (uMsg) {
+    case WM_PAINT:
+
+      return 0;
     case WM_CLOSE:
-      GDI_WRAPPER->StopPaint();
+      mGdiWrapper->StopPaint();
       DestroyWindow(hwnd);
       UnregisterClass(CLASS_NAME, mInstance);
       return 0;
 
     case WM_DESTROY:
-      GDI_WRAPPER->StopPaint();
+      mGdiWrapper->StopPaint();
       PostQuitMessage(0);
       break;
   }
@@ -111,10 +118,6 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void CopyPixels() {
-  int32_t tmp(55);
-}
-
-void DrawFrame() {
-  int32_t tmp(12);
+void RendererDrawCallback(uint8_t* frameData) {
+  mGdiWrapper->DrawBitmap(frameData);
 }

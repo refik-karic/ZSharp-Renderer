@@ -3,9 +3,11 @@
 
 #include <mutex>
 
+#include "Config.h"
+
 class Renderer {
   public:
-  Renderer(void(*callback)());
+  Renderer(void(*callback)(uint8_t* data), Config* config);
   ~Renderer();
 
   void Start();
@@ -18,10 +20,10 @@ class Renderer {
   } mRunState;
 
   std::mutex mMutex;
-
   std::thread* mRenderThread;
+  Config* mConfig;
 
-  void(*BitmapCallback)();
+  void(*BitmapCallback)(uint8_t* data);
 
   void MainLoop();
 };

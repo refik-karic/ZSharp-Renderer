@@ -2,12 +2,15 @@
 #include <thread>
 #include <cstdint>
 
+#include "Framebuffer.h"
 #include "Renderer.h"
 
-Renderer::Renderer(void(*callback)()) :
+Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
   BitmapCallback(callback),
   mRunState(RUN_STATE::STOPPED),
-  mMutex() {
+  mMutex(),
+  mConfig(config)
+{
 
 }
 
@@ -47,12 +50,32 @@ void Renderer::Stop() {
 }
 
 void Renderer::MainLoop() {
+  Framebuffer framebuffer(mConfig);
+
   using namespace std::chrono_literals;
   int32_t foo(12);
+  // Color is stored in ARGB format.
+  uint32_t colorBlue = 0xFF0000FF;
+  uint32_t colorRed = 0xFFFF0000;
+
+  bool flip = false;
 
   // Run as long as the renderer is not told to stop.
   while (mRunState == RUN_STATE::RUNNING) {
-    BitmapCallback();
-    std::this_thread::sleep_for(2s);
+    uint32_t color = 0;
+    
+    if (flip) {
+      color = colorBlue;
+    }
+    else {
+      color = colorRed;
+    }
+
+    flip = !flip;
+
+    framebuffer.Clear(color);
+
+    BitmapCallback(framebuffer.GetBuffer());
+    std::this_thread::sleep_for(50ms);
   }
 }
