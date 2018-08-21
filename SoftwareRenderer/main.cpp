@@ -11,7 +11,7 @@
 #include "GDIWrapper.h"
 
 // Global variables.
-static Config mConfig;
+static ZSharp::Config mConfig;
 static GDIWrapper* mGdiWrapper = nullptr;
 static HINSTANCE mInstance;
 static const wchar_t CLASS_NAME[] = L"Sample Window Class";
@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mGdiWrapper = new GDIWrapper(hwnd, mConfig.viewportWidth, mConfig.viewportHeight);
 
   // Launch the renderer.
-  Renderer swRenderer(RendererDrawCallback, &mConfig);
+  ZSharp::Renderer swRenderer(RendererDrawCallback, &mConfig);
   swRenderer.Start();
 
   // Run the message loop.

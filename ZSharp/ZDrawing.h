@@ -1,6 +1,7 @@
 #ifndef ZDRAWING_H
 #define ZDRAWING_H
 
+namespace ZSharp {
 class ZDrawing {
   public:
 
@@ -10,5 +11,6 @@ class ZDrawing {
   ZDrawing();
   ~ZDrawing();
 };
+}
 
 #endif

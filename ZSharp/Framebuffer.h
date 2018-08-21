@@ -5,6 +5,7 @@
 
 #include "Config.h"
 
+namespace ZSharp {
 class Framebuffer {
   public:
   Framebuffer(Config* config);
@@ -18,5 +19,6 @@ class Framebuffer {
   Config* mConfig;
   uint8_t* mPixelBuffer;
 };
+}
 
 #endif

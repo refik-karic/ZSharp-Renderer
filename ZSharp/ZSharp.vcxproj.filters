@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{314244b1-5055-441e-8bc4-ea3a38bebb5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{7533e637-5fc1-43dc-8e74-6f8d58c800f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -40,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ZVector.h">
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

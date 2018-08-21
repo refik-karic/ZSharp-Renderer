@@ -2,9 +2,9 @@
 
 #include <cstring>
 
+namespace ZSharp {
 Framebuffer::Framebuffer(Config* config) :
-  mConfig(config)
-{
+  mConfig(config) {
   mPixelBuffer = new uint8_t[config->viewportStride * config->viewportHeight];
 }
 
@@ -31,4 +31,5 @@ void Framebuffer::Clear(uint32_t color) {
   for (uint32_t i = 0; i < cachedSize; i++) {
     pBuf[i] = color;
   }
+}
 }

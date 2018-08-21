@@ -5,6 +5,7 @@
 
 #include "Config.h"
 
+namespace ZSharp {
 class Renderer {
   public:
   Renderer(void(*callback)(uint8_t* data), Config* config);
@@ -27,5 +28,6 @@ class Renderer {
 
   void MainLoop();
 };
+}
 
 #endif

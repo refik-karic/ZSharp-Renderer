@@ -1,16 +1,19 @@
 #include <chrono>
 #include <thread>
 #include <cstdint>
+#include <algorithm>
 
+#include "Constants.h"
 #include "Framebuffer.h"
 #include "Renderer.h"
+#include "ZVector.h"
 
+namespace ZSharp {
 Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
   BitmapCallback(callback),
   mRunState(RUN_STATE::STOPPED),
   mMutex(),
-  mConfig(config)
-{
+  mConfig(config) {
 
 }
 
@@ -50,24 +53,35 @@ void Renderer::Stop() {
 }
 
 void Renderer::MainLoop() {
+  using namespace std::chrono_literals;
+
   Framebuffer framebuffer(mConfig);
 
-  using namespace std::chrono_literals;
-  int32_t foo(12);
   // Color is stored in ARGB format.
   uint32_t colorBlue = 0xFF0000FF;
   uint32_t colorRed = 0xFFFF0000;
 
+  ZVector<float> testVec(4);
+  testVec.mData[0] = 5.0f;
+
+
   bool flip = false;
+
+  // Track frame times.
+  std::chrono::high_resolution_clock::time_point mainLoopStart(std::chrono::high_resolution_clock::now());
+  std::chrono::high_resolution_clock::time_point frameStart;
+  std::chrono::milliseconds frameDelta;
 
   // Run as long as the renderer is not told to stop.
   while (mRunState == RUN_STATE::RUNNING) {
+    // Time the start of the current frame.
+    frameStart = std::chrono::high_resolution_clock::now();
+
     uint32_t color = 0;
-    
+
     if (flip) {
       color = colorBlue;
-    }
-    else {
+    } else {
       color = colorRed;
     }
 
@@ -76,6 +90,11 @@ void Renderer::MainLoop() {
     framebuffer.Clear(color);
 
     BitmapCallback(framebuffer.GetBuffer());
-    std::this_thread::sleep_for(50ms);
+
+    // Time the frame.
+    frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
+    std::chrono::duration<float, std::milli> timeDelta(std::max(FRAMERATE_60HZ_MS - static_cast<float>(frameDelta.count()), 0.0f));
+    std::this_thread::sleep_for(timeDelta);
   }
+}
 }

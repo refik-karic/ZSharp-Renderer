@@ -24,8 +24,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
