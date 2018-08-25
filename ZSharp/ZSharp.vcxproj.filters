@@ -50,5 +50,8 @@
     <ClInclude Include="ZVector.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="UtilMath.h">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <cstring>
 
+#include "UtilMath.h"
+
 namespace ZSharp {
 
 /// <summary>
@@ -139,6 +141,70 @@ class ZVector {
 
     return result;
   }
+
+  /// <summary>
+  /// Calculate the cross product between two vectors and return the resultant vector.
+  /// 
+  /// NOTE: The cross product in ONLY defined in R3.
+  /// </summary>
+  /// <param name="v1">The first vector.</param>
+  /// <param name="v2">The second vector.</param>
+  /// <returns>A vector that is orthogonal to both argument vectors.</returns>
+  static ZVector<T> Cross(const ZVector<T>& v1, const ZVector<T>& v2) {
+    ZVector<T> tmpVec(3);
+
+    tmpVec.mData[0] = (v1.mData[1] * v2.mData[2]) - (v1.mData[2] * v2.mData[1]);
+    tmpVec.mData[1] = (v1.mData[2] * v2.mData[0]) - (v1.mData[0] * v2.mData[2]);
+    tmpVec.mData[0] = (v1.mData[0] * v2.mData[1]) - (v1.mData[1] * v2.mData[0]);
+
+    return tmpVec;
+  }
+
+  /// <summary>
+  /// Calculate the length of the vector and return the value.
+  /// </summary>
+  /// <param name='vector'>The vector to calculate the length of.</param>
+  /// <returns>A scalar value representing the length of the vector.</returns>
+  static T Length(const ZVector<T>& vector) {
+    return NewtonRaphsonSqrt((*this) * (*this));
+  }
+
+  /// <summary>
+  /// Normalize a vector to its unit form in the range of [0,1].
+  /// </summary>
+  /// <param name='vector'>The vector to normalize.</param>
+  /// <returns>A new resultant vector which has been normalized using the argument vector.</returns>
+  static ZVector<T> Normalize(const ZVector<T>& vector) {
+    ZVector<T> tmpVec(vector.mSize);
+    
+    T invSqrt = {};
+    invSqrt = 1 / Length(vector);
+
+    for (uint32_t i = 0; i < vector.mSize; i++) {
+      tmpVec.mData[i] = invSqrt * vector.mData[i];
+    }
+
+    return tmpVec;
+  }
+
+  /// <summary>
+  /// Convert the given vector to its homogeneous version.
+  /// </summary>
+  /// <param name='vector'>The vector of elements to use for homogenization.</param>
+  /// <param name='element'>The index of the element to homogenize with.</param>
+  /// <returns>A new resultant vector representing the homogenized version of the argument vector, retaining its length.</returns>
+  static ZVector<T> Homogenize(const ZVector<T>& vector, uint32_t element) {
+    ZVector<T> tmpVec(vector.mSize);
+    T divisor = vector.mData[element];
+
+    for (uint32_t i = 0; i <= element; i++) {
+      tmpVec[i] = vector.mData[i] / divisor;
+    }
+
+    return tmpVec;
+  }
+
+  // TODO: Implement the ApplyTransform method from the C# code.
 
   /// <summary>
   /// Set all of the data elements in the vector to their type-equivalent of 0.

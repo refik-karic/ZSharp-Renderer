@@ -27,6 +27,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="UtilMath.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />
   </ItemGroup>
