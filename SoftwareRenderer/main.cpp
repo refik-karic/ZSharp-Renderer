@@ -1,3 +1,5 @@
+// See this for information about Visual Studio C++ XML comments: https://docs.microsoft.com/en-us/cpp/ide/xml-documentation-visual-cpp
+
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -11,17 +13,46 @@
 #include "GDIWrapper.h"
 
 // Global variables.
+/// <summary>
+/// Global config passed between objects as needed to acess common settings.
+/// </summary>
 static ZSharp::Config mConfig;
+
+/// <summary>
+/// Global wrapper object to the Windows GDI+ API. 
+/// </summary>
 static GDIWrapper* mGdiWrapper = nullptr;
+
+/// <summary>
+/// Global handle to the current Window instance. 
+/// </summary>
 static HINSTANCE mInstance;
+
+/// <summary>
+/// Dummy text for the Window. 
+/// </summary>
 static const wchar_t CLASS_NAME[] = L"Sample Window Class";
+
+/// <summary>
+/// Dummy text for the Window. 
+/// </summary>
 static const wchar_t WINDOW_TEXT[] = L"Learn To Program Windows";
 
 // Functions.
+/// <summary>
+/// Message loop run on the GUI thread for processing Windows messages to the current Window. 
+/// </summary>
 LRESULT static CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+/// <summary>
+/// Callback from the renderer when a new frame is ready to be displayed. 
+/// </summary>
+/// <param name='frameData'>Byte pointer to the next frame.</param>
 void RendererDrawCallback(uint8_t* frameData);
 
-// Main entry point for the application
+/// <summary>
+/// Main entry point for the application.
+/// </summary>
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mInstance = hInstance;
 

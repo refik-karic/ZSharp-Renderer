@@ -62,8 +62,13 @@ void Renderer::MainLoop() {
   uint32_t colorRed = 0xFFFF0000;
 
   ZVector<float> testVec(4);
-  testVec.mData[0] = 5.0f;
+  testVec.mData[0] = 5.0F;
 
+  ZVector<float> test2Vec(4);
+  test2Vec.mData[0] = 3.0F;
+
+  float tmp{};
+  tmp = testVec * test2Vec;
 
   bool flip = false;
 
