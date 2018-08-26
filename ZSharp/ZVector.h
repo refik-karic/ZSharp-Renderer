@@ -15,11 +15,6 @@ template<typename T>
 class ZVector {
   public:
   /// <summary>
-  /// Pointer to the starting block of elements. 
-  /// </summary>
-  T* mData;
-
-  /// <summary>
   /// Number of elements contained in this vector. 
   /// </summary>
   const uint32_t mSize;
@@ -36,19 +31,38 @@ class ZVector {
   }
 
   /// <summary>
+  /// Create a new vector with the given dimensions and data.
+  /// </summary>
+  /// <param name='dims'>The number of "dimensions" this vector will store.</param>
+  /// <param name='data'>A pointer to some data allocated elsewhere.</param>
+  ZVector(uint32_t dims, T* data) :
+    mData(data),
+    mSize(dims),
+    mOwned(false)
+  {
+
+  }
+
+  /// <summary>
   /// Copy an exisiting vector to produce an identical one. 
   /// </summary>
   /// <param name='copy'>An exisiting vector to generate a copy from.</param>
-  ZVector(const ZVector<T>& copy) :
-    mSize(copy.mSize)
-  {
-    // Protect against self assignment.
+  ZVector(const ZVector<T>& copy) {
+    // Self copy guard.
     if (this == &copy) {
       return;
     }
 
-    // Copy the data over to the class.
-    mData = new T[copy.mSize];
+    // Perform a deep copy.
+    mSize = copy.mSize;
+
+    if (copy.mOwned) {
+      mData = new T[copy.mSize];
+    }
+    else {
+      mData = copy.mData;
+    }
+
     *this = copy;
   }
 
@@ -56,15 +70,17 @@ class ZVector {
   /// Free the memory containing the data elements. 
   /// </summary>
   ~ZVector() {
-    delete[] mData;
+    if (mOwned) {
+      delete[] mData;
+    }
   }
 
   /// <summary>
-  /// Copy all of the data elements from the RHS to the LHS. 
+  /// Perform a deep copy of the elements from the argument vector into this vector. 
   /// </summary>
   /// <param name='vector'>A vector to copy data elements from.</param>
   void operator=(const ZVector<T>& vector) {
-    // Don't waste time performing assignment on it's own data.
+    // Self assignment guard.
     // TODO: Look into whether branching here, at least for vectors in R3 or R4, is faster than actually performing the operations.
     // Most of the time this will be false so maybe the branch predictor will pick up on it.
     // However, the data will be immediately available in L(x) cache so it should be investigated further.
@@ -77,9 +93,29 @@ class ZVector {
     // Scott Meyers Effective C++ Third Edition, Item 47: p.226.
     // std::memcpy(this->mData, vector.mData, vector.mSize);
 
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      this->mData[i] = vector.mData[i];
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      mData[i] = vector[i];
     }
+  }
+
+  /// <summary>
+  /// Get the element at the given index.
+  /// This does not perform bounds checking.
+  /// </summary>
+  /// <param name='index'>Index into the vector.</param>
+  /// <returns>The element at the requested index.</returns>
+  T operator[](const uint32_t index) const {
+    return mData[index];
+  }
+
+  /// <summary>
+  /// Get the address of the element at the given index.
+  /// This does not perform bounds checking.
+  /// </summary>
+  /// <param name='index'>Index into the vector.</param>
+  /// <returns>The address of the element at the requested index.</returns>
+  T& operator[](const uint32_t index) {
+    return mData[index];
   }
 
   /// <summary>
@@ -90,8 +126,8 @@ class ZVector {
   ZVector<T> operator+(const ZVector<T>& vector) {
     ZVector<T> tmpVec(vector.mSize);
     
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      tmpVec.mData[i] = mData[i] + vector.mData[i];
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      tmpVec[i] = mData[i] + vector[i];
     }
 
     return tmpVec;
@@ -105,8 +141,8 @@ class ZVector {
   ZVector<T> operator-(const ZVector<T>& vector) {
     ZVector<T> tmpVec(vector.mSize);
 
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      tmpVec.mData[i] = mData[i] - vector.mData[i];
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      tmpVec[i] = mData[i] - vector[i];
     }
 
     return tmpVec;
@@ -120,8 +156,8 @@ class ZVector {
   ZVector<T> operator*(const T scalar) {
     ZVector<T> tmpVec(mSize);
 
-    for (uint32_t i = 0; i < mSize; i++) {
-      tmpVec.mData[i] = mData[i] * scalar;
+    for (uint32_t i(0); i < mSize; i++) {
+      tmpVec[i] = mData[i] * scalar;
     }
 
     return tmpVec;
@@ -135,8 +171,8 @@ class ZVector {
   T operator*(const ZVector<T>& vector) {
     T result{};
 
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      result += (mData[i] * vector.mData[i]);
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      result += (mData[i] * vector[i]);
     }
 
     return result;
@@ -153,9 +189,9 @@ class ZVector {
   static ZVector<T> Cross(const ZVector<T>& v1, const ZVector<T>& v2) {
     ZVector<T> tmpVec(3);
 
-    tmpVec.mData[0] = (v1.mData[1] * v2.mData[2]) - (v1.mData[2] * v2.mData[1]);
-    tmpVec.mData[1] = (v1.mData[2] * v2.mData[0]) - (v1.mData[0] * v2.mData[2]);
-    tmpVec.mData[0] = (v1.mData[0] * v2.mData[1]) - (v1.mData[1] * v2.mData[0]);
+    tmpVec[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
+    tmpVec[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
+    tmpVec[0] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
 
     return tmpVec;
   }
@@ -173,35 +209,25 @@ class ZVector {
   /// Normalize a vector to its unit form in the range of [0,1].
   /// </summary>
   /// <param name='vector'>The vector to normalize.</param>
-  /// <returns>A new resultant vector which has been normalized using the argument vector.</returns>
-  static ZVector<T> Normalize(const ZVector<T>& vector) {
-    ZVector<T> tmpVec(vector.mSize);
-    
-    T invSqrt = {};
-    invSqrt = 1 / Length(vector);
+  static void Normalize(ZVector<T>& vector) {
+    T invSqrt(1 / Length(vector));
 
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      tmpVec.mData[i] = invSqrt * vector.mData[i];
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      vector[i] *= invSqrt;
     }
-
-    return tmpVec;
   }
 
   /// <summary>
   /// Convert the given vector to its homogeneous version.
   /// </summary>
-  /// <param name='vector'>The vector of elements to use for homogenization.</param>
+  /// <param name='vector'>The vector of elements to homogenize.</param>
   /// <param name='element'>The index of the element to homogenize with.</param>
-  /// <returns>A new resultant vector representing the homogenized version of the argument vector, retaining its length.</returns>
-  static ZVector<T> Homogenize(const ZVector<T>& vector, uint32_t element) {
-    ZVector<T> tmpVec(vector.mSize);
-    T divisor = vector.mData[element];
+  static void Homogenize(ZVector<T>& vector, const uint32_t element) {
+    T divisor(vector[element]);
 
-    for (uint32_t i = 0; i <= element; i++) {
-      tmpVec[i] = vector.mData[i] / divisor;
+    for (uint32_t i(0); i <= element; i++) {
+      vector[i] /= divisor;
     }
-
-    return tmpVec;
   }
 
   // TODO: Implement the ApplyTransform method from the C# code.
@@ -210,13 +236,24 @@ class ZVector {
   /// Set all of the data elements in the vector to their type-equivalent of 0.
   /// </summary>
   /// <param name='vector'>Vector to clear.</param>
-  static void Clear(const ZVector<T>& vector) {
+  static void Clear(ZVector<T>& vector) {
     T zero{};
 
-    for (uint32_t i = 0; i < vector.mSize; i++) {
-      vector.mData[i] = zero;
+    for (uint32_t i(0); i < vector.mSize; i++) {
+      vector[i] = zero;
     }
   }
+
+  private:
+  /// <summary>
+  /// Pointer to the starting block of elements. 
+  /// </summary>
+  T* mData;
+
+  /// <summary>
+  /// Flag indicating whether or not the data in this vector was generated in the constructor.
+  /// </summary>
+  bool mOwned = true;
 };
 }
 #endif

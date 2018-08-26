@@ -7,6 +7,7 @@
 #include "Framebuffer.h"
 #include "Renderer.h"
 #include "ZVector.h"
+#include "ZMatrix.h"
 
 namespace ZSharp {
 Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
@@ -62,13 +63,13 @@ void Renderer::MainLoop() {
   uint32_t colorRed = 0xFFFF0000;
 
   ZVector<float> testVec(4);
-  testVec.mData[0] = 5.0F;
+  testVec[0] = 5.0F;
 
   ZVector<float> test2Vec(4);
-  test2Vec.mData[0] = 3.0F;
+  test2Vec[0] = 3.0F;
 
-  float tmp{};
-  tmp = testVec * test2Vec;
+  ZMatrix<float> tmpMat(4, 4);
+  ZMatrix<float>::Identity(tmpMat);
 
   bool flip = false;
 

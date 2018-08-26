@@ -53,5 +53,8 @@
     <ClInclude Include="UtilMath.h">
       <Filter>Source Files\Util</Filter>
     </ClInclude>
+    <ClInclude Include="ZMatrix.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

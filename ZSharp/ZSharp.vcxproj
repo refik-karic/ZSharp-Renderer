@@ -28,6 +28,7 @@
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="UtilMath.h" />
+    <ClInclude Include="ZMatrix.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />
   </ItemGroup>
