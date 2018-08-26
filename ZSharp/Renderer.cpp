@@ -62,14 +62,14 @@ void Renderer::MainLoop() {
   uint32_t colorBlue = 0xFF0000FF;
   uint32_t colorRed = 0xFFFF0000;
 
-  ZVector<float> testVec(4);
+  ZVector<4, float> testVec;
   testVec[0] = 5.0F;
 
-  ZVector<float> test2Vec(4);
+  ZVector<4, float> test2Vec;
   test2Vec[0] = 3.0F;
 
-  ZMatrix<float> tmpMat(4, 4);
-  ZMatrix<float>::Identity(tmpMat);
+  ZMatrix<4, 4, float> tmpMat;
+  ZMatrix<4, 4, float>::Identity(tmpMat);
 
   bool flip = false;
 
