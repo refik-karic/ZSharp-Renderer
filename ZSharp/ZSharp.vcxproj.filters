@@ -22,6 +22,12 @@
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{7533e637-5fc1-43dc-8e74-6f8d58c800f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{4d5754bc-c704-4ebb-a32a-9d3fff7bd05a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Asset">
+      <UniqueIdentifier>{b15450ca-a042-492e-b6a5-3348390a7839}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -56,5 +62,16 @@
     <ClInclude Include="ZMatrix.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="db_schema.json">
+      <Filter>Source Files\Asset</Filter>
+    </None>
+    <None Include="world_db.json">
+      <Filter>Source Files\Asset</Filter>
+    </None>
   </ItemGroup>
 </Project>

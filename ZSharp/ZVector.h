@@ -198,8 +198,6 @@ class ZVector {
     }
   }
 
-  // TODO: Implement the ApplyTransform method from the C# code.
-
   /// <summary>
   /// Set all of the data elements in the vector to their type-equivalent of 0.
   /// </summary>

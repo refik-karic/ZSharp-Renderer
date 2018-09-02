@@ -213,6 +213,22 @@ class ZMatrix {
     }
   }
 
+  /// <summary>
+  /// Apply a linear transformation to map the domain to the codomain.
+  /// </summary>
+  /// <param name='matrix'>A linear transformation.</param>
+  /// <param name='domain'>A vector in the domain to be mapped.</param>
+  /// <returns>The codomain result.</returns>
+  static ZVector<cols, T> ApplyTransform(const ZMatrix<rows, cols, T>& matrix, const ZVector<cols, T>& domain) {
+    ZVector<cols, T> codomainResult;
+
+    for (uint32_t row(0); row < rows; row++) {
+      codomainResult[row] = domain * matrix[row];
+    }
+
+    return codomainResult;
+  }
+
   private:
   /// <summary>
   /// The block of data stored in this matrix.

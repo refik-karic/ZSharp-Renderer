@@ -23,6 +23,7 @@
     <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
@@ -31,6 +32,10 @@
     <ClInclude Include="ZMatrix.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="db_schema.json" />
+    <None Include="world_db.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -179,4 +184,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties world_3db_1json__JSONSchema="db_schema.json" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
