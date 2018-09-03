@@ -1,4 +1,4 @@
-#include <chrono>
+﻿#include <chrono>
 #include <thread>
 #include <cstdint>
 #include <algorithm>
@@ -8,7 +8,6 @@
 #include "Renderer.h"
 #include "ZVector.h"
 #include "ZMatrix.h"
-#include "Model.h"
 
 namespace ZSharp {
 Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
@@ -68,20 +67,6 @@ void Renderer::MainLoop() {
 
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
-
-  Model<float> model;
-  Mesh<float> mesh;
-  Triangle triangle;
-
-  model.meshList.push_back(mesh);
-  model.verticies.push_back(testVec);
-  model.verticies.push_back(test2Vec);
-
-  triangle.index[0] = 0;
-  triangle.index[1] = 1;
-  triangle.index[2] = 2;
-
-  model.meshList.back().triangleList.push_back(triangle);
 
   bool flip = false;
 

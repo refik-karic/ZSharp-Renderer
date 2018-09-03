@@ -1,4 +1,4 @@
-#ifndef FRAMEBUFFER_H
+﻿#ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
 #include <cstdint>

@@ -1,4 +1,4 @@
-#include "GDIWrapper.h"
+﻿#include "GDIWrapper.h"
 
 GDIWrapper::GDIWrapper(HWND hwnd, int32_t width, int32_t height) :
   mMutex(),

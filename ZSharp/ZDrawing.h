@@ -1,4 +1,4 @@
-#ifndef ZDRAWING_H
+﻿#ifndef ZDRAWING_H
 #define ZDRAWING_H
 
 namespace ZSharp {

@@ -1,7 +1,10 @@
-#ifndef ASSETLOADER_H
+﻿#ifndef ASSETLOADER_H
 #define ASSETLOADER_H
 
+#include <locale>
 #include <string>
+
+#include "Model.h"
 
 namespace ZSharp {
 
@@ -20,8 +23,20 @@ class AssetLoader {
   /// Parse a given file and return the data associated with it.
   /// </summary>
   /// <param name='fileName'>Name of the file to parse.</param>
-  /// <returns>TBD</returns>
-  void ParseFile(const std::string& fileName);
+  /// <returns>A model containing all of its data.</returns>
+  template <typename T>
+  static Model<T> ParseFile(const std::string& fileName);
+
+  private:
+  /// <summary>
+  /// Typical block size used for reading from SSDs.
+  /// </summary>
+  const uint32_t BLOCK_SIZE = 4096;
+
+  /// <summary>
+  /// Locale used to read the file as.
+  /// </summary>
+  const std::locale LOCALE = std::locale("en_US.UTF8");
 };
 }
 

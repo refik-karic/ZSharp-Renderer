@@ -1,4 +1,4 @@
-#ifndef GDIWRAPPER_H
+﻿#ifndef GDIWRAPPER_H
 #define GDIWRAPPER_H
 
 // Exclude rarely-used stuff from Windows headers.

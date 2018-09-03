@@ -1,4 +1,4 @@
-#ifndef UTILMATH_H
+﻿#ifndef UTILMATH_H
 #define UTILMATH_H
 
 #include <cstdint>

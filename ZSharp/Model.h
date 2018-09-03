@@ -1,4 +1,4 @@
-#ifndef MODEL_H
+﻿#ifndef MODEL_H
 #define MODEL_H
 
 #include <list>
@@ -20,7 +20,7 @@ struct Mesh {
 template <typename T>
 struct Model {
   std::list<Mesh<T>> meshList;
-  std::vector<ZVector<3, T>> verticies;
+  std::vector<ZVector<3, T>>* verticies;
 };
 
 }
