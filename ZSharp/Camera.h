@@ -4,6 +4,8 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
+namespace ZSharp {
+
 /// <summary>
 /// Three dimensional viewing camera.
 /// </summary>
@@ -17,8 +19,7 @@ class Camera {
   /// </summary>
   /// <param name='config'>The camera configuration.</param>
   Camera(Config config) :
-    mConfig(config)
-  {
+    mConfig(config) {
     // Default the look direction is along the negative Z axis.
     mLook[2] = -1;
 
@@ -83,5 +84,6 @@ class Camera {
   /// </summary>
   Config mConfig;
 };
+}
 
 #endif

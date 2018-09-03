@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "ZVector.h"
 #include "ZMatrix.h"
+#include "Model.h"
 
 namespace ZSharp {
 Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
@@ -62,14 +63,25 @@ void Renderer::MainLoop() {
   uint32_t colorBlue = 0xFF0000FF;
   uint32_t colorRed = 0xFFFF0000;
 
-  ZVector<4, float> testVec;
+  ZVector<3, float> testVec;
   testVec[0] = 5.0F;
 
-  ZVector<4, float> test2Vec;
+  ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
 
-  ZMatrix<4, 4, float> tmpMat;
-  ZMatrix<4, 4, float>::Identity(tmpMat);
+  Model<float> model;
+  Mesh<float> mesh;
+  Triangle triangle;
+
+  model.meshList.push_back(mesh);
+  model.verticies.push_back(testVec);
+  model.verticies.push_back(test2Vec);
+
+  triangle.index[0] = 0;
+  triangle.index[1] = 1;
+  triangle.index[2] = 2;
+
+  model.meshList.back().triangleList.push_back(triangle);
 
   bool flip = false;
 

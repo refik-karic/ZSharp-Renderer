@@ -18,6 +18,7 @@
                             "type": "number"
                         },
                         "minItems": 3,
+                        "maxItems": 3,
                         "uniqueItems": false
                     },
                     "minItems": 1,
