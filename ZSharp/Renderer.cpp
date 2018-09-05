@@ -3,11 +3,15 @@
 #include <cstdint>
 #include <algorithm>
 
+#include "AssetLoader.h"
+#include "Model.h"
 #include "Constants.h"
 #include "Framebuffer.h"
 #include "Renderer.h"
 #include "ZVector.h"
 #include "ZMatrix.h"
+
+static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
 Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
@@ -67,6 +71,8 @@ void Renderer::MainLoop() {
 
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
+
+  Model<float> testModel = AssetLoader::ParseFile<float>(ASSET_FILE);
 
   bool flip = false;
 
