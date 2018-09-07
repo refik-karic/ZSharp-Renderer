@@ -42,7 +42,7 @@ class AssetLoader {
     char buffer[BLOCK_SIZE];
     uint32_t bytesRead(0);
     uint32_t remainingData(0);
-    std::list<JsonValueType> tokenList;
+    std::list<JsonValuePair> tokenList;
 
     // Read the file in blocks and then pass those blocks to the lexical analyzer.
     do {
@@ -62,7 +62,7 @@ class AssetLoader {
                                        tokenList);
       }
       else {
-        remainingData = ParseTokens((uint8_t*)buffer, 0, bytesRead);
+        remainingData = ParseTokens((uint8_t*)buffer, 0, bytesRead, tokenList);
       }
     } while (bytesRead != 0);
 
@@ -88,7 +88,6 @@ class AssetLoader {
   /// <summary>
   /// Forward declarations for later use.
   /// </summary>
-  enum class JsonValueType;
   enum class JsonTokens;
   struct JsonValuePair;
 
@@ -97,33 +96,23 @@ class AssetLoader {
   /// See this for more information: https://www.json.org/
   /// </summary>
   enum class JsonTokens {
-    OPEN_CURLY_BRACE = '{',
-    CLOSE_CURLY_BRACE = '}',
-    OPEN_SQUARE_BRACE = '[',
-    CLOSE_SQUARE_BRACE = ']',
-    COMMA = ',',
-    COLON = ':',
-    STRING = '"'
-  };
-
-  /// <summary>
-  /// List of different values supported by json.
-  /// </summary>
-  enum class JsonValueType {
-    STRING_VALUE,
-    NUMBER_INTEGER_VALUE,
-    NUMBER_FLOAT_VALUE,
-    OBJECT_VALUE,
-    ARRAY_VALUE,
-    BOOL_VALUE,
-    NULL_VALUE
+    // Unary tokens.
+    OPEN_CURLY_BRACE,
+    CLOSE_CURLY_BRACE,
+    OPEN_SQUARE_BRACE,
+    CLOSE_SQUARE_BRACE,
+    COMMA,
+    COLON,
+    // Literal values.
+    STRING,
+    NUMBER
   };
 
   /// <summary>
   /// Pair of value type and its associated data.
   /// </summary>
   struct JsonValuePair {
-    JsonValueType type;
+    JsonTokens token;
     std::string dataString;
     double dataFloat;
     uint64_t dataInt;
@@ -136,22 +125,103 @@ class AssetLoader {
   /// <param name='index'>The index into that buffer for where to start parsing from.</param>
   /// <param name='bytesRemaining'>The amount of bytes left in the buffer to read. The buffer is treated as a circular buffer and will wrap around to complete reading.</param>
   /// <param name='tokens'>A list used to store tokens in.</param>
-  /// <returns>The amount of leftover data in the buffer, if any, that cannot be parsed in one pass.<returns>
+  /// <returns>The amount of leftover data in the buffer, if any, that cannot be parsed in one pass.</returns>
   static uint32_t ParseTokens(uint8_t* data, uint32_t index, uint32_t bytesRemaining, std::list<JsonValuePair>& tokens) {
     uint32_t bytesProcessed(0);
+    uint32_t lookAhead(0);
     
-    // TODO: Finish up this implementation.
     while (bytesProcessed < bytesRemaining) {
+      JsonValuePair pair;
+
       switch (data[(index + bytesProcessed) % BLOCK_SIZE]) {
-        case static_cast<uint8_t>(JsonTokens::OPEN_CURLY_BRACE) :
+        case static_cast<uint8_t>('{') :
+          pair.token = JsonTokens::OPEN_CURLY_BRACE;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>('}'):
+          pair.token = JsonTokens::CLOSE_CURLY_BRACE;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>('[') :
+          pair.token = JsonTokens::OPEN_SQUARE_BRACE;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>(']') :
+          pair.token = JsonTokens::CLOSE_SQUARE_BRACE;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>(',') :
+          pair.token = JsonTokens::COMMA;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>(':') :
+          pair.token = JsonTokens::COLON;
+          tokens.push_back(pair);
+          bytesProcessed++;
+          break;
+        case static_cast<uint8_t>('"') :
+          pair.token = JsonTokens::STRING;
+
+          // Look ahead until:
+          // 1. Another string literal is found.
+          // 2. The end of the buffer has been reached.
+          lookAhead = bytesProcessed + 1;
+          while ((lookAhead < bytesRemaining) &&
+                 (data[(index + lookAhead) % BLOCK_SIZE] != static_cast<uint8_t>('"'))) {
+            lookAhead++;
+          }
+
+          // Check once more if the look ahead position is the end of string.
+          if (data[(index + lookAhead) % BLOCK_SIZE] != static_cast<uint8_t>('"')) {
+            // Shift the remaining data to the end of the buffer so that it doesn't get overriden by the next read() call.
+            ShiftData(data, index + bytesProcessed, bytesRemaining - bytesProcessed);
+
+            // Read another chunk of data to try and find the end of this token.
+            return bytesRemaining - bytesProcessed;
+          }
+
+          // Create a string object based off of a substring of the literal token.
+          {
+            std::string temp(lookAhead - bytesProcessed + 1, '\0');
+
+            for (uint32_t dataIndex(bytesProcessed), tempIndex(0); dataIndex < lookAhead; dataIndex++, tempIndex++) {
+              temp[tempIndex] = data[dataIndex % BLOCK_SIZE];
+            }
+
+            pair.dataString = temp;
+          }
+
+          tokens.push_back(pair);
+          // Add the delta from the look ahead.
+          bytesProcessed = bytesProcessed + (lookAhead - bytesProcessed) + 1;
           break;
         default:
           bytesProcessed++;
       }
     }
 
-    // Return the amount of data leftover in the buffer.
-    return bytesRemaining - bytesProcessed;
+    // This should only ever happen if something went wrong.
+    // In that case, any data in the existing buffer will be overwritten on the next file read.
+    return 0;
+  }
+
+  /// <summary>
+  /// Shifts data from a given index to the end of the buffer.
+  /// </summary>
+  /// <param name='data'>The buffer containing data.</param>
+  /// <param name='index'>The index read up to thus far. (this can be out of bounds because it is a circular buffer.</param>
+  /// <param name='bytesRemaining'>The amount of data to shift over.</param>
+  static void ShiftData(uint8_t* data, uint32_t index, uint32_t bytesRemaining) {
+    while (bytesRemaining > 0) {
+      data[BLOCK_SIZE - bytesRemaining] = data[index % BLOCK_SIZE];
+      bytesRemaining--;
+      index++;
+    }
   }
 };
 }
