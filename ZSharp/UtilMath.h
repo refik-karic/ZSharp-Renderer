@@ -11,9 +11,7 @@ namespace ZSharp {
 /// </summary>
 /// <param name='degrees'>The angle in degrees.</param>
 /// <returns>The angle in radians.</returns>
-double DegreesToRadians(const double degrees) {
-  return degrees * PI_OVER_180;
-}
+double DegreesToRadians(const double degrees);
 
 /// <summary>
 /// Calculates an approximate square root for a given value using the Newton-Raphson method.

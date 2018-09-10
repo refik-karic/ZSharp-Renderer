@@ -22,6 +22,7 @@
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="UtilMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />

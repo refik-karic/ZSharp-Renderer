@@ -72,7 +72,8 @@ void Renderer::MainLoop() {
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
 
-  Model<float> testModel = AssetLoader::ParseFile<float>(ASSET_FILE);
+  AssetLoader assetLoader;
+  Model<float> testModel = assetLoader.ParseFile<float>(ASSET_FILE);
 
   bool flip = false;
 
@@ -102,7 +103,7 @@ void Renderer::MainLoop() {
 
     // Time the frame.
     frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
-    std::chrono::duration<float, std::milli> timeDelta(std::max(FRAMERATE_60HZ_MS - static_cast<float>(frameDelta.count()), 0.0f));
+    std::chrono::duration<float, std::milli> timeDelta(std::max(Constants::FRAMERATE_60HZ_MS - static_cast<float>(frameDelta.count()), 0.0f));
     std::this_thread::sleep_for(timeDelta);
   }
 }
