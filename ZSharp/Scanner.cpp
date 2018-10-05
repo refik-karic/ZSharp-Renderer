@@ -39,23 +39,30 @@ bool Scanner::ReadFromFile(const std::string& fileName) {
 }
 
 const std::list<Scanner::JsonToken>& Scanner::ScanTokens(const std::string& fileName) {
+  // Clear any previous file contents.
+  mTokens.clear();
+  
+  // Read the entire file into memory.
+  // Return an empty list of tokens if nothing was read.
   if (!ReadFromFile(fileName)) {
     return mTokens;
   }
   
+  // Scan the tokens one by one until the entire file has been processed.
   while (!IsAtEnd()) {
     mStart = mCurrent;
     ScanToken();
   }
 
-  // TODO: Finish implementing this section.
-
+  // Return the populated list of tokens.
   return mTokens;
 }
 
 void Scanner::ScanToken() {
+  // Fetch the next character in the buffer.
   char c = Advance();
 
+  // Check which token category it falls into.
   switch (c) {
     case '{':
       AddToken(JsonTokenType::OPEN_CURLY_BRACE);
@@ -78,17 +85,23 @@ void Scanner::ScanToken() {
     case '"':
       ScanString();
       break;
+    case '\n':
+      mLine++;
     default:
-      if (IsDigit(c)) {
+      // Check if the next token is a number.
+      // Numbers can have a preceeding minus sign indicating negative values.
+      if ((c == '-' && IsDigit(Peek())) || IsDigit(c)) {
         ScanNumber();
       }
       else {
-        // TODO: Print out an error here.
+        std::cout << "Unknown token at position: " << mCurrent << ", Line: " << mLine << std::endl;
       }
   }
 }
 
 void Scanner::ScanString() {
+  // Keep scanning the buffer until the end of the current string has been reached.
+  // Strings can span over multiple lines.
   while (Peek() != '"' && !IsAtEnd()) {
     if (Peek() == '\n') {
       mLine++;
@@ -97,11 +110,13 @@ void Scanner::ScanString() {
     Advance();
   }
 
+  // Make sure the string has terminated before the end of the file was reached.
   if (IsAtEnd()) {
-    // TODO: Handle error here when unterminated string.
+    std::cout << "Non-terminated String detected at position: " << mCurrent << ", Line: " << mLine << std::endl;
     return;
   }
 
+  // Absorb the ending quote.
   Advance();
 
   // Scan a string from the substring of the buffered data.
@@ -109,6 +124,7 @@ void Scanner::ScanString() {
   std::string scannedString(mFileBuffer.data() + mStart + 1, mFileBuffer.data() + mCurrent - 1);
   scannedString = scannedString + '\0';
 
+  // Add the string to the list of tokens.
   JsonToken nextToken;
   nextToken.token = JsonTokenType::STRING;
   nextToken.dataString = scannedString;
@@ -116,17 +132,20 @@ void Scanner::ScanString() {
 }
 
 void Scanner::ScanNumber() {
+  // Used to indicate whether or not the current number is a real number with fractional digits.
   bool realNumber = false;
 
+  // Keep scanning until no more digits are left in the current lexeme.
   while (IsDigit(Peek())) {
     Advance();
   }
 
+  // Check for real numbers.
   if (Peek() == '.' && IsDigit(PeekNext())) {
     realNumber = true;
-
     Advance();
 
+    // Read the rest of the fractional digits.
     while (IsDigit(Peek())) {
       Advance();
     }
@@ -139,6 +158,7 @@ void Scanner::ScanNumber() {
   // Create a token based off of the scanned number value.
   JsonToken nextToken;
 
+  // Convert the number to its appropriate type.
   if (realNumber) {
     nextToken.token = JsonTokenType::NUMBER_FLOAT;
     nextToken.dataFloat = std::atof(scannedString.c_str());
@@ -148,6 +168,7 @@ void Scanner::ScanNumber() {
     nextToken.dataInt = static_cast<std::int64_t>(std::atoll(scannedString.c_str()));
   }
 
+  // Add it to the list of tokens.
   AddToken(nextToken);
 }
 

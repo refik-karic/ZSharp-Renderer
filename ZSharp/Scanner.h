@@ -2,6 +2,7 @@
 #define SCANNER_H
 
 #include <fstream>
+#include <iostream> // TODO: Replace this with some kind of global logger singleton.
 #include <list>
 #include <string>
 #include <vector>
@@ -134,8 +135,9 @@ class Scanner {
     if (IsAtEnd()) {
       return '\0';
     }
-
-    return mFileBuffer[mCurrent];
+    else {
+      return mFileBuffer[mCurrent];
+    }
   }
 
   /// <summary>
