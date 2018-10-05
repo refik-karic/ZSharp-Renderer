@@ -73,7 +73,7 @@ void Renderer::MainLoop() {
   test2Vec[0] = 3.0F;
 
   AssetLoader assetLoader;
-  Model<float> testModel = assetLoader.ParseFile<float>(ASSET_FILE);
+  Model<float> testModel = assetLoader.LoadModel<float>(ASSET_FILE);
 
   bool flip = false;
 

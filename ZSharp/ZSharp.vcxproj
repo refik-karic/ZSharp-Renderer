@@ -22,6 +22,7 @@
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="UtilMath.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +33,7 @@
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Scanner.h" />
     <ClInclude Include="UtilMath.h" />
     <ClInclude Include="ZMatrix.h" />
     <ClInclude Include="ZVector.h" />

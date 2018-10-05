@@ -42,6 +42,9 @@
     <ClCompile Include="UtilMath.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
+    <ClCompile Include="Scanner.cpp">
+      <Filter>Source Files\Asset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Scanner.h">
+      <Filter>Source Files\Asset</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
