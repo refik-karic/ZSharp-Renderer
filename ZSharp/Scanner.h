@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include "JsonObject.h"
+
 // Thank you to Bob Nystrom
 // http://www.craftinginterpreters.com/
 // This implementation borrows heavily from his work. Its been a long time since I had to implement a Recursive Descent Parser so thank you for publishing this online.
@@ -19,38 +21,6 @@ namespace ZSharp {
 
 class Scanner {
   public:
-  /// <summary>
-  /// Set of tokens supported by JSON file format.
-  /// See this for more information: https://www.json.org/
-  /// </summary>
-  enum class JsonTokenType {
-    // Unary tokens.
-    OPEN_CURLY_BRACE,
-    CLOSE_CURLY_BRACE,
-    OPEN_SQUARE_BRACE,
-    CLOSE_SQUARE_BRACE,
-    COMMA,
-    COLON,
-    // Literal values.
-    STRING,
-    NUMBER_FLOAT,
-    NUMBER_INT,
-    BOOLEAN,
-    NULL_VALUE
-  };
-
-  /// <summary>
-  /// Pair of value type and its associated data.
-  /// </summary>
-  struct JsonToken {
-    JsonTokenType token;
-    std::string dataString;
-    union {
-      bool dataBool;
-      double dataFloat;
-      int64_t dataInt;
-    };
-  };
 
   Scanner() {
 
@@ -64,7 +34,7 @@ class Scanner {
   /// A const reference to the list of scanned tokens.
   /// The list will be empty if there were errors when scanning the requested file.
   /// </returns>
-  const std::list<JsonToken>& ScanTokens(const std::string& fileName);
+  const std::list<JsonObject::JsonToken>& ScanTokens(const std::string& fileName);
 
   private:
   /// <summary>
@@ -95,7 +65,7 @@ class Scanner {
   /// <summary>
   /// A list of the tokens scanned in from a file.
   /// </summary>
-  std::list<JsonToken> mTokens;
+  std::list<JsonObject::JsonToken> mTokens;
 
   /// <summary>
   /// Read the entire file into memory and store it in the buffer.
@@ -144,8 +114,8 @@ class Scanner {
   /// Add a non-data token to the list.
   /// </summary>
   /// <param name='token'>The type of token to add.</param>
-  void AddToken(JsonTokenType token) {
-    JsonToken nextToken;
+  void AddToken(JsonObject::JsonTokenType token) {
+    JsonObject::JsonToken nextToken;
     nextToken.token = token;
     mTokens.push_back(nextToken);
   }
@@ -154,7 +124,7 @@ class Scanner {
   /// Add a token with some data to the list.
   /// </summary>
   /// <param name='token'>The token containing its data member.</param>
-  void AddToken(JsonToken token) {
+  void AddToken(JsonObject::JsonToken token) {
     mTokens.push_back(token);
   }
 

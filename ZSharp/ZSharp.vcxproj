@@ -31,6 +31,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
+    <ClInclude Include="JsonObject.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scanner.h" />

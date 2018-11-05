@@ -12,6 +12,7 @@ struct Triangle {
   uint32_t index[3];
 };
 
+// TODO: Figure out why this template exists since it isn't used for anything.
 template <typename T>
 struct Mesh {
   std::list<Triangle> triangleList;

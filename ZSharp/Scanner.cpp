@@ -38,7 +38,7 @@ bool Scanner::ReadFromFile(const std::string& fileName) {
   return true;
 }
 
-const std::list<Scanner::JsonToken>& Scanner::ScanTokens(const std::string& fileName) {
+const std::list<JsonObject::JsonToken>& Scanner::ScanTokens(const std::string& fileName) {
   // Clear any previous file contents.
   mTokens.clear();
   
@@ -65,22 +65,22 @@ void Scanner::ScanToken() {
   // Check which token category it falls into.
   switch (c) {
     case '{':
-      AddToken(JsonTokenType::OPEN_CURLY_BRACE);
+      AddToken(JsonObject::JsonTokenType::OPEN_CURLY_BRACE);
       break;
     case '}':
-      AddToken(JsonTokenType::CLOSE_CURLY_BRACE);
+      AddToken(JsonObject::JsonTokenType::CLOSE_CURLY_BRACE);
       break;
     case '[':
-      AddToken(JsonTokenType::OPEN_SQUARE_BRACE);
+      AddToken(JsonObject::JsonTokenType::OPEN_SQUARE_BRACE);
       break;
     case ']':
-      AddToken(JsonTokenType::CLOSE_SQUARE_BRACE);
+      AddToken(JsonObject::JsonTokenType::CLOSE_SQUARE_BRACE);
       break;
     case ',':
-      AddToken(JsonTokenType::COMMA);
+      AddToken(JsonObject::JsonTokenType::COMMA);
       break;
     case ':':
-      AddToken(JsonTokenType::COLON);
+      AddToken(JsonObject::JsonTokenType::COLON);
       break;
     case '"':
       ScanString();
@@ -125,9 +125,11 @@ void Scanner::ScanString() {
   scannedString = scannedString + '\0';
 
   // Add the string to the list of tokens.
-  JsonToken nextToken;
-  nextToken.token = JsonTokenType::STRING;
-  nextToken.dataString = scannedString;
+  JsonObject::JsonToken nextToken;
+  nextToken.token = JsonObject::JsonTokenType::STRING;
+  JsonObject::JsonTokenValue nextValue;
+  nextValue.dataString = scannedString;
+  nextToken.value = nextValue;
   AddToken(nextToken);
 }
 
@@ -156,19 +158,21 @@ void Scanner::ScanNumber() {
   scannedString = scannedString + '\0';
 
   // Create a token based off of the scanned number value.
-  JsonToken nextToken;
+  JsonObject::JsonToken nextToken;
+  JsonObject::JsonTokenValue nextValue;
 
   // Convert the number to its appropriate type.
   if (realNumber) {
-    nextToken.token = JsonTokenType::NUMBER_FLOAT;
-    nextToken.dataFloat = std::atof(scannedString.c_str());
+    nextToken.token = JsonObject::JsonTokenType::NUMBER_FLOAT;
+    nextValue.dataFloat = std::atof(scannedString.c_str());
   }
   else {
-    nextToken.token = JsonTokenType::NUMBER_INT;
-    nextToken.dataInt = static_cast<std::int64_t>(std::atoll(scannedString.c_str()));
+    nextToken.token = JsonObject::JsonTokenType::NUMBER_INT;
+    nextValue.dataInt = static_cast<std::int64_t>(std::atoll(scannedString.c_str()));
   }
 
   // Add it to the list of tokens.
+  nextToken.value = nextValue;
   AddToken(nextToken);
 }
 
