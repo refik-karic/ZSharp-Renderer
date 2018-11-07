@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="JsonObject.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="UtilMath.cpp" />

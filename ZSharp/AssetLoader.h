@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "JsonObject.h"
 #include "Scanner.h"
 #include "Model.h"
 
@@ -34,19 +35,24 @@ class AssetLoader {
     // Scan the asset file for data and generate a model from that data.
     Scanner scanner;
 
-    const std::list<Scanner::JsonToken>& tokens(scanner.ScanTokens(fileName));
+    // Convert the output of the scanner to a JSON object and fill it with data.
+    JsonObject jsonObject(PopulateJsonFromTokens(scanner.ScanTokens(fileName)));
 
-    if (tokens.size() != 0) {
-      for (const auto& token : tokens) {
+    // TODO: Populate model data from JSON object.
 
-      }
-      // TODO: Process the tokens in here.
-    }
 
+    // Return the populated model to the caller.
     return modelResult;
   }
 
   private:
+
+  /// <summary>
+  /// Populate a JSON object with tokens from the scanner.
+  /// </summary>
+  /// <param name = 'tokens'>A list of tokens from the scanner to process.</param>
+  /// <returns>A new JSON object containing the parsed data.</returns>
+  JsonObject PopulateJsonFromTokens(const std::list<JsonObject::JsonToken>& tokens);
 };
 }
 

@@ -45,6 +45,9 @@
     <ClCompile Include="Scanner.cpp">
       <Filter>Source Files\Asset</Filter>
     </ClCompile>
+    <ClCompile Include="JsonObject.cpp">
+      <Filter>Source Files\Asset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">

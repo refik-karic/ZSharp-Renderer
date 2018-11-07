@@ -1,12 +1,17 @@
 #ifndef JSONOBJECT_H
 #define JSONOBJECT_H
 
+#include <cstdint>
+
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace ZSharp {
 
 class JsonObject {
   public:
+
   /// <summary>
   /// Set of tokens supported by JSON file format.
   /// See this for more information: https://www.json.org/
@@ -47,7 +52,34 @@ class JsonObject {
     JsonTokenValue value;
   };
 
+  /// <summary>
+  /// Represents all the supported JSON value types per the JSON standard.
+  /// </summary>
+  enum class JsonValueType {
+    STRING_VALUE,
+    NUMBER_INT_VALUE,
+    NUMBER_FLOAT_VALUE,
+    OBJECT_VALUE,
+    ARRAY_VALUE,
+    BOOL_VALUE,
+    NULL_VALUE
+  };
 
+  /// <summary>
+  /// Holds all information regarding JSON keys.
+  /// This includes the type of the key as well as its value(s).
+  /// </summary>
+  struct JsonValue {
+    JsonValueType valueType;
+    std::string dataString;
+    union {
+      bool dataBool;
+      double dataFloat;
+      int64_t dataInt;
+    };
+    std::unique_ptr<JsonObject> dataObject;
+    std::vector<JsonValue> dataArray;
+  };
 
   private:
   /// <summary>
@@ -56,10 +88,9 @@ class JsonObject {
   std::string mKey;
 
   /// <summary>
-  /// TODO: Find out how to recursively store values and handle objects without any keys.
+  /// Value associated with key.
   /// </summary>
-  //JsonValue mValue;
-
+  JsonValue mValue;
 };
 
 }
