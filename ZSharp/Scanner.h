@@ -31,10 +31,10 @@ class Scanner {
   /// </summary>
   /// <param name='fileName'>The name of the file to scan for tokens.</param>
   /// <returns>
-  /// A const reference to the list of scanned tokens.
+  /// A reference to the list of scanned tokens.
   /// The list will be empty if there were errors when scanning the requested file.
   /// </returns>
-  const std::list<JsonObject::JsonToken>& ScanTokens(const std::string& fileName);
+  std::list<JsonObject::JsonToken>& ScanTokens(const std::string& fileName);
 
   private:
   /// <summary>

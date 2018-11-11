@@ -1,6 +1,7 @@
 ﻿#ifndef ASSETLOADER_H
 #define ASSETLOADER_H
 
+#include <list>
 #include <string>
 
 #include "JsonObject.h"
@@ -36,10 +37,14 @@ class AssetLoader {
     Scanner scanner;
 
     // Convert the output of the scanner to a JSON object and fill it with data.
-    JsonObject jsonObject(PopulateJsonFromTokens(scanner.ScanTokens(fileName)));
+    JsonObject jsonObject;
+    auto& tokenList = scanner.ScanTokens(fileName);
+
+    // Fill in the JSON object with data.
+    PopulateJsonObject(jsonObject, tokenList);
 
     // TODO: Populate model data from JSON object.
-
+    // TODO: Also need to re-evaluate my internal data structures for polygons and models.
 
     // Return the populated model to the caller.
     return modelResult;
@@ -48,11 +53,20 @@ class AssetLoader {
   private:
 
   /// <summary>
-  /// Populate a JSON object with tokens from the scanner.
+  /// Fills in a JSON object with data, given by a list of tokens from the scanner.
   /// </summary>
-  /// <param name = 'tokens'>A list of tokens from the scanner to process.</param>
-  /// <returns>A new JSON object containing the parsed data.</returns>
-  JsonObject PopulateJsonFromTokens(const std::list<JsonObject::JsonToken>& tokens);
+  /// <param name='jsonObject'>The JSON object to fill in with data.</param>
+  /// <param name='tokenList'>A list of tokens scanned in by the parser.</param>
+  void PopulateJsonObject(JsonObject& jsonObject, std::list<JsonObject::JsonToken>& tokenList);
+
+  /// <summary>
+  /// Recursively add data to a JSON object.
+  /// </summary>
+  /// <param name='jsonObject'>The current object level.</param>
+  /// <param name='begin'>An iterator pointing to the current index.</param>
+  /// <param name='end'>An iterator pointing the end.</param>
+  /// <param name='isArray'>Flag for representing whether or not the current call should store upcoming values in the included array.</param>
+  void ProcessJsonData(JsonObject& jsonObject, std::list<JsonObject::JsonToken>::iterator& begin, std::list<JsonObject::JsonToken>::iterator& end, bool isArray);
 };
 }
 

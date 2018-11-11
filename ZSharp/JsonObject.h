@@ -28,7 +28,7 @@ class JsonObject {
     STRING,
     NUMBER_FLOAT,
     NUMBER_INT,
-    BOOLEAN,
+    BOOL_VALUE,
     NULL_VALUE
   };
 
@@ -40,7 +40,7 @@ class JsonObject {
     union {
       bool dataBool;
       double dataFloat;
-      int64_t dataInt;
+      std::int64_t dataInt;
     };
   };
 
@@ -75,11 +75,27 @@ class JsonObject {
     union {
       bool dataBool;
       double dataFloat;
-      int64_t dataInt;
+      std::int64_t dataInt;
     };
-    std::unique_ptr<JsonObject> dataObject;
+    std::shared_ptr<JsonObject> dataObject;
     std::vector<JsonValue> dataArray;
   };
+
+  void SetKey(const std::string& key) {
+    mKey = key;
+  }
+
+  std::string& GetKey() {
+    return mKey;
+  }
+
+  void SetValue(const JsonValue& value) {
+    mValue = value;
+  }
+
+  JsonValue& GetValue() {
+    return mValue;
+  }
 
   private:
   /// <summary>

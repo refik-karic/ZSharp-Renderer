@@ -38,7 +38,7 @@ bool Scanner::ReadFromFile(const std::string& fileName) {
   return true;
 }
 
-const std::list<JsonObject::JsonToken>& Scanner::ScanTokens(const std::string& fileName) {
+std::list<JsonObject::JsonToken>& Scanner::ScanTokens(const std::string& fileName) {
   // Clear any previous file contents.
   mTokens.clear();
   
