@@ -4,6 +4,7 @@
 // Exclude rarely-used stuff from Windows headers.
 #define WIN32_LEAN_AND_MEAN
 
+#include <cstddef>
 #include <cstdint>
 
 #include <windows.h>
@@ -22,12 +23,12 @@
 
 class GDIWrapper {
   public:
-  GDIWrapper(HWND hwnd, int32_t width, int32_t height);
+  GDIWrapper(HWND hwnd, std::size_t width, std::size_t height);
   ~GDIWrapper();
 
-  uint32_t* GetBitmapBuffer();
+  std::uintptr_t* GetBitmapBuffer();
   void StopPaint();
-  void DrawBitmap(uint8_t* frameData);
+  void DrawBitmap(std::uint8_t* frameData);
 
   private:
   std::mutex mMutex;
@@ -37,7 +38,7 @@ class GDIWrapper {
   Gdiplus::Rect mRect;
   Gdiplus::Bitmap* mBitmap;
   Gdiplus::BitmapData* mBitmapData;
-  uint32_t mSizeBitmap;
+  std::size_t mSizeBitmap;
 };
 
 #endif

@@ -1,6 +1,7 @@
 ﻿#ifndef ZMATRIX_H
 #define ZMATRIX_H
 
+#include <cstddef>
 #include <cmath>
 
 #include "ZVector.h"
@@ -10,7 +11,7 @@ namespace ZSharp {
 /// <summary>
 /// Generic matrix containing an arbitrary amount of rows and columns.
 /// </summary>
-template <uint32_t rows, uint32_t cols , typename T>
+template <std::size_t rows, std::size_t cols , typename T>
 class ZMatrix {
   public:
   /// <summary>
@@ -63,7 +64,7 @@ class ZMatrix {
   /// <summary>
   /// <param name='index'>Index into the matrix.</param>
   /// <returns>A vector located at the requested index.</returns>
-  ZVector<cols, T>& operator[](const uint32_t index) {
+  ZVector<cols, T>& operator[](std::size_t index) {
     return mData[index];
   }
 
@@ -179,7 +180,7 @@ class ZMatrix {
   /// <param name='matrix'>The matrix to apply the rotation to.</param>
   /// <param name='angle'>The angle of rotation.</param>
   /// <param name='axis>The axis of rotation.</param>
-  static void SetRotation(ZMatrix<rows, cols, T>& matrix, const T angle, const Axis axis) {
+  static void SetRotation(ZMatrix<rows, cols, T>& matrix, T angle, Axis axis) {
     // TODO: Find a way to reduce type conversion here and call the appropriate type-specific trig functions, perhaps using type-traits.
     switch (axis) {
       case Axis::Z:

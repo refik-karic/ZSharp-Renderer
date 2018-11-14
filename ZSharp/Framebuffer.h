@@ -4,20 +4,21 @@
 #include <cstdint>
 
 #include "Config.h"
+#include "ZColor.h"
 
 namespace ZSharp {
 class Framebuffer {
   public:
-  Framebuffer(Config* config);
+  Framebuffer(Config& config);
   ~Framebuffer();
 
-  uint8_t* GetBuffer();
-  void SetPixel(uint32_t x, uint32_t y, uint32_t color);
-  void Clear(uint32_t color);
+  std::uint8_t* GetBuffer();
+  void SetPixel(std::size_t x, std::size_t y, ZColor color);
+  void Clear(ZColor color);
 
   private:
-  Config* mConfig;
-  uint8_t* mPixelBuffer;
+  Config& mConfig;
+  std::uint8_t* mPixelBuffer;
 };
 }
 

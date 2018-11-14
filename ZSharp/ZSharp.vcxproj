@@ -37,6 +37,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scanner.h" />
     <ClInclude Include="UtilMath.h" />
+    <ClInclude Include="ZColor.h" />
     <ClInclude Include="ZMatrix.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />

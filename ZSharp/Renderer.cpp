@@ -1,24 +1,26 @@
-﻿#include <chrono>
-#include <thread>
+﻿#include <algorithm>
 #include <cstdint>
-#include <algorithm>
+#include <chrono>
+#include <thread>
 
 #include "AssetLoader.h"
-#include "Model.h"
 #include "Constants.h"
 #include "Framebuffer.h"
+#include "Model.h"
 #include "Renderer.h"
-#include "ZVector.h"
+#include "ZColor.h"
 #include "ZMatrix.h"
+#include "ZVector.h"
 
 static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
-Renderer::Renderer(void(*callback)(uint8_t* data), Config* config) :
+Renderer::Renderer(void(*callback)(std::uint8_t* data), Config& config) :
   BitmapCallback(callback),
   mRunState(RUN_STATE::STOPPED),
   mMutex(),
-  mConfig(config) {
+  mConfig(config),
+  mRenderThread(nullptr) {
 
 }
 
@@ -52,6 +54,7 @@ void Renderer::Stop() {
     // Block until the render thread is finished.
     mRenderThread->join();
     delete mRenderThread;
+    mRenderThread = nullptr;
   }
 
   mMutex.unlock();
@@ -63,8 +66,11 @@ void Renderer::MainLoop() {
   Framebuffer framebuffer(mConfig);
 
   // Color is stored in ARGB format.
-  uint32_t colorBlue = 0xFF0000FF;
-  uint32_t colorRed = 0xFFFF0000;
+  ZColor colorRed;
+  colorRed.Color = ZColors::RED;
+
+  ZColor colorBlue;
+  colorBlue.Color = ZColors::BLUE;
 
   ZVector<3, float> testVec;
   testVec[0] = 5.0F;
@@ -72,8 +78,8 @@ void Renderer::MainLoop() {
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
 
-  AssetLoader assetLoader;
-  Model<float> testModel = assetLoader.LoadModel<float>(ASSET_FILE);
+  //AssetLoader assetLoader;
+  //Model<float> testModel = assetLoader.LoadModel<float>(ASSET_FILE);
 
   bool flip = false;
 
@@ -87,7 +93,7 @@ void Renderer::MainLoop() {
     // Time the start of the current frame.
     frameStart = std::chrono::high_resolution_clock::now();
 
-    uint32_t color = 0;
+    ZColor color;
 
     if (flip) {
       color = colorBlue;

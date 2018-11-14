@@ -89,6 +89,9 @@
     <ClInclude Include="JsonObject.h">
       <Filter>Source Files\Asset</Filter>
     </ClInclude>
+    <ClInclude Include="ZColor.h">
+      <Filter>Source Files\Display</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="db_schema.json">

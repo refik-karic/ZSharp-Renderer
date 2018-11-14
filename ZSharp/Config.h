@@ -2,13 +2,14 @@
 #define CONFIG_H
 
 #include <cstdint>
+#include <cstddef>
 
 namespace ZSharp{
 struct Config {
-  uint32_t viewportWidth;
-  uint32_t viewportHeight;
-  uint32_t bytesPerPixel;
-  uint32_t viewportStride;
+  std::size_t viewportWidth;
+  std::size_t viewportHeight;
+  std::size_t bytesPerPixel;
+  std::size_t viewportStride;
 };
 }
 #endif

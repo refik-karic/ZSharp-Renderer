@@ -47,8 +47,8 @@ LRESULT static CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 /// <summary>
 /// Callback from the renderer when a new frame is ready to be displayed. 
 /// </summary>
-/// <param name='frameData'>Byte pointer to the next frame.</param>
-void RendererDrawCallback(uint8_t* frameData);
+/// <param name='frameData'>Pointer to the next frame.</param>
+void RendererDrawCallback(std::uint8_t* frameData);
 
 /// <summary>
 /// Main entry point for the application.
@@ -56,10 +56,11 @@ void RendererDrawCallback(uint8_t* frameData);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mInstance = hInstance;
 
-  mConfig.bytesPerPixel = 4;
+  std::size_t bytesPerPixel = 4;
+  mConfig.bytesPerPixel = bytesPerPixel;
   mConfig.viewportWidth = 640;
   mConfig.viewportHeight = 480;
-  mConfig.viewportStride = mConfig.viewportWidth * 4;
+  mConfig.viewportStride = mConfig.viewportWidth * bytesPerPixel;
   
   WNDCLASS wc = {};
   wc.lpfnWndProc = MessageLoop;
@@ -80,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     WINDOW_TEXT, // Window text.
     WS_OVERLAPPEDWINDOW, // Window style.
     // Size and position.
-    CW_USEDEFAULT, CW_USEDEFAULT, mConfig.viewportWidth, mConfig.viewportHeight,
+    CW_USEDEFAULT, CW_USEDEFAULT, static_cast<int>(mConfig.viewportWidth), static_cast<int>(mConfig.viewportHeight),
     NULL, // Parent window.
     NULL, // Menu.
     mInstance, // Instance handle.
@@ -97,12 +98,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mGdiWrapper = new GDIWrapper(hwnd, mConfig.viewportWidth, mConfig.viewportHeight);
 
   // Launch the renderer.
-  ZSharp::Renderer swRenderer(RendererDrawCallback, &mConfig);
+  ZSharp::Renderer swRenderer(RendererDrawCallback, mConfig);
   swRenderer.Start();
 
   // Run the message loop.
   bool bGotMsg;
-  MSG  msg;
+  MSG msg;
   msg.message = WM_NULL;
   PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
 
@@ -149,6 +150,6 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void RendererDrawCallback(uint8_t* frameData) {
+void RendererDrawCallback(std::uint8_t* frameData) {
   mGdiWrapper->DrawBitmap(frameData);
 }

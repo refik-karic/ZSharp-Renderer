@@ -1,8 +1,7 @@
 ﻿#ifndef ZVECTOR_H
 #define ZVECTOR_H
 
-#include <cstdint>
-#include <cstring>
+#include <cstddef>
 
 #include "UtilMath.h"
 
@@ -19,9 +18,13 @@ namespace ZSharp {
 /// <summary>
 /// Generic vector containg an arbitrary amount of elements. 
 /// </summary>
-template<uint32_t elements, typename T>
+template<std::size_t elements, typename T>
 class ZVector {
   public:
+
+  // Convenience typedefs for frequently used instances of this class.
+  typedef ZVector<3, float> Vec3f_t;
+
   /// <summary>
   /// Create a new vector with the given dimensions and clears its contents.
   /// </summary>
@@ -72,7 +75,7 @@ class ZVector {
   /// </summary>
   /// <param name='index'>Index into the vector.</param>
   /// <returns>The element at the requested index.</returns>
-  T operator[](const uint32_t index) const {
+  T operator[](std::size_t index) const {
     return mData[index];
   }
 
@@ -82,7 +85,7 @@ class ZVector {
   /// </summary>
   /// <param name='index'>Index into the vector.</param>
   /// <returns>The address of the element at the requested index.</returns>
-  T& operator[](const uint32_t index) {
+  T& operator[](std::size_t index) {
     return mData[index];
   }
 
@@ -121,7 +124,7 @@ class ZVector {
   /// </summary>
   /// <param name='scalar'>The scalar to multiply through with.</param>
   /// <returns>A new resultant vector, argument vectors remain unchanged.</returns>
-  ZVector<elements, T> operator*(const T scalar) {
+  ZVector<elements, T> operator*(T scalar) {
     ZVector<elements, T> result;
 
     for (uint32_t i(0); i < elements; i++) {
@@ -190,7 +193,7 @@ class ZVector {
   /// </summary>
   /// <param name='vector'>The vector of elements to homogenize.</param>
   /// <param name='element'>The index of the element to homogenize with.</param>
-  static void Homogenize(ZVector<elements, T>& vector, const uint32_t element) {
+  static void Homogenize(ZVector<elements, T>& vector, std::size_t element) {
     T divisor(vector[element]);
 
     for (uint32_t i(0); i <= element; i++) {
