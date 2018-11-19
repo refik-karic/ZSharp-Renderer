@@ -15,7 +15,7 @@
 static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
-Renderer::Renderer(void(*callback)(std::uint8_t* data), Config& config) :
+Renderer::Renderer(void(*callback)(std::uint8_t* data), Config* config) :
   BitmapCallback(callback),
   mRunState(RUN_STATE::STOPPED),
   mMutex(),
@@ -78,8 +78,9 @@ void Renderer::MainLoop() {
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
 
-  //AssetLoader assetLoader;
-  //Model<float> testModel = assetLoader.LoadModel<float>(ASSET_FILE);
+  AssetLoader assetLoader;
+  Model<float> testModel;
+  assetLoader.LoadModel<float>(ASSET_FILE, testModel);
 
   bool flip = false;
 

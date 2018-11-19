@@ -1,9 +1,9 @@
 ﻿#include "Framebuffer.h"
 
 namespace ZSharp {
-Framebuffer::Framebuffer(Config& config) :
+Framebuffer::Framebuffer(Config* config) :
   mConfig(config) {
-  mPixelBuffer = new std::uint8_t[config.viewportStride * config.viewportHeight];
+  mPixelBuffer = new std::uint8_t[config->viewportStride * config->viewportHeight];
 }
 
 Framebuffer::~Framebuffer() {
@@ -16,14 +16,14 @@ std::uint8_t* Framebuffer::GetBuffer() {
 
 void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
   // Scissor test.
-  if (x >= 0 && y >= 0 && x < mConfig.viewportWidth && y < mConfig.viewportHeight) {
-    std::size_t offset = (x * mConfig.bytesPerPixel) + (y * mConfig.viewportStride);
+  if (x >= 0 && y >= 0 && x < mConfig->viewportWidth && y < mConfig->viewportHeight) {
+    std::size_t offset = (x * mConfig->bytesPerPixel) + (y * mConfig->viewportStride);
     *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
   }
 }
 
 void Framebuffer::Clear(ZColor color) {
-  std::size_t cachedSize = (mConfig.viewportStride * mConfig.viewportHeight) / sizeof(std::uintptr_t);
+  std::size_t cachedSize = (mConfig->viewportStride * mConfig->viewportHeight) / sizeof(std::uintptr_t);
   std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
   std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
 

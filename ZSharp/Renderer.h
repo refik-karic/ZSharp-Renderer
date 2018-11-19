@@ -8,7 +8,7 @@
 namespace ZSharp {
 class Renderer {
   public:
-  Renderer(void(*callback)(std::uint8_t* data), Config& config);
+  Renderer(void(*callback)(std::uint8_t* data), Config* config);
   ~Renderer();
 
   void Start();
@@ -22,7 +22,7 @@ class Renderer {
 
   std::mutex mMutex;
   std::thread* mRenderThread;
-  Config& mConfig;
+  Config* mConfig;
 
   void(*BitmapCallback)(std::uint8_t* data);
 

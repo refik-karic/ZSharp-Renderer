@@ -19,7 +19,7 @@ class Camera {
   /// Create a new camera at the origin.
   /// </summary>
   /// <param name='config'>The camera configuration.</param>
-  Camera(Config& config) :
+  Camera(Config* config) :
     mConfig(config) {
     // Default the look direction is along the negative Z axis.
     mLook[2] = -1;
@@ -83,7 +83,7 @@ class Camera {
   /// <summary>
   /// Camera configuration.
   /// </summary>
-  Config& mConfig;
+  Config* mConfig;
 };
 }
 

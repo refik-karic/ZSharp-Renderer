@@ -9,7 +9,7 @@
 namespace ZSharp {
 class Framebuffer {
   public:
-  Framebuffer(Config& config);
+  Framebuffer(Config* config);
   ~Framebuffer();
 
   std::uint8_t* GetBuffer();
@@ -17,7 +17,7 @@ class Framebuffer {
   void Clear(ZColor color);
 
   private:
-  Config& mConfig;
+  Config* mConfig;
   std::uint8_t* mPixelBuffer;
 };
 }

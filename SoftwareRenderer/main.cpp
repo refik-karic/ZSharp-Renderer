@@ -18,9 +18,6 @@
 /// </summary>
 static ZSharp::Config mConfig;
 
-/// <summary>
-/// Global wrapper object to the Windows GDI+ API. 
-/// </summary>
 static GDIWrapper* mGdiWrapper = nullptr;
 
 /// <summary>
@@ -28,14 +25,8 @@ static GDIWrapper* mGdiWrapper = nullptr;
 /// </summary>
 static HINSTANCE mInstance;
 
-/// <summary>
-/// Dummy text for the Window. 
-/// </summary>
 static const wchar_t CLASS_NAME[] = L"Sample Window Class";
 
-/// <summary>
-/// Dummy text for the Window. 
-/// </summary>
 static const wchar_t WINDOW_TEXT[] = L"Learn To Program Windows";
 
 // Functions.
@@ -98,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mGdiWrapper = new GDIWrapper(hwnd, mConfig.viewportWidth, mConfig.viewportHeight);
 
   // Launch the renderer.
-  ZSharp::Renderer swRenderer(RendererDrawCallback, mConfig);
+  ZSharp::Renderer swRenderer(RendererDrawCallback, &mConfig);
   swRenderer.Start();
 
   // Run the message loop.

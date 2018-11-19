@@ -13,15 +13,6 @@ namespace ZSharp {
 /// <returns>The angle in radians.</returns>
 double DegreesToRadians(const double degrees);
 
-/// <summary>
-/// Calculates an approximate square root for a given value using the Newton-Raphson method.
-///
-/// Computer Graphics Principles and Practice Second Edition in C
-/// James D. Foley, Andries van Dam, Steven K. Feiner, John F. Hughes
-/// See Appendix A.7 p.1109
-/// </summary>
-/// <param name='val'>The value to find the square root of.</param>
-/// <returns>An approximate square root.</returns>
 template <typename T>
 T NewtonRaphsonSqrt(T val) {
   // Adjust as necessary for accuracy.

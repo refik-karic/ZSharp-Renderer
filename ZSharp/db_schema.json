@@ -7,7 +7,30 @@
     "patternProperties": {
         "^Model-[a-zA-Z0-9]+$": {
             "description": "A model that can be put together, displayed, and animated.",
-            "type": "object",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "patternProperties": {
+                    "^Mesh-[a-zA-Z0-9]+$": {
+                        "description": "A mesh which makes up a portion of a model.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "patternProperties": {
+                                // TODO: Finish updating this schema at some point.
+                            },
+                            "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                    }
+                },
+                "additionalProperties": false
+
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+
             "patternProperties": {
                 "^Mesh-[a-zA-Z0-9]+$": {
                     "description": "A mesh which makes up a portion of a model.",

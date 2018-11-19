@@ -40,22 +40,22 @@ class Scanner {
   /// <summary>
   /// Typical block size used for reading from SSDs.
   /// </summary>
-  static constexpr std::uint32_t BLOCK_SIZE = 4096;
+  static constexpr std::size_t BLOCK_SIZE = 4096;
 
   /// <summary>
   /// Keeps track of the start of the current lexeme.
   /// </summary>
-  std::int32_t mStart = 0;
+  std::size_t mStart = 0;
   
   /// <summary>
   /// Keep track of the current position in the current lexeme.
   /// </summary>
-  std::int32_t mCurrent = 0;
+  std::size_t mCurrent = 0;
   
   /// <summary>
   /// Keeps track of which line the scanner is on for reporting errors.
   /// </summary>
-  std::int32_t mLine = 0;
+  std::size_t mLine = 0;
 
   /// <summary>
   /// A buffer containing the contents of a file read into memory.

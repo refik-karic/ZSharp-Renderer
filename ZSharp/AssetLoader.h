@@ -23,31 +23,27 @@ class AssetLoader {
 
   }
 
-  /// <summary>
-  /// Parse a given file and return the data associated with it.
-  /// </summary>
-  /// <param name='fileName'>Absolute path to the file to be parsed.</param>
-  /// <returns>A model containing all of its data.</returns>
   template <typename T>
-  Model<T> LoadModel(const std::string& fileName) {
-    // Create a model which will hold the result of reading from the file.
-    Model<T> modelResult;
-
+  void LoadModel(const std::string& fileName, Model<T>& model) {
     // Scan the asset file for data and generate a model from that data.
     Scanner scanner;
+    JsonObject jsonObject;
 
     // Convert the output of the scanner to a JSON object and fill it with data.
-    JsonObject jsonObject;
     auto& tokenList = scanner.ScanTokens(fileName);
 
     // Fill in the JSON object with data.
     PopulateJsonObject(jsonObject, tokenList);
 
-    // TODO: Populate model data from JSON object.
-    // TODO: Also need to re-evaluate my internal data structures for polygons and models.
-
-    // Return the populated model to the caller.
-    return modelResult;
+    // Populate model data from JSON object.
+    
+    // Loop over each mesh in the model asset file.
+    for (std::size_t i; i < jsonObject.GetValue().dataArray.size(); i++) {
+      const auto& meshData = jsonObject.GetValue().dataArray;
+      // TODO: Finish this implementation later.
+      // Look for an efficient way to copy the data over.
+      // Avoid data duplication by having the triangles contain indicies into the raw array of the mesh.
+    }
   }
 
   private:
