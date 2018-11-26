@@ -1,6 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
+#include <cstddef>
 #include "ZVector.h"
 
 namespace ZSharp {
@@ -13,10 +14,8 @@ class Triangle {
 
   }
 
-  Triangle(const ZVector<3, T>& p1, const ZVector<3, T>& p2, const ZVector<3, T>& p3) :
-    p1(mData[0]),
-    p2(mData[1]),
-    p3(mData[2])
+  Triangle(std::size_t p1, std::size_t p2, std::size_t p3) :
+    mIndicies({p1, p2, p3})
   { }
 
   Triangle(const Triangle<T>& copy) {
@@ -35,18 +34,21 @@ class Triangle {
       return;
     }
 
-    mData[0] = rhs[0];
-    mData[1] = rhs[1];
-    mData[2] = rhs[2];
+    mIndicies[0] = rhs.mIndicies[0];
+    mIndicies[1] = rhs.mIndicies[1];
+    mIndicies[2] = rhs.mIndicies[2];
   }
 
-  ZVector<3, T>& operator[](std::size_t index) {
-    return mData[index];
+  void SetPoint(std::size_t point, std::size_t index) {
+    mIndicies[point] = index;
   }
+
+  /*ZVector<3, T>& operator[](std::size_t index) {
+    return mData[index];
+  }*/
 
   private:
-  // TODO: Make this a pointer and update the class to handle that.
-  ZVector<3, T> mData[3];
+  std::size_t mIndicies[3];
 };
 
 }

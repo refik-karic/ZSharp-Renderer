@@ -4,6 +4,7 @@
 #include <cstddef>
 
 #include "Triangle.h"
+#include "ZHeapArray.h"
 
 namespace ZSharp {
 
@@ -15,65 +16,48 @@ class Mesh {
 
   }
 
-  Mesh(std::size_t dataSize, std::size_t numPrimitives) : 
-    mRawDataSize(dataSize),
-    mNumPrimitives(numPrimitives),
-    mRawData(new T[dataSize]),
-    mPrimData(new Triangle<T>[numPrimitives])
-  {
-    for (std::size_t i = 0; i < numPrimitives; i++) {
-      mData[i] = new Triangle<T>();
-    }
+  Mesh(std::size_t numVerts, std::size_t numTriangleFaces) {
+    mVertTable.Resize(numVerts);
+    mTriangleFaceTable.Resize(numTriangleFaces);
   }
 
-  ~Mesh() {
-    if (mRawDataSize > 0) {
-      delete[] mRawData;
+  Mesh(const Mesh<T>& copy) {
+    if (this == &copy) {
+      return;
     }
 
-    if (mNumPrimitives > 0) {
-      for (std::size_t i = 0; i < mNumPrimitives; i++) {
-        delete mData[i];
-      }
-      delete[] mData;
+    *this = copy;
+  }
+  
+  void operator=(const Mesh<T>& rhs) {
+    if (this == &rhs) {
+      return;
     }
+
+    mVertTable = rhs.mVertTable;
+    mTriangleFaceTable = rhs.mTriangleFaceTable;
   }
 
-  Mesh(const Mesh<T>& copy) = delete;
-  void operator=(const Mesh<T>& rhs) = delete;
-
-  Triangle<T>& operator[](std::size_t index) {
+  /*Triangle<T>& operator[](std::size_t index) {
     return *(mData[index]);
+  }*/
+
+  void SetData(const T* vertData, std::size_t numVerts, std::size_t numTriangleFaces) {
+    mVertTable.Resize(numVerts);
+    mVertTable.CopyData(vertData, numVerts);
+    mTriangleFaceTable.Resize(numTriangleFaces);
   }
 
-  // TODO: Come back to this later and find a better way to do this.
-  // Need to handle the raw array as well as the triangle indicies somehow.
-  void SetData(const Triangle<T>** data, std::size_t length) {
-    if (mNumPrimitives == 0) {
-      mNumPrimitives = length;
-      mData = new Triangle<T>[length];
-    
-      for (std::size_t i = 0; i < length && i < mNumPrimitives; i++) {
-        mData[i] = new Triangle<T>();
-        mData[i] = *(data[i]);
-      }
-    }
-    else {
-      for (std::size_t i = 0; i < length && i < mNumPrimitives; i++) {
-        mData[i] = *(data[i]);
-      }
-    }
+  void SetTriangle(const std::size_t* triangleFaceData, std::size_t index) {
+    Triangle<T>& triangle = mTriangleFaceTable[index];
+    triangle.SetPoint(0, triangleFaceData[0]);
+    triangle.SetPoint(1, triangleFaceData[1]);
+    triangle.SetPoint(2, triangleFaceData[2]);
   }
 
   private:
-  // Backing buffer for all the geometry in this mesh.
-  T* mRawData;
-
-  // Each triangle with indicies into the raw data.
-  Triangle<T>** mPrimData;
-
-  std::size_t mRawDataSize;
-  std::size_t mNumPrimitives = 0;
+  ZHeapArray<T> mVertTable;
+  ZHeapArray<Triangle<T>> mTriangleFaceTable;
 };
 }
 

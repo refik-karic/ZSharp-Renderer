@@ -4,9 +4,10 @@
 #include <list>
 #include <string>
 
+#include "Model.h"
 #include "JsonObject.h"
 #include "Scanner.h"
-#include "Model.h"
+#include "ZHeapArray.h"
 
 namespace ZSharp {
 
@@ -35,14 +36,33 @@ class AssetLoader {
     // Fill in the JSON object with data.
     PopulateJsonObject(jsonObject, tokenList);
 
-    // Populate model data from JSON object.
+    // Make room for the amount of meshes loaded in the requested model.
+    model = Model<T>(jsonObject.GetValue().dataArray.size());
     
     // Loop over each mesh in the model asset file.
-    for (std::size_t i; i < jsonObject.GetValue().dataArray.size(); i++) {
-      const auto& meshData = jsonObject.GetValue().dataArray;
-      // TODO: Finish this implementation later.
-      // Look for an efficient way to copy the data over.
-      // Avoid data duplication by having the triangles contain indicies into the raw array of the mesh.
+    for (std::size_t meshIndex = 0; meshIndex < jsonObject.GetValue().dataArray.size(); ++meshIndex) {
+      auto indicies = jsonObject.GetValue().dataArray[meshIndex].dataObject.get()->GetValue().dataArray[0].dataObject.get();
+      auto verticies = jsonObject.GetValue().dataArray[meshIndex].dataObject.get()->GetValue().dataArray[1].dataObject.get();
+
+      Mesh<T>& mesh = model[meshIndex];
+
+      // Copy all of the JSON array tokens to a raw continuous array in memory.
+      ZHeapArray<T> vertData(verticies->GetValue().dataArray.size());
+      for (std::size_t i = 0; i < vertData.Size(); ++i) {
+        vertData[i] = static_cast<T>(verticies->GetValue().dataArray[i].dataFloat);
+      }
+
+      // Set the vertex data and number of faces/triangles in the mesh.
+      mesh.SetData(vertData.Data(), vertData.Size(), indicies->GetValue().dataArray.size());
+
+      // Set each individual triangle with its indicies into the mesh vertex table.
+      for (std::size_t triIndex = 0; triIndex < indicies->GetValue().dataArray.size(); ++triIndex) {
+        std::size_t triIndicies[3];
+        triIndicies[0] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[0].dataInt);
+        triIndicies[1] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[1].dataInt);
+        triIndicies[2] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[2].dataInt);
+        mesh.SetTriangle(triIndicies, triIndex);
+      }
     }
   }
 

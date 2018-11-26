@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Asset">
       <UniqueIdentifier>{b15450ca-a042-492e-b6a5-3348390a7839}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DataStructures">
+      <UniqueIdentifier>{6e2a7c5a-2f5f-45a7-9256-b52c3e2d868e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="ZHeapArray.h">
+      <Filter>Source Files\DataStructures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
