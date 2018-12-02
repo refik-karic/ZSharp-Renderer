@@ -34,8 +34,8 @@ class Mesh {
       return;
     }
 
-    mVertTable = rhs.mVertTable;
-    mTriangleFaceTable = rhs.mTriangleFaceTable;
+    mVertTable = rhs.GetVertTable();
+    mTriangleFaceTable = rhs.GetTriangleFaceTable();
   }
 
   /*Triangle<T>& operator[](std::size_t index) {
@@ -53,6 +53,22 @@ class Mesh {
     triangle.SetPoint(0, triangleFaceData[0]);
     triangle.SetPoint(1, triangleFaceData[1]);
     triangle.SetPoint(2, triangleFaceData[2]);
+  }
+
+  ZHeapArray<T>& GetVertTable() {
+    return mVertTable;
+  }
+
+  const ZHeapArray<T>& GetVertTable() const {
+    return mVertTable;
+  }
+
+  ZHeapArray<Triangle<T>>& GetTriangleFaceTable() {
+    return mTriangleFaceTable;
+  }
+
+  const ZHeapArray<Triangle<T>>& GetTriangleFaceTable() const {
+    return mTriangleFaceTable;
   }
 
   private:

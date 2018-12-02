@@ -2,7 +2,7 @@
 #define TRIANGLE_H
 
 #include <cstddef>
-#include "ZVector.h"
+//#include "ZVector.h"
 
 namespace ZSharp {
 
@@ -34,9 +34,9 @@ class Triangle {
       return;
     }
 
-    mIndicies[0] = rhs.mIndicies[0];
-    mIndicies[1] = rhs.mIndicies[1];
-    mIndicies[2] = rhs.mIndicies[2];
+    mIndicies[0] = rhs.GetIndex(0);
+    mIndicies[1] = rhs.GetIndex(1);
+    mIndicies[2] = rhs.GetIndex(2);
   }
 
   void SetPoint(std::size_t point, std::size_t index) {
@@ -46,6 +46,14 @@ class Triangle {
   /*ZVector<3, T>& operator[](std::size_t index) {
     return mData[index];
   }*/
+
+  std::size_t GetIndex(std::size_t index) {
+    return mIndicies[index];
+  }
+
+  const std::size_t GetIndex(std::size_t index) const {
+    return mIndicies[index];
+  }
 
   private:
   std::size_t mIndicies[3];

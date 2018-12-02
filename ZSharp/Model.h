@@ -32,7 +32,7 @@ class Model {
       return;
     }
 
-    mData = rhs.mData;
+    mData = rhs.GetMeshData();
   }
 
   Mesh<T>& operator[](std::size_t index) {
@@ -41,6 +41,14 @@ class Model {
 
   std::size_t MeshCount() {
     return mData.Size();
+  }
+
+  ZHeapArray<Mesh<T>>& GetMeshData() {
+    return mData;
+  }
+
+  const ZHeapArray<Mesh<T>>& GetMeshData() const {
+    return mData;
   }
 
   private:

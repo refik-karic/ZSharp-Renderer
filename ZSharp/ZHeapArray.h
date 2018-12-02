@@ -12,8 +12,10 @@ class ZHeapArray {
 
   }
 
-  ZHeapArray(std::size_t size) {
-    mData = new T[size];
+  ZHeapArray(std::size_t size) :
+    mSize(size),
+    mData(new T[size])
+  {
   }
 
   ~ZHeapArray() {
@@ -35,8 +37,8 @@ class ZHeapArray {
       return;
     }
 
-    Resize(rhs.mSize);
-    CopyData(rhs.mData, rhs.mSize);
+    Resize(rhs.Size());
+    CopyData(rhs.Data(), rhs.Size());
   }
 
   T operator[](std::size_t index) const {
@@ -51,7 +53,11 @@ class ZHeapArray {
     return mData;
   }
 
-  std::size_t Size() {
+  const T* Data() const {
+    return mData;
+  }
+
+  std::size_t Size() const {
     return mSize;
   }
 
