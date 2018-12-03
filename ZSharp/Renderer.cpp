@@ -8,6 +8,7 @@
 #include "Framebuffer.h"
 #include "Model.h"
 #include "Renderer.h"
+#include "Camera.h"
 #include "ZColor.h"
 #include "ZMatrix.h"
 #include "ZVector.h"
@@ -77,6 +78,8 @@ void Renderer::MainLoop() {
 
   ZVector<3, float> test2Vec;
   test2Vec[0] = 3.0F;
+
+  Camera<float> camera(mConfig);
 
   AssetLoader assetLoader;
   Model<float> testModel;

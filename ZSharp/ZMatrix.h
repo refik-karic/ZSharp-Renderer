@@ -8,7 +8,7 @@
 
 namespace ZSharp {
 
-template <std::size_t rows, std::size_t cols , typename T>
+template <std::size_t rows, std::size_t cols, typename T>
 class ZMatrix {
   public:
   enum class Axis {
@@ -105,15 +105,17 @@ class ZMatrix {
     return result;
   }
 
-  static void SetTranslation(ZMatrix<rows, cols, T>& matrix, const ZVector<cols, T>& translation) {
+  template<std::size_t argCols>
+  static void SetTranslation(ZMatrix<rows, cols, T>& matrix, const ZVector<argCols, T>& translation) {
     std::size_t lastColumn = cols - 1;
-    for (std::size_t row = 0; row < rows; row++) {
+    for (std::size_t row = 0; row < argCols; row++) {
       matrix[row][lastColumn] = translation[row];
     }
   }
 
-  static void SetScale(ZMatrix<rows, cols, T>& matrix, const ZVector<cols, T>& scale) {
-    for (std::size_t row = 0; row < rows; row++) {
+  template<std::size_t argCols>
+  static void SetScale(ZMatrix<rows, cols, T>& matrix, const ZVector<argCols, T>& scale) {
+    for (std::size_t row = 0; row < argCols; row++) {
       matrix[row][row] = scale[row];
     }
   }
