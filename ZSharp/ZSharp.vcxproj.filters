@@ -51,6 +51,9 @@
     <ClCompile Include="JsonObject.cpp">
       <Filter>Source Files\Asset</Filter>
     </ClCompile>
+    <ClCompile Include="ZDrawing.cpp">
+      <Filter>Source Files\Display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">

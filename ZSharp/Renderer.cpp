@@ -109,6 +109,9 @@ void Renderer::MainLoop() {
 
     framebuffer.Clear(color);
 
+    // Transform all primitives in the current FOV and get them ready to draw.
+    camera.PerspectiveProjection(testModel);
+
     BitmapCallback(framebuffer.GetBuffer());
 
     // Time the frame.

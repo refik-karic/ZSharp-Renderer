@@ -6,6 +6,7 @@
 
 #include "Constants.h"
 #include "Config.h"
+#include "Triangle.h"
 #include "ZMatrix.h"
 #include "ZVector.h"
 
@@ -137,6 +138,14 @@ class Camera {
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // TODO: Finish this implementation by adding the logic which applies the unhing and window transforms to the primitives.
+    for (std::size_t meshIdx = 0; meshIdx < model.MeshCount(); meshIdx++) {
+      for (std::size_t triIdx = 0; triIdx < model[meshIdx].GetTriangleFaceTable().Size(); triIdx++) {
+        Triangle<T>& curTriangle = model[meshIdx].GetTriangleFaceTable()[triIdx];
+        curTriangle.GetIndex(0);
+        curTriangle.GetIndex(1);
+        curTriangle.GetIndex(2);
+      }
+    }
   }
 
   private:

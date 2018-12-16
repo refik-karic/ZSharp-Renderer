@@ -25,6 +25,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="UtilMath.cpp" />
+    <ClCompile Include="ZDrawing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />

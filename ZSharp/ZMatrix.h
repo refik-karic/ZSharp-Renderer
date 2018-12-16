@@ -46,6 +46,10 @@ class ZMatrix {
     return mData[index];
   }
 
+  const ZVector<cols, T>& operator[](std::size_t index) const {
+    return mData[index];
+  }
+
   ZMatrix<rows, cols, T> operator*(T scalar) {
     ZMatrix<rows, cols, T> result;
 

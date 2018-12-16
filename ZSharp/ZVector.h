@@ -53,6 +53,13 @@ class ZVector {
     }
   }
 
+  template <std::size_t argElements>
+  void operator=(const ZVector<argElements, T>& vector) {
+    for (std::size_t i = 0; i < argElements; i++) {
+      mData[i] = vector[i];
+    }
+  }
+
   T operator[](std::size_t index) const {
     return mData[index];
   }
@@ -101,6 +108,16 @@ class ZVector {
     return result;
   }
 
+  T operator*(const ZVector<elements, T>& vector) const {
+    T result{};
+
+    for (std::size_t i = 0; i < elements; i++) {
+      result += (mData[i] * vector[i]);
+    }
+
+    return result;
+  }
+
   static ZVector<elements, T> Cross(const ZVector<elements, T>& v1, const ZVector<elements, T>& v2) {
     ZVector<elements, T> result;
 
@@ -112,7 +129,7 @@ class ZVector {
   }
 
   static T Length(const ZVector<elements, T>& vector) {
-    return NewtonRaphsonSqrt((*this) * (*this));
+    return NewtonRaphsonSqrt(vector * vector);
   }
 
   static void Normalize(ZVector<elements, T>& vector) {
