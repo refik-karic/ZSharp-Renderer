@@ -16,12 +16,13 @@
 static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
-Renderer::Renderer(void(*callback)(std::uint8_t* data), Config* config) :
-  BitmapCallback(callback),
+Renderer::Renderer(Config* config) :
   mRunState(RUN_STATE::STOPPED),
   mMutex(),
   mConfig(config),
-  mRenderThread(nullptr) {
+  mRenderThread(nullptr),
+  mBuffer(nullptr)
+{
 
 }
 
@@ -36,7 +37,7 @@ Renderer::~Renderer() {
 void Renderer::Start() {
   mMutex.lock();
 
-  if (BitmapCallback != nullptr && mRunState != RUN_STATE::RUNNING) {
+  if (mRunState != RUN_STATE::RUNNING) {
     // Set the main loop in the running state and let it run.
     mRunState = RUN_STATE::RUNNING;
     mRenderThread = new std::thread(&Renderer::MainLoop, this);
@@ -72,6 +73,9 @@ void Renderer::MainLoop() {
 
   ZColor colorBlue;
   colorBlue.Color = ZColors::BLUE;
+
+  framebuffer.Clear(colorBlue);
+  mBuffer = &framebuffer;
 
   ZVector<3, float> testVec;
   testVec[0] = 5.0F;
@@ -112,12 +116,15 @@ void Renderer::MainLoop() {
     // Transform all primitives in the current FOV and get them ready to draw.
     camera.PerspectiveProjection(testModel);
 
-    BitmapCallback(framebuffer.GetBuffer());
-
     // Time the frame.
     frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
     std::chrono::duration<float, std::milli> timeDelta(std::max(Constants::FRAMERATE_60HZ_MS - static_cast<float>(frameDelta.count()), 0.0f));
     std::this_thread::sleep_for(timeDelta);
   }
 }
+
+Framebuffer* Renderer::GetNextFrame() {
+  return mBuffer;
+}
+
 }

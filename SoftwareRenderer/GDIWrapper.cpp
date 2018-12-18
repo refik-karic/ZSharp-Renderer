@@ -1,81 +1,63 @@
-﻿#include "GDIWrapper.h"
+﻿#include <algorithm>
+#include <cstring>
 
-GDIWrapper::GDIWrapper(HWND hwnd, std::size_t width, std::size_t height) :
-  mMutex(),
-  mHwnd(hwnd),
-  mRect(0, 0, static_cast<int>(width), static_cast<int>(height)),
-  mStopPaint(false)
+#include "GDIWrapper.h"
+
+GDIWrapper::GDIWrapper(HWND hwnd) :
+  mHwnd(hwnd)
 {
   // Initialize GDI+.
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
   GdiplusStartup(&mGdiToken, &gdiplusStartupInput, NULL);
 
   // Create the bitmap and the data object required to lock/unlock the bitmap for writing.
-  mBitmap = new Gdiplus::Bitmap(static_cast<INT>(width), static_cast<INT>(height), PixelFormat32bppARGB);
-  mBitmapData = new Gdiplus::BitmapData();
-  mSizeBitmap = width * height * 4; // 4 Bytes per pixel.
+  RECT activeWindowSize;
+  GetClientRect(mHwnd, &activeWindowSize);
+  mBitmap = new Gdiplus::Bitmap(activeWindowSize.right, activeWindowSize.bottom, PixelFormat32bppARGB);
 }
 
 GDIWrapper::~GDIWrapper() {
-  delete mBitmapData;
   delete mBitmap;
   Gdiplus::GdiplusShutdown(mGdiToken);
 }
 
-std::uintptr_t* GDIWrapper::GetBitmapBuffer() {
-  return reinterpret_cast<std::uintptr_t*>(mBitmapData->Scan0);
-}
+void GDIWrapper::DrawBitmap(ZSharp::Framebuffer* nextFrame) {
+  // Get the current window dimensions.
+  RECT activeWindowSize;
+  GetClientRect(mHwnd, &activeWindowSize);
+  Gdiplus::Rect drawRect(static_cast<int>(activeWindowSize.left),
+                         static_cast<int>(activeWindowSize.top),
+                         static_cast<int>(activeWindowSize.right),
+                         static_cast<int>(activeWindowSize.bottom));
 
-void GDIWrapper::StopPaint() {
-  mMutex.lock();
-
-  mStopPaint = true;
-
-  mMutex.unlock();
-}
-
-void GDIWrapper::DrawBitmap(std::uint8_t* frameData) {
-  mMutex.lock();
-  
-  if (mStopPaint) {
-    return;
+  // Check for cases where the display window size has chnaged.
+  if (mBitmap->GetWidth() != drawRect.Width && mBitmap->GetHeight() != drawRect.Height) {
+    delete mBitmap;
+    mBitmap = new Gdiplus::Bitmap(drawRect.Width, drawRect.Height, PixelFormat32bppARGB);
   }
 
   // Lock the bitmap to get access to the underlying buffer.
-  mBitmap->LockBits(&mRect,
+  Gdiplus::BitmapData bitmapData;
+  mBitmap->LockBits(&drawRect,
                     Gdiplus::ImageLockMode::ImageLockModeWrite,
                     PixelFormat32bppARGB,
-                    mBitmapData);
+                    &bitmapData);
 
   // Copy over the next frame.
-  std::size_t cachedSize = mSizeBitmap / sizeof(std::uintptr_t);
-  std::uintptr_t* bmpDataPtr = reinterpret_cast<std::uintptr_t*>(mBitmapData->Scan0);
-  std::uintptr_t* frameDataPtr = reinterpret_cast<std::uintptr_t*>(frameData);
-
-  for (std::size_t i = 0; i < cachedSize; i++) {
-    bmpDataPtr[i] = frameDataPtr[i];
-  }
+  std::size_t numFrameBytes = std::min<std::size_t>(bitmapData.Stride * bitmapData.Height, nextFrame->GetStride() * nextFrame->GetHeight());
+  std::memcpy(bitmapData.Scan0, nextFrame->GetBuffer(), numFrameBytes);
 
   // Unlock the bitmap so that it can be drawn to screen.
-  mBitmap->UnlockBits(mBitmapData);
+  mBitmap->UnlockBits(&bitmapData);
 
   HDC hdc;
   PAINTSTRUCT ps;
   hdc = BeginPaint(mHwnd, &ps);
   Gdiplus::Graphics graphics(hdc);
-  graphics.DrawImage(mBitmap, mRect);
+  graphics.DrawImage(mBitmap, drawRect);
   EndPaint(mHwnd, &ps);
 
   // TODO: This uses lazy "dirty rectangle" drawing and re-draws the entire frame on each pass.
   // It would be much better to track the changed area and only update that.
-
-  RECT rect;
-  rect.left = 0;
-  rect.top = 0;
-  rect.right = mRect.Width;
-  rect.bottom = mRect.Height;
-
-  InvalidateRect(mHwnd, &rect, false);
-
-  mMutex.unlock();
+  InvalidateRect(mHwnd, &activeWindowSize, false);
 }

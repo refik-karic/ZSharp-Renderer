@@ -5,7 +5,6 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <cstddef>
-#include <cstdint>
 
 #include <windows.h>
 #include <winuser.h>
@@ -19,26 +18,19 @@
 #include <Gdipluspixelformats.h>
 #include <gdiplustypes.h>
 
-#include <mutex>
+#include <Framebuffer.h>
 
 class GDIWrapper {
   public:
-  GDIWrapper(HWND hwnd, std::size_t width, std::size_t height);
+  GDIWrapper(HWND hwnd);
   ~GDIWrapper();
 
-  std::uintptr_t* GetBitmapBuffer();
-  void StopPaint();
-  void DrawBitmap(std::uint8_t* frameData);
+  void DrawBitmap(ZSharp::Framebuffer* nextFrame);
 
   private:
-  std::mutex mMutex;
-  bool mStopPaint;
   HWND mHwnd;
   ULONG_PTR mGdiToken;
-  Gdiplus::Rect mRect;
   Gdiplus::Bitmap* mBitmap;
-  Gdiplus::BitmapData* mBitmapData;
-  std::size_t mSizeBitmap;
 };
 
 #endif

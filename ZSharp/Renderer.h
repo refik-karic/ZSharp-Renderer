@@ -3,16 +3,18 @@
 
 #include <mutex>
 
+#include "Framebuffer.h"
 #include "Config.h"
 
 namespace ZSharp {
 class Renderer {
   public:
-  Renderer(void(*callback)(std::uint8_t* data), Config* config);
+  Renderer(Config* config);
   ~Renderer();
 
   void Start();
   void Stop();
+  Framebuffer* GetNextFrame();
 
   private:
   enum class RUN_STATE {
@@ -23,8 +25,7 @@ class Renderer {
   std::mutex mMutex;
   std::thread* mRenderThread;
   Config* mConfig;
-
-  void(*BitmapCallback)(std::uint8_t* data);
+  Framebuffer* mBuffer;
 
   void MainLoop();
 };

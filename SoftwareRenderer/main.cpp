@@ -10,6 +10,7 @@
 // Headers.
 #include <windows.h>
 #include <Renderer.h>
+#include <Framebuffer.h>
 #include "GDIWrapper.h"
 
 // Global variables.
@@ -17,6 +18,8 @@
 /// Global config passed between objects as needed to acess common settings.
 /// </summary>
 static ZSharp::Config mConfig;
+
+static ZSharp::Renderer* mRenderer = nullptr;
 
 static GDIWrapper* mGdiWrapper = nullptr;
 
@@ -34,12 +37,6 @@ static const wchar_t WINDOW_TEXT[] = L"Learn To Program Windows";
 /// Message loop run on the GUI thread for processing Windows messages to the current Window. 
 /// </summary>
 LRESULT static CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-/// <summary>
-/// Callback from the renderer when a new frame is ready to be displayed. 
-/// </summary>
-/// <param name='frameData'>Pointer to the next frame.</param>
-void RendererDrawCallback(std::uint8_t* frameData);
 
 /// <summary>
 /// Main entry point for the application.
@@ -86,36 +83,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   ShowWindow(hwnd, nCmdShow);
 
   // Setup bitmap display on the window.
-  mGdiWrapper = new GDIWrapper(hwnd, mConfig.viewportWidth, mConfig.viewportHeight);
+  mGdiWrapper = new GDIWrapper(hwnd);
 
   // Launch the renderer.
-  ZSharp::Renderer swRenderer(RendererDrawCallback, &mConfig);
-  swRenderer.Start();
+  mRenderer = new ZSharp::Renderer(&mConfig);
+  mRenderer->Start();
 
   // Run the message loop.
-  bool bGotMsg;
   MSG msg;
   msg.message = WM_NULL;
-  PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
 
-  // For sleeping.
-  using namespace std::chrono_literals;
-
-  while (WM_QUIT != msg.message) {
-    // Process window events.
-    // Use PeekMessage() so we can use idle time to render the scene. 
-    bGotMsg = (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE) != 0);
-
-    if (bGotMsg) {
-      // Translate and dispatch the message
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-    }
-
-    // Sleep to avoid busy spinning.
-    std::this_thread::sleep_for(10ms);
+  while (GetMessage(&msg, hwnd, 0, 0)) {
+    // Translate message is required for retrieving decoded user input.
+    TranslateMessage(&msg);
+    // Dispatch message is required to process the message from the OS.
+    DispatchMessage(&msg);
   }
 
+  UnregisterClass(CLASS_NAME, mInstance);
   delete mGdiWrapper;
 
   return 0;
@@ -124,23 +109,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   switch (uMsg) {
     case WM_PAINT:
+      if (mGdiWrapper != nullptr && mRenderer != nullptr) {
+        ZSharp::Framebuffer* buf = mRenderer->GetNextFrame();
 
+        if (buf->GetBuffer() != nullptr) {
+          mGdiWrapper->DrawBitmap(buf);
+        }
+      }
       return 0;
     case WM_CLOSE:
-      mGdiWrapper->StopPaint();
       DestroyWindow(hwnd);
       UnregisterClass(CLASS_NAME, mInstance);
       return 0;
-
     case WM_DESTROY:
-      mGdiWrapper->StopPaint();
       PostQuitMessage(0);
       break;
   }
 
   return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
-void RendererDrawCallback(std::uint8_t* frameData) {
-  mGdiWrapper->DrawBitmap(frameData);
 }
