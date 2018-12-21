@@ -1,5 +1,6 @@
 ﻿#include <algorithm>
 #include <cstring>
+#include <cstddef>
 
 #include "GDIWrapper.h"
 
@@ -21,6 +22,7 @@ GDIWrapper::~GDIWrapper() {
   Gdiplus::GdiplusShutdown(mGdiToken);
 }
 
+// TODO: Debug this because it is causing a crash.
 void GDIWrapper::DrawBitmap(ZSharp::Framebuffer* nextFrame) {
   // Get the current window dimensions.
   RECT activeWindowSize;
@@ -31,7 +33,7 @@ void GDIWrapper::DrawBitmap(ZSharp::Framebuffer* nextFrame) {
                          static_cast<int>(activeWindowSize.bottom));
 
   // Check for cases where the display window size has chnaged.
-  if (mBitmap->GetWidth() != drawRect.Width && mBitmap->GetHeight() != drawRect.Height) {
+  if (mBitmap->GetWidth() != drawRect.Width || mBitmap->GetHeight() != drawRect.Height) {
     delete mBitmap;
     mBitmap = new Gdiplus::Bitmap(drawRect.Width, drawRect.Height, PixelFormat32bppARGB);
   }
