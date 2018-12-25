@@ -10,18 +10,17 @@
 // Headers.
 #include <windows.h>
 #include <Renderer.h>
-#include <Framebuffer.h>
 #include "GDIWrapper.h"
 
 // Global variables.
 /// <summary>
 /// Global config passed between objects as needed to acess common settings.
 /// </summary>
-static ZSharp::Config mConfig;
+ZSharp::Config mConfig;
 
-static ZSharp::Renderer* mRenderer = nullptr;
+ZSharp::Renderer* mRenderer = nullptr;
 
-static GDIWrapper* mGdiWrapper = nullptr;
+GDIWrapper* mGdiWrapper = nullptr;
 
 // Functions.
 /// <summary>
@@ -40,7 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   mConfig.viewportStride = mConfig.viewportWidth * bytesPerPixel;
   
   const char className[] = "Test Class Name";
-  WNDCLASSEXA wc = {};
+  WNDCLASSEXA wc;
   wc.cbSize = sizeof(WNDCLASSEXA);
   wc.style = CS_HREDRAW | CS_VREDRAW;
   wc.lpfnWndProc = MessageLoop;
@@ -62,18 +61,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
   }
 
+  DWORD windowStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
   RECT clientRect;
   clientRect.top = 0;
   clientRect.left = 0;
   clientRect.bottom = static_cast<long>(mConfig.viewportHeight);
   clientRect.right = static_cast<long>(mConfig.viewportWidth);
-  AdjustWindowRectEx(&clientRect, WS_CAPTION, false, 0);
+  AdjustWindowRectEx(&clientRect, windowStyle, false, 0);
 
   HWND hwnd = CreateWindowExA(
     0, // Optional style.
     className, // Window class.
     "Test Window", // Window text.
-    WS_CAPTION, // Window style.
+    windowStyle, // Window style.
     // Size and position.
     CW_USEDEFAULT, // X
     CW_USEDEFAULT, // Y
@@ -89,18 +89,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
-  // Setup bitmap display on the window.
-  mGdiWrapper = new GDIWrapper(hwnd);
-
-  // Launch the renderer.
+  // Prepare renderer and hook GDI+ to its framebuffer.
   mRenderer = new ZSharp::Renderer(&mConfig);
-  mRenderer->Start();
+  mRenderer->RenderNextFrame();
+  mGdiWrapper = new GDIWrapper(hwnd, mRenderer->GetFrameBuffer());
 
   // Run the message loop.
   MSG msg;
-
   ShowWindow(hwnd, nCmdShow);
+  UpdateWindow(hwnd);
 
+  // TODO: Something wrong with the way I'm handling the message loop and it's causing Windows to crash.
+  // Investigate further.
   while (GetMessageA(&msg, hwnd, 0, 0)) {
     // Translate message is required for retrieving decoded user input.
     TranslateMessage(&msg);
@@ -110,6 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 
   UnregisterClassA(className, hInstance);
   delete mGdiWrapper;
+  delete mRenderer;
 
   return 0;
 }
@@ -118,17 +119,12 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   switch (uMsg) {
     // Update the frame whenever the it changes size or it needs to redraw.
     case WM_ERASEBKGND:
-      if (mRenderer->GetNextFrame()->GetBuffer() != nullptr) {
-        mGdiWrapper->DrawBitmap(mRenderer->GetNextFrame());
-      }
-
       // MSDN says we need to return non-zero when changing the background.
       return 1;
     case WM_PAINT:
-      if (mRenderer->GetNextFrame()->GetBuffer() != nullptr) {
-        mGdiWrapper->DrawBitmap(mRenderer->GetNextFrame());
+      if (mGdiWrapper != nullptr && mRenderer != nullptr) {
+        mGdiWrapper->UpdateWindow();
       }
-      
       break;
     case WM_CLOSE:
       DestroyWindow(hwnd);

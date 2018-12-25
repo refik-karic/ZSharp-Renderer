@@ -20,10 +20,10 @@
 
 class GDIWrapper {
   public:
-  GDIWrapper(HWND hwnd);
+  GDIWrapper(HWND hwnd, ZSharp::Framebuffer* frameData);
   ~GDIWrapper();
 
-  void DrawBitmap(ZSharp::Framebuffer* nextFrame);
+  void UpdateWindow();
 
   private:
   HWND mHwnd;

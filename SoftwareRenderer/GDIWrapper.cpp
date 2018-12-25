@@ -1,20 +1,23 @@
-﻿#include <algorithm>
-#include <cstring>
-#include <cstddef>
+﻿#include <cstddef>
 
 #include "GDIWrapper.h"
 
-GDIWrapper::GDIWrapper(HWND hwnd) :
+GDIWrapper::GDIWrapper(HWND hwnd, ZSharp::Framebuffer* frameData) :
   mHwnd(hwnd)
 {
   // Initialize GDI+.
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  GdiplusStartup(&mGdiToken, &gdiplusStartupInput, NULL);
+  gdiplusStartupInput.GdiplusVersion = 1;
+  gdiplusStartupInput.DebugEventCallback = nullptr;
+  gdiplusStartupInput.SuppressBackgroundThread = false;
+  gdiplusStartupInput.SuppressExternalCodecs = false; // Ignored for GDI+ v1.0
+  GdiplusStartup(&mGdiToken, &gdiplusStartupInput, nullptr);
 
-  // Create the bitmap and the data object required to lock/unlock the bitmap for writing.
-  RECT activeWindowSize;
-  GetClientRect(mHwnd, &activeWindowSize);
-  mBitmap = new Gdiplus::Bitmap(activeWindowSize.right, activeWindowSize.bottom, PixelFormat32bppARGB);
+  mBitmap = new Gdiplus::Bitmap(static_cast<INT>(frameData->GetWidth()),
+                                static_cast<INT>(frameData->GetHeight()),
+                                static_cast<INT>(frameData->GetStride()),
+                                PixelFormat32bppARGB,
+                                frameData->GetBuffer());
 }
 
 GDIWrapper::~GDIWrapper() {
@@ -22,8 +25,7 @@ GDIWrapper::~GDIWrapper() {
   Gdiplus::GdiplusShutdown(mGdiToken);
 }
 
-// TODO: Debug this because it is causing a crash.
-void GDIWrapper::DrawBitmap(ZSharp::Framebuffer* nextFrame) {
+void GDIWrapper::UpdateWindow() {
   // Get the current window dimensions.
   RECT activeWindowSize;
   GetClientRect(mHwnd, &activeWindowSize);
@@ -32,30 +34,12 @@ void GDIWrapper::DrawBitmap(ZSharp::Framebuffer* nextFrame) {
                          static_cast<int>(activeWindowSize.right),
                          static_cast<int>(activeWindowSize.bottom));
 
-  // Check for cases where the display window size has chnaged.
-  if (mBitmap->GetWidth() != drawRect.Width || mBitmap->GetHeight() != drawRect.Height) {
-    delete mBitmap;
-    mBitmap = new Gdiplus::Bitmap(drawRect.Width, drawRect.Height, PixelFormat32bppARGB);
-  }
-
-  // Lock the bitmap to get access to the underlying buffer.
-  Gdiplus::BitmapData bitmapData;
-  mBitmap->LockBits(&drawRect,
-                    Gdiplus::ImageLockMode::ImageLockModeWrite,
-                    PixelFormat32bppARGB,
-                    &bitmapData);
-
-  // Copy over the next frame.
-  std::size_t numFrameBytes = std::min<std::size_t>(bitmapData.Stride * bitmapData.Height, nextFrame->GetStride() * nextFrame->GetHeight());
-  std::memcpy(bitmapData.Scan0, nextFrame->GetBuffer(), numFrameBytes);
-
-  // Unlock the bitmap so that it can be drawn to screen.
-  mBitmap->UnlockBits(&bitmapData);
-
+  // Use GDI+ to draw the bitmap onto our viewport.
   HDC hdc;
   PAINTSTRUCT ps;
   hdc = BeginPaint(mHwnd, &ps);
   Gdiplus::Graphics graphics(hdc);
+  // Note that GDI+ will handle upscaling/downscaling if necessary.
   graphics.DrawImage(mBitmap, drawRect);
   EndPaint(mHwnd, &ps);
 

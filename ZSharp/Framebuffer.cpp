@@ -10,10 +10,6 @@ Framebuffer::~Framebuffer() {
   delete[] mPixelBuffer;
 }
 
-std::uint8_t* Framebuffer::GetBuffer() {
-  return mPixelBuffer;
-}
-
 void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
   // Scissor test.
   if (x >= 0 && y >= 0 && x < mConfig->viewportWidth && y < mConfig->viewportHeight) {

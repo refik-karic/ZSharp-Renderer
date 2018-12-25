@@ -1,10 +1,11 @@
 ﻿#ifndef RENDERER_H
 #define RENDERER_H
 
-#include <mutex>
-
-#include "Framebuffer.h"
+#include "AssetLoader.h"
+#include "Camera.h"
 #include "Config.h"
+#include "Model.h"
+#include "Framebuffer.h"
 
 namespace ZSharp {
 class Renderer {
@@ -12,22 +13,17 @@ class Renderer {
   Renderer(Config* config);
   ~Renderer();
 
-  void Start();
-  void Stop();
-  Framebuffer* GetNextFrame();
+  void RenderNextFrame();
+  Framebuffer* GetFrameBuffer();
 
   private:
-  enum class RUN_STATE {
-    RUNNING,
-    STOPPED
-  } mRunState;
+  Camera<float> mCamera;
+  Framebuffer mBuffer;
+  Model<float> mModel;
+  AssetLoader mAssetLoader;
 
-  std::mutex mMutex;
-  std::thread* mRenderThread;
-  Config* mConfig;
-  Framebuffer* mBuffer;
-
-  void MainLoop();
+  // For debugging.
+  bool mFlip = false;
 };
 }
 
