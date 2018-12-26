@@ -16,7 +16,7 @@ class Framebuffer {
   void SetPixel(std::size_t x, std::size_t y, ZColor color);
   void Clear(ZColor color);
 
-  std::uint8_t* GetBuffer() {
+  const std::uint8_t* GetBuffer() const {
     return mPixelBuffer;
   }
 

@@ -4,6 +4,9 @@
 #include <cstdint>
 #include "Constants.h"
 
+// Warning	C4723	potential divide by 0
+#pragma warning(disable: 4723)
+
 namespace ZSharp {
 
 /// <summary>
@@ -35,5 +38,8 @@ T NewtonRaphsonSqrt(T val) {
   return x0;
 }
 }
+
+// Warning	C4723	potential divide by 0
+#pragma warning(default: 4723)
 
 #endif

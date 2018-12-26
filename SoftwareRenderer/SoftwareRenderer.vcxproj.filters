@@ -26,5 +26,8 @@
     <ClInclude Include="GDIWrapper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsHeadersWrapper.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
