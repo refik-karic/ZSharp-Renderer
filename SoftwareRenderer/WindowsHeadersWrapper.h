@@ -1,6 +1,9 @@
 #ifndef WINDOWSHEADERSWRAPPER_H
 #define WINDOWSHEADERSWRAPPER_H
 
+// Even though this header only includes the minimum requirements at any given time.
+// It is still useful to ignore excess things in the event where another header, such as objidl.h from GDI+/COM, include windows.h themselves.
+
 // Exclude rarely-used stuff from Windows headers.
 #define WIN32_LEAN_AND_MEAN
 
@@ -41,7 +44,7 @@
 #define NOCOMM
 #define NOKANJI
 #define NOHELP
-//#define NOPROFILER
+#define NOPROFILER
 #define NODEFERWINDOWPOS
 #define NOMCX
 

@@ -1,8 +1,9 @@
 ﻿// See this for information about Visual Studio C++ XML comments: https://docs.microsoft.com/en-us/cpp/ide/xml-documentation-visual-cpp
 
 // Headers.
-#include "WindowsHeadersWrapper.h"
 #include <Renderer.h>
+
+#include "WindowsHeadersWrapper.h"
 #include "GDIWrapper.h"
 
 // Global variables.
@@ -10,15 +11,17 @@
 /// Global config passed between objects as needed to acess common settings.
 /// </summary>
 ZSharp::Config mConfig;
-std::size_t mBytesPerPixel = 4;
+constexpr std::size_t mBytesPerPixel = 4;
 
 ZSharp::Renderer* mRenderer = nullptr;
 
 GDIWrapper* mGdiWrapper = nullptr;
 
-const char mClassName[] = "Test Class Name";
+const wchar_t mClassName[] = L"Test Class Name";
 
-HWND SetupWindow(HINSTANCE hInstance, const char* className);
+bool InitializeRenderer();
+
+HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className);
 
 /// <summary>
 /// Message loop run on the GUI thread for processing Windows messages to the current Window. 
@@ -28,19 +31,16 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /// <summary>
 /// Main entry point for the application.
 /// </summary>
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
-  mConfig.bytesPerPixel = mBytesPerPixel;
-  mConfig.viewportWidth = 640;
-  mConfig.viewportHeight = 480;
-  mConfig.viewportStride = mConfig.viewportWidth * mBytesPerPixel;
+int WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow) {
+  if (!InitializeRenderer()) {
+    return -1;
+  }
   
   HWND hwnd = SetupWindow(hInstance, mClassName);
   if (hwnd == nullptr) {
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
-  // Prepare renderer and hook GDI+ to its framebuffer.
-  mRenderer = new ZSharp::Renderer(&mConfig);
   mGdiWrapper = new GDIWrapper(hwnd);
 
   // Run the message loop.
@@ -48,14 +48,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
   ShowWindow(hwnd, nCmdShow);
   UpdateWindow(hwnd);
 
-  while (GetMessageA(&msg, hwnd, 0, 0) > 0) {
+  while (GetMessageW(&msg, hwnd, 0, 0) > 0) {
     // Translate message is required for retrieving decoded user input.
     TranslateMessage(&msg);
     // Dispatch message is required to process the message from the OS.
-    DispatchMessageA(&msg);
+    DispatchMessageW(&msg);
   }
 
-  UnregisterClassA(mClassName, hInstance);
+  UnregisterClassW(mClassName, hInstance);
   delete mGdiWrapper;
   delete mRenderer;
 
@@ -65,10 +65,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   switch (uMsg) {
     case WM_PAINT:
-      if (mGdiWrapper != nullptr && mRenderer != nullptr) {
-        mRenderer->RenderNextFrame();
-        mGdiWrapper->UpdateWindow(*(mRenderer->GetFrameBuffer()));
-      }
+      mRenderer->RenderNextFrame();
+      mGdiWrapper->UpdateWindow(*(mRenderer->GetFrameBuffer()));
       break;
     case WM_CLOSE:
       DestroyWindow(hwnd);
@@ -79,14 +77,26 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_QUIT:
       return wParam;
     default:
-      return DefWindowProcA(hwnd, uMsg, wParam, lParam);
+      return DefWindowProcW(hwnd, uMsg, wParam, lParam);
   }
 
   return 0;
 }
 
-HWND SetupWindow(HINSTANCE hInstance, const char* className) {
-  WNDCLASSEXA wc;
+bool InitializeRenderer() {
+  mConfig.bytesPerPixel = mBytesPerPixel;
+  mConfig.viewportWidth = 640;
+  mConfig.viewportHeight = 480;
+  mConfig.viewportStride = mConfig.viewportWidth * mBytesPerPixel;
+
+  // Prepare renderer and hook GDI+ to its framebuffer.
+  mRenderer = new ZSharp::Renderer(&mConfig);
+
+  return true;
+}
+
+HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
+  WNDCLASSEXW wc;
   wc.cbSize = sizeof(WNDCLASSEXA);
   wc.style = CS_HREDRAW | CS_VREDRAW;
   wc.lpfnWndProc = MessageLoop;
@@ -100,7 +110,7 @@ HWND SetupWindow(HINSTANCE hInstance, const char* className) {
   wc.lpszClassName = className;
   wc.hIconSm = 0;
 
-  if (!RegisterClassExA(&wc)) {
+  if (!RegisterClassExW(&wc)) {
     return nullptr;
   }
   
@@ -112,10 +122,10 @@ HWND SetupWindow(HINSTANCE hInstance, const char* className) {
   clientRect.right = static_cast<long>(mConfig.viewportWidth);
   AdjustWindowRectEx(&clientRect, windowStyle, false, 0);
 
-  return CreateWindowExA(
+  return CreateWindowExW(
     0, // Optional style.
     className, // Window class.
-    "Test Window", // Window text.
+    L"Test Window", // Window text.
     windowStyle, // Window style.
     // Size and position.
     CW_USEDEFAULT, // X

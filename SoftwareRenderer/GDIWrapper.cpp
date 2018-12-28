@@ -9,7 +9,7 @@
 #include <gdiplusimaging.h>
 #include <gdiplusgraphics.h>
 #include <gdiplusheaders.h>
-#include <Gdipluspixelformats.h>
+#include <gdipluspixelformats.h>
 #include <gdiplustypes.h>
 
 Gdiplus::Bitmap* mBitmap;
