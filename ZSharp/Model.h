@@ -2,9 +2,9 @@
 #define MODEL_H
 
 #include <cstddef>
+#include <vector>
 
 #include "Mesh.h"
-#include "ZHeapArray.h"
 #include "ZVector.h"
 
 namespace ZSharp {
@@ -39,20 +39,20 @@ class Model {
     return mData[index];
   }
 
-  std::size_t MeshCount() {
-    return mData.Size();
+  std::size_t MeshCount() const {
+    return mData.size();
   }
 
-  ZHeapArray<Mesh<T>>& GetMeshData() {
+  std::vector<Mesh<T>>& GetMeshData() {
     return mData;
   }
 
-  const ZHeapArray<Mesh<T>>& GetMeshData() const {
+  const std::vector<Mesh<T>>& GetMeshData() const {
     return mData;
   }
 
   private:
-  ZHeapArray<Mesh<T>> mData;
+  std::vector<Mesh<T>> mData;
 };
 
 }

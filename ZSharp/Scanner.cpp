@@ -11,29 +11,8 @@ bool Scanner::ReadFromFile(const std::string& fileName) {
     return false;
   }
 
-  // TODO: Look into whether seeking to the end of large files has an impact on performance.
-  // We could read and allocate memory as we go but this might be slightly more efficient.
-
-  // Seek to the end of the file.
-  inputStream.seekg(0, std::ios::end);
-
-  // Resize the vector once to avoid potential future memory allocations when reading blocks.
-  mFileBuffer.resize(static_cast<std::size_t>(inputStream.tellg()));
-
-  // Seek back to the beginnning and start reading.
-  inputStream.seekg(0, std::ios::beg);
-
-  // Track how many bytes were read on each iteration.
-  std::uint32_t bytesRead(0);
-
-  do {
-    // Read a block of data from the file into the next position in the buffer.
-    inputStream.read(mFileBuffer.data() + bytesRead, BLOCK_SIZE);
-    bytesRead = static_cast<std::uint32_t>(inputStream.gcount());
-  } while (bytesRead != 0);
-
-  // Release the resource before finishing up.
-  inputStream.close();
+  // Leave it to the standard library to worry about the most efficient platform specific way to read the file.
+  mFileBuffer = std::vector<char>(std::istreambuf_iterator<char>(inputStream), std::istreambuf_iterator<char>());
 
   return true;
 }

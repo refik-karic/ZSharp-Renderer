@@ -2,9 +2,9 @@
 #define MESH_H
 
 #include <cstddef>
+#include <vector>
 
 #include "Triangle.h"
-#include "ZHeapArray.h"
 
 namespace ZSharp {
 
@@ -17,8 +17,8 @@ class Mesh {
   }
 
   Mesh(std::size_t numVerts, std::size_t numTriangleFaces) {
-    mVertTable.Resize(numVerts);
-    mTriangleFaceTable.Resize(numTriangleFaces);
+    mVertTable.resize(numVerts);
+    mTriangleFaceTable.resize(numTriangleFaces);
   }
 
   Mesh(const Mesh<T>& copy) {
@@ -43,9 +43,13 @@ class Mesh {
   }*/
 
   void SetData(const T* vertData, std::size_t numVerts, std::size_t numTriangleFaces) {
-    mVertTable.Resize(numVerts);
-    mVertTable.CopyData(vertData, numVerts);
-    mTriangleFaceTable.Resize(numTriangleFaces);
+    mVertTable.resize(numVerts);
+
+    for (std::size_t i = 0; i < numVerts; ++i) {
+      mVertTable[i] = *(vertData + i);
+    }
+
+    mTriangleFaceTable.resize(numTriangleFaces);
   }
 
   void SetTriangle(const std::size_t* triangleFaceData, std::size_t index) {
@@ -55,25 +59,25 @@ class Mesh {
     triangle.SetPoint(2, triangleFaceData[2]);
   }
 
-  ZHeapArray<T>& GetVertTable() {
+  std::vector<T>& GetVertTable() {
     return mVertTable;
   }
 
-  const ZHeapArray<T>& GetVertTable() const {
+  const std::vector<T>& GetVertTable() const {
     return mVertTable;
   }
 
-  ZHeapArray<Triangle<T>>& GetTriangleFaceTable() {
+  std::vector<Triangle<T>>& GetTriangleFaceTable() {
     return mTriangleFaceTable;
   }
 
-  const ZHeapArray<Triangle<T>>& GetTriangleFaceTable() const {
+  const std::vector<Triangle<T>>& GetTriangleFaceTable() const {
     return mTriangleFaceTable;
   }
 
   private:
-  ZHeapArray<T> mVertTable;
-  ZHeapArray<Triangle<T>> mTriangleFaceTable;
+  std::vector<T> mVertTable;
+  std::vector<Triangle<T>> mTriangleFaceTable;
 };
 }
 

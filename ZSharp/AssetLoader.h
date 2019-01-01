@@ -3,11 +3,11 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #include "Model.h"
 #include "JsonObject.h"
 #include "Scanner.h"
-#include "ZHeapArray.h"
 
 namespace ZSharp {
 
@@ -47,13 +47,13 @@ class AssetLoader {
       Mesh<T>& mesh = model[meshIndex];
 
       // Copy all of the JSON array tokens to a raw continuous array in memory.
-      ZHeapArray<T> vertData(verticies->GetValue().dataArray.size());
-      for (std::size_t i = 0; i < vertData.Size(); ++i) {
+      std::vector<T> vertData(verticies->GetValue().dataArray.size());
+      for (std::size_t i = 0; i < vertData.size(); ++i) {
         vertData[i] = static_cast<T>(verticies->GetValue().dataArray[i].dataFloat);
       }
 
       // Set the vertex data and number of faces/triangles in the mesh.
-      mesh.SetData(vertData.Data(), vertData.Size(), indicies->GetValue().dataArray.size());
+      mesh.SetData(vertData.data(), vertData.size(), indicies->GetValue().dataArray.size());
 
       // Set each individual triangle with its indicies into the mesh vertex table.
       for (std::size_t triIndex = 0; triIndex < indicies->GetValue().dataArray.size(); ++triIndex) {

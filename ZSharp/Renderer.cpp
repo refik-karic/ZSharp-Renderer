@@ -25,18 +25,15 @@ Renderer::~Renderer() {
 void Renderer::RenderNextFrame() {
   using namespace std::chrono_literals;
 
+  // Copy over the potential models to be displayed.
+  Model<float> copyModel = mModel;
+
   // Color is stored in ARGB format.
   ZColor colorRed;
   colorRed.Color = ZColors::RED;
 
   ZColor colorBlue;
   colorBlue.Color = ZColors::BLUE;
-
-  ZVector<3, float> testVec;
-  testVec[0] = 5.0F;
-
-  ZVector<3, float> test2Vec;
-  test2Vec[0] = 3.0F;
 
   // Track frame times.
   std::chrono::high_resolution_clock::time_point mainLoopStart(std::chrono::high_resolution_clock::now());
@@ -46,20 +43,11 @@ void Renderer::RenderNextFrame() {
   // Time the start of the current frame.
   frameStart = std::chrono::high_resolution_clock::now();
 
-  ZColor color;
-
-  if (mFlip) {
-    color = colorBlue;
-  } else {
-    color = colorRed;
-  }
-
-  mFlip = !mFlip;
-
-  mBuffer.Clear(color);
+  // Clear the last frame before drawing the next set of primitives.
+  mBuffer.Clear(colorBlue);
 
   // Transform all primitives in the current FOV and get them ready to draw.
-  mCamera.PerspectiveProjection(mModel);
+  mCamera.PerspectiveProjection(copyModel);
 
   // Time the frame.
   frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);

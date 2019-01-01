@@ -41,7 +41,6 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="UtilMath.h" />
     <ClInclude Include="ZColor.h" />
-    <ClInclude Include="ZHeapArray.h" />
     <ClInclude Include="ZMatrix.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZDrawing.h" />
