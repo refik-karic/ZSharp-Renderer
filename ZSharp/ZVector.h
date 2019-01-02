@@ -98,20 +98,22 @@ class ZVector {
     return result;
   }
 
-  T operator*(const ZVector<elements, T>& vector) {
+  template<std::size_t argElements>
+  T operator*(const ZVector<argElements, T>& vector) {
     T result{};
 
-    for (std::size_t i = 0; i < elements; i++) {
+    for (std::size_t i = 0; i < argElements; i++) {
       result += (mData[i] * vector[i]);
     }
 
     return result;
   }
 
-  T operator*(const ZVector<elements, T>& vector) const {
+  template<std::size_t argElements>
+  T operator*(const ZVector<argElements, T>& vector) const {
     T result{};
 
-    for (std::size_t i = 0; i < elements; i++) {
+    for (std::size_t i = 0; i < argElements; i++) {
       result += (mData[i] * vector[i]);
     }
 

@@ -1,11 +1,8 @@
 ﻿#ifndef UTILMATH_H
 #define UTILMATH_H
 
-#include <cstdint>
+#include <cstddef>
 #include "Constants.h"
-
-// Warning	C4723	potential divide by 0
-#pragma warning(disable: 4723)
 
 namespace ZSharp {
 
@@ -14,17 +11,18 @@ namespace ZSharp {
 /// </summary>
 /// <param name='degrees'>The angle in degrees.</param>
 /// <returns>The angle in radians.</returns>
-double DegreesToRadians(const double degrees);
+double DegreesToRadians(double degrees);
 
 template <typename T>
 T NewtonRaphsonSqrt(T val) {
   // Adjust as necessary for accuracy.
-  uint32_t iterations = 10;
+  std::size_t iterations = 10;
 
   // Initial guess.
   T x0 = {};
+  x0 += 1;
 
-  for (uint32_t i = 0; i < iterations; i++) {
+  for (std::size_t i = 0; i < iterations; ++i) {
     /*
     x0 is the initial guess that gets adjusted after each iteration.
     Basically this boils down to the following mathematical equation:
@@ -38,8 +36,5 @@ T NewtonRaphsonSqrt(T val) {
   return x0;
 }
 }
-
-// Warning	C4723	potential divide by 0
-#pragma warning(default: 4723)
 
 #endif

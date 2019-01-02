@@ -2,7 +2,7 @@
 
 namespace ZSharp {
 
-double DegreesToRadians(const double degrees) {
+double DegreesToRadians(double degrees) {
   return degrees * Constants::PI_OVER_180;
 }
 

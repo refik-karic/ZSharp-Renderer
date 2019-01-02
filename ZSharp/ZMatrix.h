@@ -125,14 +125,17 @@ class ZMatrix {
   }
 
   static void SetRotation(ZMatrix<rows, cols, T>& matrix, T angle, Axis axis) {
+    // Warning C4244 possible conversion loss of data.
+    #pragma warning(disable: 4244)
+    
     // TODO: Find a way to reduce type conversion here and call the appropriate type-specific trig functions, perhaps using type-traits.
     switch (axis) {
       case Axis::Z:
       case Axis::TWO_DIMENSIONS:
-        matrix[0][0] = cos(reinterpret_cast<double>(angle));
-        matrix[0][1] = -1 * sin(reinterpret_cast<double>(angle));
-        matrix[1][0] = sin(reinterpret_cast<double>(angle));
-        matrix[1][1] = cos(reinterpret_cast<double>(angle));
+        matrix[0][0] = cos(static_cast<double>(angle));
+        matrix[0][1] = -1 * sin(static_cast<double>(angle));
+        matrix[1][0] = sin(static_cast<double>(angle));
+        matrix[1][1] = cos(static_cast<double>(angle));
         matrix[2][2] = 1;
 
         if (axis == Axis::Z) {
@@ -141,25 +144,29 @@ class ZMatrix {
         break;
       case Axis::X:
         matrix[0][0] = 1;
-        matrix[1][1] = cos(reinterpret_cast<double>(angle));
-        matrix[1][2] = -1 * sin(reinterpret_cast<double>(angle));
-        matrix[2][1] = sin(reinterpret_cast<double>(angle));
-        matrix[2][2] = cos(reinterpret_cast<double>(angle));
+        matrix[1][1] = cos(static_cast<double>(angle));
+        matrix[1][2] = -1 * sin(static_cast<double>(angle));
+        matrix[2][1] = sin(static_cast<double>(angle));
+        matrix[2][2] = cos(static_cast<double>(angle));
         matrix[3][3] = 1;
         break;
       case Axis::Y:
-        matrix[0][0] = cos(reinterpret_cast<double>(angle));
-        matrix[0][2] = sin(reinterpret_cast<double>(angle));
+        matrix[0][0] = cos(static_cast<double>(angle));
+        matrix[0][2] = sin(static_cast<double>(angle));
         matrix[1][1] = 1;
-        matrix[2][0] = -1 * sin(reinterpret_cast<double>(angle));
-        matrix[2][2] = cos(reinterpret_cast<double>(angle));
+        matrix[2][0] = -1 * sin(static_cast<double>(angle));
+        matrix[2][2] = cos(static_cast<double>(angle));
         matrix[3][3] = 1;
         break;
     }
+
+    // Warning C4244 possible conversion loss of data.
+    #pragma warning(default: 4244)
   }
 
-  static ZVector<cols, T> ApplyTransform(const ZMatrix<rows, cols, T>& matrix, const ZVector<cols, T>& domain) {
-    ZVector<cols, T> codomainResult;
+  template<std::size_t vecCols>
+  static ZVector<vecCols, T> ApplyTransform(const ZMatrix<rows, cols, T>& matrix, const ZVector<vecCols, T>& domain) {
+    ZVector<vecCols, T> codomainResult;
 
     for (std::size_t row = 0; row < rows; row++) {
       codomainResult[row] = domain * matrix[row];

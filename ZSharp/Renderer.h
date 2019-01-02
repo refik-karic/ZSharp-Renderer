@@ -4,8 +4,9 @@
 #include "AssetLoader.h"
 #include "Camera.h"
 #include "Config.h"
-#include "Model.h"
 #include "Framebuffer.h"
+#include "Model.h"
+#include "ZColor.h"
 
 namespace ZSharp {
 class Renderer {
@@ -22,8 +23,10 @@ class Renderer {
   Model<float> mModel;
   AssetLoader mAssetLoader;
 
-  // For debugging.
-  bool mFlip = false;
+  std::size_t mFrameCount = 0;
+
+  template<typename T>
+  void DrawPrimitives(Model<T>& model, const ZColor& color);
 };
 }
 

@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 
 #include "ZDrawing.h"
 
 namespace ZSharp {
 
+// TODO: Fix a bug here causing certain lines to be drawn incorrectly. This is a result of the port from the previous C# implementation.
 void DrawRunSlice(Framebuffer & framebuffer, std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, ZColor color) {
   if (x1 == x2) {
     // Special case for vertical lines.
@@ -54,7 +56,7 @@ void DrawRunSlice(Framebuffer & framebuffer, std::size_t x1, std::size_t y1, std
     // Error is always treated as positive.
     double error = 0.0;
     // Keeps track of how many pixels the current row will draw.
-    std::size_t slopeStep;
+    std::int32_t slopeStep;
     // Total number of iterations alone the minor axis.
     std::size_t delta;
 
@@ -73,16 +75,16 @@ void DrawRunSlice(Framebuffer & framebuffer, std::size_t x1, std::size_t y1, std
     // TODO: It may be worth special casing diagonals with a slope of 1 since the error term becomes meaningless.
     if (std::abs(static_cast<int>(x2 - x1)) >= std::abs(static_cast<int>(y2 - y1))) {
       // Y minor axis.
-      delta = std::abs(static_cast<int>(y2 - y1));
+      delta = std::abs(static_cast<std::int32_t>(y2 - y1));
       slope = std::abs(static_cast<double>((x2 - x1)) / (y2 - y1));
 
       for (std::size_t i = 0; i < delta; i++) {
         // Drop fraction.
         error += slope - std::floor(slope);
-        slopeStep = static_cast<std::size_t>(std::floor(slope) + error);
+        slopeStep = static_cast<std::int32_t>(std::floor(slope) + error);
 
         // Compensate for the extra pixel.
-        if (slopeStep > static_cast<std::size_t>(slope)) {
+        if (slopeStep > static_cast<std::int32_t>(slope)) {
           error = std::max(error - 1.0, 0.0);
         }
 
@@ -108,18 +110,17 @@ void DrawRunSlice(Framebuffer & framebuffer, std::size_t x1, std::size_t y1, std
     }
     else {
       // X minor axis.
-      delta = std::abs(static_cast<int>(x2 - x1));
+      delta = std::abs(static_cast<std::int32_t>(x2 - x1));
       // Keeps track of how much, but more importantly which direction, to move along the minor axis.
-      std::size_t minorStep = (x2 - x1) / delta;
       slope = std::abs(static_cast<double>((y2 - y1)) / (x2 - x1));
 
       for (std::size_t i = 0; i < delta; i++) {
         // Drop fraction.
         error += slope - std::floor(slope);
-        slopeStep = static_cast<std::size_t>(std::floor(slope) + error);
+        slopeStep = static_cast<std::int32_t>(std::floor(slope) + error);
 
         // Compensate for the extra pixel.
-        if (slopeStep > static_cast<std::size_t>(slope)) {
+        if (slopeStep > static_cast<std::int32_t>(slope)) {
           error = std::max(error - 1.0, 0.0);
         }
 
@@ -130,7 +131,7 @@ void DrawRunSlice(Framebuffer & framebuffer, std::size_t x1, std::size_t y1, std
 
         // Must adjust the x by this even since it only moves one pixel at a time.
         // This is because it could be moving left or right.
-        x1 += minorStep;
+        x1 = x1 + ((x2 - x1) / delta);
         y1 += slopeStep;
       }
     }
