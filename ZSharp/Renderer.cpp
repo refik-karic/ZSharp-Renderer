@@ -46,7 +46,7 @@ void Renderer::RenderNextFrame() {
   }
 
   // Iterate over each mesh in the model.
-  /*for (std::size_t meshIdx = 0; meshIdx < copyModel.MeshCount(); meshIdx++) {
+  for (std::size_t meshIdx = 0; meshIdx < copyModel.MeshCount(); meshIdx++) {
     // Iterate over each mesh's primitives.
     for (std::size_t triIdx = 0; triIdx < copyModel[meshIdx].GetTriangleFaceTable().size(); triIdx++) {
       // Get the triangle indicies for the current primitive in the mesh.
@@ -89,7 +89,7 @@ void Renderer::RenderNextFrame() {
       copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1] = p3[1];
       copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 2] = p3[2];
     }
-  }*/
+  }
 
   // Color is stored in ARGB format.
   ZColor colorRed;
