@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="ZConfig.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="JsonObject.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -30,7 +31,7 @@
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="ZConfig.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="JsonObject.h" />

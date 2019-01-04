@@ -3,38 +3,33 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
-#include "Config.h"
 #include "ZColor.h"
 
 namespace ZSharp {
 class Framebuffer {
   public:
-  Framebuffer(Config* config);
-  ~Framebuffer();
+  Framebuffer();
 
   void SetPixel(std::size_t x, std::size_t y, ZColor color);
   void Clear(ZColor color);
 
   const std::uint8_t* GetBuffer() const {
-    return mPixelBuffer;
+    return mPixelBuffer.data();
   }
 
-  std::size_t GetStride() const {
-    return mConfig->viewportStride;
-  }
-
-  std::size_t GetWidth() const {
-    return mConfig->viewportWidth;
-  }
-
-  std::size_t GetHeight() const {
-    return mConfig->viewportHeight;
+  std::size_t GetSize() const {
+    return mTotalSize;
   }
 
   private:
-  Config* mConfig;
-  std::uint8_t* mPixelBuffer;
+  std::vector<uint8_t> mPixelBuffer;
+  std::size_t mWidth;
+  std::size_t mHeight;
+  std::size_t mBytesPerPixel;
+  std::size_t mStride;
+  std::size_t mTotalSize;
 };
 }
 

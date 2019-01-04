@@ -1,26 +1,28 @@
 ﻿#include "Framebuffer.h"
+#include "ZConfig.h"
 
 namespace ZSharp {
-Framebuffer::Framebuffer(Config* config) :
-  mConfig(config) {
-  mPixelBuffer = new std::uint8_t[config->viewportStride * config->viewportHeight];
-}
-
-Framebuffer::~Framebuffer() {
-  delete[] mPixelBuffer;
+Framebuffer::Framebuffer() {
+  ZConfig& config = ZConfig::GetInstance();
+  mWidth = config.GetViewportWidth();
+  mHeight = config.GetViewportHeight();
+  mBytesPerPixel = config.GetBytesPerPixel();
+  mStride = config.GetViewportStride();
+  mTotalSize = config.GetViewportStride() * config.GetViewportHeight();
+  mPixelBuffer.resize(mTotalSize);
 }
 
 void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
   // Scissor test.
-  if (x >= 0 && y >= 0 && x < mConfig->viewportWidth && y < mConfig->viewportHeight) {
-    std::size_t offset = (x * mConfig->bytesPerPixel) + (y * mConfig->viewportStride);
-    *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
+  if (x >= 0 && y >= 0 && x < mWidth && y < mHeight) {
+    std::size_t offset = (x * mBytesPerPixel) + (y * mStride);
+    *(reinterpret_cast<std::uint32_t*>(mPixelBuffer.data() + offset)) = color.Color;
   }
 }
 
 void Framebuffer::Clear(ZColor color) {
-  std::size_t cachedSize = (mConfig->viewportStride * mConfig->viewportHeight) / sizeof(std::uintptr_t);
-  std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
+  std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
+  std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer.data());
   std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
 
   // HACK: For 64-bit systems we need to shift the 4 BPP color into the additional register space.

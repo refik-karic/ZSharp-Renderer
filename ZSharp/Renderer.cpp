@@ -13,20 +13,13 @@
 static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
-Renderer::Renderer(Config* config) :
-  mCamera(config),
-  mBuffer(config)
-{
+Renderer::Renderer() {
   mAssetLoader.LoadModel<float>(ASSET_FILE, mModel);
   ZVector<3, float> cameraDefaultPos;
   cameraDefaultPos[0] = 4.0f;
   cameraDefaultPos[1] = 0.0f;
   cameraDefaultPos[2] = 25.0f;
   mCamera.MoveCamera(cameraDefaultPos);
-}
-
-Renderer::~Renderer() {
-
 }
 
 void Renderer::RenderNextFrame() {

@@ -3,7 +3,6 @@
 
 #include "AssetLoader.h"
 #include "Camera.h"
-#include "Config.h"
 #include "Framebuffer.h"
 #include "Model.h"
 #include "ZColor.h"
@@ -11,8 +10,7 @@
 namespace ZSharp {
 class Renderer {
   public:
-  Renderer(Config* config);
-  ~Renderer();
+  Renderer();
 
   void RenderNextFrame();
   Framebuffer* GetFrameBuffer();

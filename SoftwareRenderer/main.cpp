@@ -2,16 +2,10 @@
 
 // Headers.
 #include <Renderer.h>
+#include <ZConfig.h>
 
 #include "WindowsHeadersWrapper.h"
 #include "GDIWrapper.h"
-
-// Global variables.
-/// <summary>
-/// Global config passed between objects as needed to acess common settings.
-/// </summary>
-ZSharp::Config mConfig;
-constexpr std::size_t mBytesPerPixel = 4;
 
 ZSharp::Renderer* mRenderer = nullptr;
 
@@ -84,13 +78,13 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 bool InitializeRenderer() {
-  mConfig.bytesPerPixel = mBytesPerPixel;
-  mConfig.viewportWidth = 640;
-  mConfig.viewportHeight = 480;
-  mConfig.viewportStride = mConfig.viewportWidth * mBytesPerPixel;
+  ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
+  config.SetBytesPerPixel(4);
+  config.SetViewportWidth(640);
+  config.SetViewportHeight(480);
 
   // Prepare renderer and hook GDI+ to its framebuffer.
-  mRenderer = new ZSharp::Renderer(&mConfig);
+  mRenderer = new ZSharp::Renderer();
 
   return true;
 }
@@ -114,12 +108,14 @@ HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
     return nullptr;
   }
   
+  ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
+
   DWORD windowStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
   RECT clientRect;
   clientRect.top = 0;
   clientRect.left = 0;
-  clientRect.bottom = static_cast<long>(mConfig.viewportHeight);
-  clientRect.right = static_cast<long>(mConfig.viewportWidth);
+  clientRect.bottom = static_cast<long>(config.GetViewportHeight());
+  clientRect.right = static_cast<long>(config.GetViewportWidth());
   AdjustWindowRectEx(&clientRect, windowStyle, false, 0);
 
   return CreateWindowExW(

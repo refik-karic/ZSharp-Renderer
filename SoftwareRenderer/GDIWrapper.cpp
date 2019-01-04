@@ -56,8 +56,7 @@ void GDIWrapper::UpdateWindow(const ZSharp::Framebuffer& frameData) {
   if (lockResult == Gdiplus::Status::Ok) {
     // TODO: For some reason GDI+ will not let me just pass in my own bitmapData struct with a pointer set directly to my framebuffer.
     // Instead I have to waste a lot of time copying data over to the locked region. Need to investigate this further at some point.
-    std::size_t numBytes = frameData.GetStride() * frameData.GetHeight();
-    std::memcpy(bitmapData.Scan0, frameData.GetBuffer(), numBytes);
+    std::memcpy(bitmapData.Scan0, frameData.GetBuffer(), frameData.GetSize());
     mBitmap->UnlockBits(&bitmapData);
 
     // Use GDI+ to draw the bitmap onto our viewport.

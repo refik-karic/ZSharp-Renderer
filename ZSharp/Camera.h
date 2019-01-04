@@ -5,8 +5,8 @@
 #include <cstdint>
 
 #include "Constants.h"
-#include "Config.h"
 #include "Triangle.h"
+#include "ZConfig.h"
 #include "ZMatrix.h"
 #include "ZVector.h"
 
@@ -24,8 +24,12 @@ class Camera {
   /// Create a new camera at the origin.
   /// </summary>
   /// <param name='config'>The camera configuration.</param>
-  Camera(Config* config) :
-    mConfig(config) {
+  Camera() {
+    // Cache some data about the viewport.
+    ZConfig& config = ZConfig::GetInstance();
+    mWidth = config.GetViewportWidth();
+    mHeight = config.GetViewportHeight();
+
     // Default the look direction is along the negative Z axis.
     mLook[2] = static_cast<T>(-1);
 
@@ -130,10 +134,10 @@ class Camera {
     * See Figure 13.1 p.300
     */
     ZMatrix<2, 3, T> windowTransform;
-    windowTransform[0][0] = static_cast<T>(static_cast<std::intptr_t>(mConfig->viewportWidth) * static_cast<std::intptr_t>(-1));
-    windowTransform[0][2] = static_cast<T>(mConfig->viewportWidth);
-    windowTransform[1][1] = static_cast<T>(mConfig->viewportHeight);
-    windowTransform[1][2] = static_cast<T>(mConfig->viewportHeight);
+    windowTransform[0][0] = static_cast<T>(static_cast<std::intptr_t>(mWidth) * static_cast<std::intptr_t>(-1));
+    windowTransform[0][2] = static_cast<T>(mWidth);
+    windowTransform[1][1] = static_cast<T>(mHeight);
+    windowTransform[1][2] = static_cast<T>(mHeight);
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // Iterate over each mesh in the model.
@@ -233,10 +237,9 @@ class Camera {
   /// </summary>
   T mFovVert;
 
-  /// <summary>
-  /// Camera configuration.
-  /// </summary>
-  Config* mConfig;
+  std::size_t mWidth;
+  
+  std::size_t mHeight;
 };
 }
 
