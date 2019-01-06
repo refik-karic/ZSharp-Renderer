@@ -38,49 +38,15 @@ void Renderer::RenderNextFrame() {
     mFrameCount = 0;
   }
 
-  // Iterate over each mesh in the model.
-  for (std::size_t meshIdx = 0; meshIdx < copyModel.MeshCount(); meshIdx++) {
-    // Iterate over each mesh's primitives.
-    for (std::size_t triIdx = 0; triIdx < copyModel[meshIdx].GetTriangleFaceTable().size(); triIdx++) {
-      // Get the triangle indicies for the current primitive in the mesh.
-      Triangle<float>& curTriangle = copyModel[meshIdx].GetTriangleFaceTable()[triIdx];
-
-      // Get the data from the model.
-      ZVector<4, float> p1;
-      p1[0] = copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3];
-      p1[1] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1];
-      p1[2] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 2];
-      p1[3] = 1.0F;
-
-      ZVector<4, float> p2;
-      p2[0] = copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3];
-      p2[1] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1];
-      p2[2] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 2];
-      p2[3] = 1.0F;
-
-      ZVector<4, float> p3;
-      p3[0] = copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3];
-      p3[1] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1];
-      p3[2] = copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 2];
-      p3[3] = 1.0F;
-
-      // Apply the rotation matrix to the vectors.
-      p1 = ZMatrix<4, 4, float>::ApplyTransform(rotationMatrix, p1);
-      p2 = ZMatrix<4, 4, float>::ApplyTransform(rotationMatrix, p2);
-      p3 = ZMatrix<4, 4, float>::ApplyTransform(rotationMatrix, p3);
-
-      // Write the data back to the model verticies.
-      copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3] = p1[0];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1] = p1[1];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 2] = p1[2];
-
-      copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3] = p2[0];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1] = p2[1];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 2] = p2[2];
-
-      copyModel[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3] = p3[0];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1] = p3[1];
-      copyModel[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 2] = p3[2];
+  for (Mesh<float>& mesh : copyModel.GetMeshData()) {
+    for (Triangle<float>& triangle : mesh.GetTriangleFaceTable()) {
+      for (std::size_t vertex = 0; vertex < 3; ++vertex) {
+        ZVector<4, float> vertexVector;
+        vertexVector[3] = 1.0F;
+        vertexVector.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(vertex) * 3), 3);
+        vertexVector = ZMatrix<4, 4, float>::ApplyTransform(rotationMatrix, vertexVector);
+        vertexVector.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(vertex) * 3), 3);
+      }
     }
   }
 
@@ -117,36 +83,33 @@ Framebuffer* Renderer::GetFrameBuffer() {
 }
 
 template<typename T>
-void Renderer::DrawPrimitives(Model<T>& model, const ZColor& color) {
+void Renderer::DrawPrimitives(const Model<T>& model, ZColor color) {
   // Iterate over each mesh in the model.
-  for (std::size_t meshIdx = 0; meshIdx < model.MeshCount(); meshIdx++) {
+  for (const Mesh<T>& mesh : model.GetMeshData()) {
     // Iterate over each mesh's primitives.
-    for (std::size_t triIdx = 0; triIdx < model[meshIdx].GetTriangleFaceTable().size(); triIdx++) {
-      // Get the triangle indicies for the current primitive in the mesh.
-      Triangle<T>& curTriangle = model[meshIdx].GetTriangleFaceTable()[triIdx];
-
+    for (const Triangle<T>& triangle : mesh.GetTriangleFaceTable()) {
       // Draw line connecting p1 to p2.
       DrawRunSlice(mBuffer, 
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3]), 
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(0) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(0) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(1) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(1) * 3) + 1]),
                    color);
 
       // Draw line connecting p2 to p3.
       DrawRunSlice(mBuffer,
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(1) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(1) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(2) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(2) * 3) + 1]),
                    color);
 
       // Draw line connecting p3 to p1.
       DrawRunSlice(mBuffer,
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3]),
-                   static_cast<std::size_t>(model[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(2) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(2) * 3) + 1]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[triangle.GetIndex(0) * 3]),
+                   static_cast<std::size_t>(mesh.GetVertTable()[(triangle.GetIndex(0) * 3) + 1]),
                    color);
     }
   }

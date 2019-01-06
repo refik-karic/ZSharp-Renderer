@@ -24,7 +24,7 @@ class Renderer {
   std::size_t mFrameCount = 0;
 
   template<typename T>
-  void DrawPrimitives(Model<T>& model, const ZColor& color);
+  void DrawPrimitives(const Model<T>& model, ZColor color);
 };
 }
 

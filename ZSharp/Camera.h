@@ -141,29 +141,20 @@ class Camera {
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // Iterate over each mesh in the model.
-    for (std::size_t meshIdx = 0; meshIdx < model.MeshCount(); meshIdx++) {
+    for (Mesh<T>& mesh : model.GetMeshData()) {
       // Iterate over each mesh's primitives.
-      for (std::size_t triIdx = 0; triIdx < model[meshIdx].GetTriangleFaceTable().size(); triIdx++) {
-        // Get the triangle indicies for the current primitive in the mesh.
-        Triangle<T>& curTriangle = model[meshIdx].GetTriangleFaceTable()[triIdx];
-
+      for (Triangle<T>& triangle : mesh.GetTriangleFaceTable()) {
         // Get the mesh data in a format we can compute using the linear algebra library.
         ZVector<4, T> p1;
-        p1[0] = model[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3];
-        p1[1] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1];
-        p1[2] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 2];
+        p1.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(0) * 3), 3);
         p1[3] = static_cast<T>(1);
         
         ZVector<4, T> p2;
-        p2[0] = model[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3];
-        p2[1] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1];
-        p2[2] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 2];
+        p2.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(1) * 3), 3);
         p2[3] = static_cast<T>(1);
 
         ZVector<4, T> p3;
-        p3[0] = model[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3];
-        p3[1] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1];
-        p3[2] = model[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 2];
+        p3.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(2) * 3), 3);
         p3[3] = static_cast<T>(1);
 
         // Apply the "unhing" transform to each vertex.
@@ -187,14 +178,9 @@ class Camera {
         p3 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p3);
 
         // Store the resulting vectors back into the vertex table of the mesh.
-        model[meshIdx].GetVertTable()[curTriangle.GetIndex(0) * 3] = p1[0];
-        model[meshIdx].GetVertTable()[(curTriangle.GetIndex(0) * 3) + 1] = p1[1];
-
-        model[meshIdx].GetVertTable()[curTriangle.GetIndex(1) * 3] = p2[0];
-        model[meshIdx].GetVertTable()[(curTriangle.GetIndex(1) * 3) + 1] = p2[1];
-
-        model[meshIdx].GetVertTable()[curTriangle.GetIndex(2) * 3] = p3[0];
-        model[meshIdx].GetVertTable()[(curTriangle.GetIndex(2) * 3) + 1] = p3[1];
+        p1.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(0) * 3), 2);
+        p2.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(1) * 3), 2);
+        p3.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(2) * 3), 2);
 
         // At this point the verticies for the current primitive have been converted to screen space and are ready to be drawn.
       }

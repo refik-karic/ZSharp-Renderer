@@ -68,7 +68,7 @@ class ZVector {
     return mData[index];
   }
 
-  ZVector<elements, T> operator+(const ZVector<elements, T>& vector) {
+  ZVector<elements, T> operator+(const ZVector<elements, T>& vector) const {
     ZVector<elements, T> result;
     
     for (std::size_t i = 0; i < elements; i++) {
@@ -78,7 +78,7 @@ class ZVector {
     return result;
   }
 
-  ZVector<elements, T> operator-(const ZVector<elements, T>& vector) {
+  ZVector<elements, T> operator-(const ZVector<elements, T>& vector) const {
     ZVector<elements, T> result;
 
     for (std::size_t i = 0; i < elements; i++) {
@@ -88,7 +88,7 @@ class ZVector {
     return result;
   }
 
-  ZVector<elements, T> operator*(T scalar) {
+  ZVector<elements, T> operator*(T scalar) const {
     ZVector<elements, T> result;
 
     for (std::size_t i = 0; i < elements; i++) {
@@ -155,6 +155,18 @@ class ZVector {
 
     for (std::size_t i = 0; i < elements; i++) {
       vector[i] = zero;
+    }
+  }
+
+  void LoadRawData(const T* const data, std::size_t length) {
+    for (std::size_t i = 0; i < length; ++i) {
+      mData[i] = data[i];
+    }
+  }
+
+  void StoreRawData(T* data, std::size_t length) const {
+    for (std::size_t i = 0; i < length; ++i) {
+      data[i] = mData[i];
     }
   }
 
