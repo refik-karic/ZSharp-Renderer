@@ -15,6 +15,19 @@ static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV
 namespace ZSharp {
 Renderer::Renderer() {
   mAssetLoader.LoadModel<float>(ASSET_FILE, mModel);
+  
+  std::size_t indexBufSize = 0;
+  std::size_t vertexBufSize = 0;
+
+  for (Mesh<float>& mesh : mModel.GetMeshData()) {
+    // Must account for the possibility of clipping the max amount on each triangle.
+    indexBufSize += (mesh.GetTriangleFaceTable().size() * 3) * 4;
+    vertexBufSize += (mesh.GetVertTable().size()) * 2;
+  }
+
+  mIndexBuffer.resize(indexBufSize);
+  mVertexBuffer.resize(vertexBufSize);
+  
   ZVector<3, float> cameraDefaultPos;
   cameraDefaultPos[0] = 4.0f;
   cameraDefaultPos[1] = 0.0f;
@@ -27,6 +40,8 @@ void Renderer::RenderNextFrame() {
 
   // Copy over the potential models to be displayed.
   Model<float> copyModel = mModel;
+
+  // TODO: Extract the raw vertex and index buffers from the models and pass them into the camera to perform clipping.
 
   // Apply a rotation matrix to the verticies in the model before transforming them to screen space.
   ZMatrix<4, 4, float> rotationMatrix;

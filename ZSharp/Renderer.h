@@ -1,6 +1,8 @@
 ﻿#ifndef RENDERER_H
 #define RENDERER_H
 
+#include <vector>
+
 #include "AssetLoader.h"
 #include "Camera.h"
 #include "Framebuffer.h"
@@ -22,6 +24,9 @@ class Renderer {
   AssetLoader mAssetLoader;
 
   std::size_t mFrameCount = 0;
+
+  std::vector<std::size_t> mIndexBuffer;
+  std::vector<float> mVertexBuffer;
 
   template<typename T>
   void DrawPrimitives(const Model<T>& model, ZColor color);
