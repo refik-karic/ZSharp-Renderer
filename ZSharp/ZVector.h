@@ -26,12 +26,10 @@ class ZVector {
 
   ZVector(const ZVector<elements, T>& copy) {
     // Self copy guard.
-    if (this == &copy) {
-      return;
+    if (this != &copy) {
+      // Perform a deep copy.
+      *this = copy;
     }
-
-    // Perform a deep copy.
-    *this = copy;
   }
 
   void operator=(const ZVector<elements, T>& vector) {
