@@ -38,4 +38,13 @@ void Framebuffer::Clear(ZColor color) {
     pBuf[i] = convColor;
   }
 }
+
+const std::uint8_t* Framebuffer::GetBuffer() const {
+  return mPixelBuffer.data();
+}
+
+std::size_t Framebuffer::GetSize() const {
+  return mTotalSize;
+}
+
 }

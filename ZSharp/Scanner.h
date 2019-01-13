@@ -38,11 +38,6 @@ class Scanner {
 
   private:
   /// <summary>
-  /// Typical block size used for reading from SSDs.
-  /// </summary>
-  static constexpr std::size_t BLOCK_SIZE = 4096;
-
-  /// <summary>
   /// Keeps track of the start of the current lexeme.
   /// </summary>
   std::size_t mStart = 0;
@@ -79,9 +74,7 @@ class Scanner {
   /// Check whether or not the scanner has reached the end of the file buffer.
   /// </summary>
   /// <returns>True if end has been reached, False otherwise.</returns>
-  bool IsAtEnd() {
-    return mCurrent >= mFileBuffer.size();
-  }
+  bool IsAtEnd();
 
   /// <summary>
   /// Scan the next token into the list.
@@ -92,41 +85,25 @@ class Scanner {
   /// Advance the scanners position in the current lexeme.
   /// </summary>
   /// <returns>The character at the current position prior to advancing.</returns>
-  char Advance() {
-    mCurrent++;
-    return mFileBuffer[mCurrent - 1];
-  }
+  char Advance();
 
   /// <summary>
   /// Peek into which character is at the current position in the buffer.
   /// </summary>
   /// <returns>The character at the current position, NULL if the end of buffer has been reached.</returns>
-  char Peek() {
-    if (IsAtEnd()) {
-      return '\0';
-    }
-    else {
-      return mFileBuffer[mCurrent];
-    }
-  }
+  char Peek();
 
   /// <summary>
   /// Add a non-data token to the list.
   /// </summary>
   /// <param name='token'>The type of token to add.</param>
-  void AddToken(JsonObject::JsonTokenType token) {
-    JsonObject::JsonToken nextToken;
-    nextToken.token = token;
-    mTokens.push_back(nextToken);
-  }
+  void AddToken(JsonObject::JsonTokenType token);
 
   /// <summary>
   /// Add a token with some data to the list.
   /// </summary>
   /// <param name='token'>The token containing its data member.</param>
-  void AddToken(JsonObject::JsonToken token) {
-    mTokens.push_back(token);
-  }
+  void AddToken(JsonObject::JsonToken token);
 
   /// <summary>
   /// Scan a string literal token into the list.
@@ -138,9 +115,7 @@ class Scanner {
   /// </summary>
   /// <param name='letter'>The letter to checker.</param>
   /// <returns>True if it is a digit, False otherwise.</returns>
-  bool IsDigit(char letter) {
-    return letter >= '0' && letter <= '9';
-  }
+  bool IsDigit(char letter);
 
   /// <summary>
   /// Scans the next lexeme for a number token.
@@ -151,14 +126,7 @@ class Scanner {
   /// Lookahead of one for parsing longer lexemes.
   /// </summary>
   /// <returns>The character two positions ahead in the buffer.</returns>
-  char PeekNext() {
-    if (mCurrent + 1 >= mFileBuffer.size()) {
-      return '\0';
-    }
-    else {
-      return mFileBuffer[mCurrent + 1];
-    }
-  }
+  char PeekNext();
 };
 
 }

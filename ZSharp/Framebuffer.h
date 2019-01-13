@@ -14,14 +14,8 @@ class Framebuffer {
 
   void SetPixel(std::size_t x, std::size_t y, ZColor color);
   void Clear(ZColor color);
-
-  const std::uint8_t* GetBuffer() const {
-    return mPixelBuffer.data();
-  }
-
-  std::size_t GetSize() const {
-    return mTotalSize;
-  }
+  const std::uint8_t* GetBuffer() const;
+  std::size_t GetSize() const;
 
   private:
   std::vector<uint8_t> mPixelBuffer;

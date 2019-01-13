@@ -81,21 +81,13 @@ class JsonObject {
     std::vector<JsonValue> dataArray;
   };
 
-  void SetKey(const std::string& key) {
-    mKey = key;
-  }
+  void SetKey(const std::string& key);
 
-  std::string& GetKey() {
-    return mKey;
-  }
+  std::string& GetKey();
 
-  void SetValue(const JsonValue& value) {
-    mValue = value;
-  }
+  void SetValue(const JsonValue& value);
 
-  JsonValue& GetValue() {
-    return mValue;
-  }
+  JsonValue& GetValue();
 
   private:
   /// <summary>

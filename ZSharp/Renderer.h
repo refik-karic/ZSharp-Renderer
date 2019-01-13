@@ -1,12 +1,14 @@
 ﻿#ifndef RENDERER_H
 #define RENDERER_H
 
-#include <vector>
+#include <memory>
 
 #include "AssetLoader.h"
 #include "Camera.h"
 #include "Framebuffer.h"
+#include "IndexBuffer.h"
 #include "Model.h"
+#include "VertexBuffer.h"
 #include "ZColor.h"
 
 namespace ZSharp {
@@ -25,8 +27,8 @@ class Renderer {
 
   std::size_t mFrameCount = 0;
 
-  std::vector<std::size_t> mIndexBuffer;
-  std::vector<float> mVertexBuffer;
+  std::shared_ptr<IndexBuffer> mIndexBuffer;
+  std::shared_ptr<VertexBuffer<float>> mVertexBuffer;
 
   template<typename T>
   void DrawPrimitives(const Model<T>& model, ZColor color);

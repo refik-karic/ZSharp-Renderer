@@ -155,4 +155,43 @@ void Scanner::ScanNumber() {
   AddToken(nextToken);
 }
 
+bool Scanner::IsAtEnd() {
+  return mCurrent >= mFileBuffer.size();
+}
+
+char Scanner::Advance() {
+  mCurrent++;
+  return mFileBuffer[mCurrent - 1];
+}
+
+char Scanner::Peek() {
+  if (IsAtEnd()) {
+    return '\0';
+  } else {
+    return mFileBuffer[mCurrent];
+  }
+}
+
+void Scanner::AddToken(JsonObject::JsonTokenType token) {
+  JsonObject::JsonToken nextToken;
+  nextToken.token = token;
+  mTokens.push_back(nextToken);
+}
+
+void Scanner::AddToken(JsonObject::JsonToken token) {
+  mTokens.push_back(token);
+}
+
+bool Scanner::IsDigit(char letter) {
+  return letter >= '0' && letter <= '9';
+}
+
+char Scanner::PeekNext() {
+  if (mCurrent + 1 >= mFileBuffer.size()) {
+    return '\0';
+  } else {
+    return mFileBuffer[mCurrent + 1];
+  }
+}
+
 }

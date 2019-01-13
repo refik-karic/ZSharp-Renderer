@@ -2,7 +2,6 @@
 #define UTILMATH_H
 
 #include <cstddef>
-#include "Constants.h"
 
 namespace ZSharp {
 

@@ -21,14 +21,14 @@ Renderer::Renderer() {
 
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
     // Must account for the possibility of clipping the max amount on each triangle.
-    indexBufSize += (mesh.GetTriangleFaceTable().size() * 3) * 4;
-    vertexBufSize += (mesh.GetVertTable().size()) * 2;
+    indexBufSize += (mesh.GetTriangleFaceTable().size() * 3);
+    vertexBufSize += mesh.GetVertTable().size();
   }
 
-  mIndexBuffer.resize(indexBufSize);
-  mVertexBuffer.resize(vertexBufSize);
+  mIndexBuffer = std::make_shared<IndexBuffer>(indexBufSize);
+  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, 3);
   
-  ZVector<3, float> cameraDefaultPos;
+  Vec3f_t cameraDefaultPos;
   cameraDefaultPos[0] = 4.0f;
   cameraDefaultPos[1] = 0.0f;
   cameraDefaultPos[2] = 25.0f;
@@ -42,12 +42,15 @@ void Renderer::RenderNextFrame() {
   Model<float> copyModel = mModel;
 
   // TODO: Extract the raw vertex and index buffers from the models and pass them into the camera to perform clipping.
+  for (Mesh<float>& mesh : copyModel.GetMeshData()) {
+
+  }
 
   // Apply a rotation matrix to the verticies in the model before transforming them to screen space.
-  ZMatrix<4, 4, float> rotationMatrix;
-  ZMatrix<4, 4, float>::SetRotation(rotationMatrix, 
+  Mat4x4f rotationMatrix;
+  Mat4x4f::SetRotation(rotationMatrix,
                                     static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
-                                    ZMatrix<4, 4, float>::Axis::Z);
+                                    Mat4x4f::Axis::Z);
   mFrameCount++;
   if (mFrameCount > 360) {
     mFrameCount = 0;
@@ -56,10 +59,10 @@ void Renderer::RenderNextFrame() {
   for (Mesh<float>& mesh : copyModel.GetMeshData()) {
     for (Triangle<float>& triangle : mesh.GetTriangleFaceTable()) {
       for (std::size_t vertex = 0; vertex < 3; ++vertex) {
-        ZVector<4, float> vertexVector;
+        Vec4f_t vertexVector;
         vertexVector[3] = 1.0F;
         vertexVector.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(vertex) * 3), 3);
-        vertexVector = ZMatrix<4, 4, float>::ApplyTransform(rotationMatrix, vertexVector);
+        vertexVector = Mat4x4f::ApplyTransform(rotationMatrix, vertexVector);
         vertexVector.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(vertex) * 3), 3);
       }
     }

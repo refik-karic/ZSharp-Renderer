@@ -174,6 +174,7 @@ class ZVector {
 
 // Convenience typedefs for frequently used instances of this class.
 typedef ZVector<3, float> Vec3f_t;
+typedef ZVector<4, float> Vec4f_t;
 
 }
 #endif

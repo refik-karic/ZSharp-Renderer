@@ -178,6 +178,10 @@ class ZMatrix {
   private:
   ZVector<cols, T> mData[rows];
 };
+
+// Frequently used typedefs.
+typedef ZMatrix<4, 4, float> Mat4x4f;
+
 }
 
 #endif

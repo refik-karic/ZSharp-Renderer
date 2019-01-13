@@ -1,6 +1,7 @@
 #ifndef VERTEX_BUFFER_H
 #define VERTEX_BUFFER_H
 
+#include <string>
 #include <vector>
 
 namespace ZSharp {
@@ -11,6 +12,7 @@ class VertexBuffer {
 
   VertexBuffer(std::size_t size, std::size_t stride) :
     mData(size * 2),
+    mRequestedSize(size),
     mStride(stride)
   {
 
@@ -39,15 +41,21 @@ class VertexBuffer {
   }
 
   std::size_t GetSize() const {
-    return mData.size();
+    return mRequestedSize;
   }
 
   std::size_t GetStride() const {
     return mStride;
   }
 
+  void CopyData(const T* data, std::size_t index, ::size_t length) {
+    // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
+    std::memcpy(mData.data() + index, data, length);
+  }
+
   private:
   std::vector<T> mData;
+  std::size_t mRequestedSize = 0;
   std::size_t mStride = 0;
 };
 

@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="ZColor.cpp" />
     <ClCompile Include="ZConfig.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="JsonObject.cpp" />
