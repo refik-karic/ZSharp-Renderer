@@ -31,21 +31,21 @@ class Triangle {
       return;
     }
 
-    mIndicies[0] = rhs.GetIndex(0);
-    mIndicies[1] = rhs.GetIndex(1);
-    mIndicies[2] = rhs.GetIndex(2);
+    mIndicies[0] = rhs[0];
+    mIndicies[1] = rhs[1];
+    mIndicies[2] = rhs[2];
   }
 
-  void SetPoint(std::size_t point, std::size_t index) {
-    mIndicies[point] = index;
-  }
-
-  std::size_t GetIndex(std::size_t index) {
+  std::size_t operator[](std::size_t index) const {
     return mIndicies[index];
   }
 
-  const std::size_t GetIndex(std::size_t index) const {
+  std::size_t& operator[](std::size_t index) {
     return mIndicies[index];
+  }
+
+  const std::size_t* GetData() {
+    return mIndicies;
   }
 
   private:

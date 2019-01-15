@@ -180,7 +180,7 @@ class ZMatrix {
 };
 
 // Frequently used typedefs.
-typedef ZMatrix<4, 4, float> Mat4x4f;
+typedef ZMatrix<4, 4, float> Mat4x4f_t;
 
 }
 

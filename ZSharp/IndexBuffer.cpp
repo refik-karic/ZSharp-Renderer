@@ -3,7 +3,9 @@
 namespace ZSharp {
 
 IndexBuffer::IndexBuffer(std::size_t size) :
-  mData(size * 4) {
+  mData(size * 4),
+  mRequestedSize(size)
+{
 
 }
 
@@ -29,13 +31,29 @@ std::size_t& IndexBuffer::operator[](std::size_t index) {
   return mData[index];
 }
 
-std::size_t IndexBuffer::GetSize() const {
+std::size_t IndexBuffer::GetTotalSize() const {
   return mData.size();
 }
 
-void IndexBuffer::CopyData(const std::size_t* data, std::size_t index, ::size_t length) {
+std::size_t IndexBuffer::GetRequestedSize() const {
+  return mRequestedSize;
+}
+
+std::size_t IndexBuffer::GetWorkingSize() const {
+  return mWorkingSize;
+}
+
+void IndexBuffer::SetWorkingSize(std::size_t size) {
+  mWorkingSize = size;
+}
+
+void IndexBuffer::CopyData(const std::size_t* data, std::size_t index, std::size_t length) {
   // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
-  std::memcpy(mData.data() + index, data, length);
+  std::memcpy(mData.data() + index, data, length * sizeof(std::size_t));
+}
+
+void IndexBuffer::Clear() {
+  std::memset(mData.data(), 0, mData.size() * sizeof(std::size_t));
 }
 
 }

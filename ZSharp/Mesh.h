@@ -39,10 +39,6 @@ class Mesh {
     mTriangleFaceTable = rhs.GetTriangleFaceTable();
   }
 
-  /*Triangle<T>& operator[](std::size_t index) {
-    return *(mData[index]);
-  }*/
-
   void SetData(const T* vertData, std::size_t numVerts, std::size_t numTriangleFaces) {
     mVertTable.resize(numVerts);
 
@@ -64,9 +60,9 @@ class Mesh {
 
   void SetTriangle(const std::size_t* triangleFaceData, std::size_t index) {
     Triangle<T>& triangle = mTriangleFaceTable[index];
-    triangle.SetPoint(0, triangleFaceData[0]);
-    triangle.SetPoint(1, triangleFaceData[1]);
-    triangle.SetPoint(2, triangleFaceData[2]);
+    triangle[0] = triangleFaceData[0];
+    triangle[1] = triangleFaceData[1];
+    triangle[2] = triangleFaceData[2];
   }
 
   std::vector<T>& GetVertTable() {

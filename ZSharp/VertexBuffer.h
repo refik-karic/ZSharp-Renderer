@@ -40,22 +40,47 @@ class VertexBuffer {
     return mData[index];
   }
 
-  std::size_t GetSize() const {
+  std::size_t GetRequestedSize() const {
     return mRequestedSize;
+  }
+
+  std::size_t GetTotalSize() const {
+    return mData.size();
+  }
+
+  std::size_t GetWorkingSize() const {
+    return mWorkingSize;
+  }
+
+  void SetWorkingSize(std::size_t size) {
+    mWorkingSize = size;
   }
 
   std::size_t GetStride() const {
     return mStride;
   }
 
-  void CopyData(const T* data, std::size_t index, ::size_t length) {
+  void CopyData(const T* data, std::size_t index, std::size_t length) {
     // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
-    std::memcpy(mData.data() + index, data, length);
+    std::memcpy(mData.data() + index, data, length * sizeof(T));
+  }
+
+  T* GetData() {
+    return mData.data();
+  }
+
+  const T* GetData() const {
+    return mData.data();
+  }
+
+  void Clear() {
+    std::memset(mData.data(), 0, mData.size() * sizeof(T));
   }
 
   private:
   std::vector<T> mData;
   std::size_t mRequestedSize = 0;
+  std::size_t mWorkingSize = 0;
   std::size_t mStride = 0;
 };
 

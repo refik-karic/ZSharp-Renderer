@@ -18,12 +18,22 @@ class IndexBuffer {
 
   std::size_t& operator[](std::size_t index);
 
-  std::size_t GetSize() const;
+  std::size_t GetTotalSize() const;
 
-  void CopyData(const std::size_t* data, std::size_t index, ::size_t length);
+  std::size_t GetRequestedSize() const;
+
+  std::size_t GetWorkingSize() const;
+
+  void SetWorkingSize(std::size_t size);
+
+  void CopyData(const std::size_t* data, std::size_t index, std::size_t length);
+
+  void Clear();
 
   private:
   std::vector<std::size_t> mData;
+  std::size_t mRequestedSize = 0;
+  std::size_t mWorkingSize = 0;
 };
 
 }

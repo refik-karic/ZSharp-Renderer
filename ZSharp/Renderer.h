@@ -31,7 +31,7 @@ class Renderer {
   std::shared_ptr<VertexBuffer<float>> mVertexBuffer;
 
   template<typename T>
-  void DrawPrimitives(const Model<T>& model, ZColor color);
+  void DrawPrimitives(const VertexBuffer<T>& vertexBuffer, const IndexBuffer& indexBuffer, ZColor color);
 };
 }
 

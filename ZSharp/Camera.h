@@ -5,7 +5,9 @@
 #include <cstdint>
 
 #include "Constants.h"
+#include "IndexBuffer.h"
 #include "Triangle.h"
+#include "VertexBuffer.h"
 #include "ZConfig.h"
 #include "ZMatrix.h"
 #include "ZVector.h"
@@ -53,7 +55,7 @@ class Camera {
     mPosition = position;
   }
 
-  void PerspectiveProjection(Model<T>& model) {
+  void PerspectiveProjection(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     // Create perspective projection matrix.
 
     // Calculate the W unit vector (opposite of look vector).
@@ -141,20 +143,20 @@ class Camera {
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // Iterate over each mesh in the model.
-    for (Mesh<T>& mesh : model.GetMeshData()) {
+    /*for (Mesh<T>& mesh : model.GetMeshData()) {
       // Iterate over each mesh's primitives.
       for (Triangle<T>& triangle : mesh.GetTriangleFaceTable()) {
         // Get the mesh data in a format we can compute using the linear algebra library.
         ZVector<4, T> p1;
-        p1.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(0) * 3), 3);
+        p1.LoadRawData(mesh.GetVertTable().data() + (triangle[0] * 3), 3);
         p1[3] = static_cast<T>(1);
         
         ZVector<4, T> p2;
-        p2.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(1) * 3), 3);
+        p2.LoadRawData(mesh.GetVertTable().data() + (triangle[1] * 3), 3);
         p2[3] = static_cast<T>(1);
 
         ZVector<4, T> p3;
-        p3.LoadRawData(mesh.GetVertTable().data() + (triangle.GetIndex(2) * 3), 3);
+        p3.LoadRawData(mesh.GetVertTable().data() + (triangle[2] * 3), 3);
         p3[3] = static_cast<T>(1);
 
         // Apply the "unhing" transform to each vertex.
@@ -178,12 +180,36 @@ class Camera {
         p3 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p3);
 
         // Store the resulting vectors back into the vertex table of the mesh.
-        p1.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(0) * 3), 2);
-        p2.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(1) * 3), 2);
-        p3.StoreRawData(mesh.GetVertTable().data() + (triangle.GetIndex(2) * 3), 2);
+        p1.StoreRawData(mesh.GetVertTable().data() + (triangle[0] * 3), 2);
+        p2.StoreRawData(mesh.GetVertTable().data() + (triangle[1] * 3), 2);
+        p3.StoreRawData(mesh.GetVertTable().data() + (triangle[2] * 3), 2);
 
         // At this point the verticies for the current primitive have been converted to screen space and are ready to be drawn.
       }
+    }*/
+
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += vertexBuffer.GetStride()) {
+      // Get the mesh data in a format we can compute using the linear algebra library.
+      ZVector<4, T> vertex;
+      vertex.LoadRawData(vertexBuffer.GetData() + i, 3);
+      vertex[3] = static_cast<T>(1);
+
+      // Apply the "unhing" transform to each vertex.
+      vertex = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertex);
+
+      // Homogenize the verticies.
+      ZVector<4, T>::Homogenize(vertex, 3);
+
+      // Drop the W component since it is no longer needed.
+      ZVector<4, T>::Homogenize(vertex, 2);
+
+      // Multiply by the windowing transform to get pixel coodinates.
+      vertex = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertex);
+
+      // Store the resulting vectors back into the vertex table of the mesh.
+      vertex.StoreRawData(vertexBuffer.GetData() + i, 2);
+
+      // At this point the current vertex has been converted to screen space and is ready to be drawn.
     }
   }
 
