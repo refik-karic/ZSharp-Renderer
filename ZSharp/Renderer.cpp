@@ -104,7 +104,7 @@ void Renderer::RenderNextFrame() {
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
   // Draw the primitives onto the framebuffer.
-  DrawPrimitives(*mVertexBuffer, *mIndexBuffer, colorRed);
+  DrawTriangles(*mVertexBuffer, *mIndexBuffer, colorRed);
 
   // Time the frame.
   frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
@@ -115,34 +115,40 @@ Framebuffer* Renderer::GetFrameBuffer() {
 }
 
 template<typename T>
-void Renderer::DrawPrimitives(const VertexBuffer<T>& vertexBuffer, const IndexBuffer& indexBuffer, ZColor color) {
+void Renderer::DrawTriangles(const VertexBuffer<T>& vertexBuffer, const IndexBuffer& indexBuffer, ZColor color) {
   // Iterate over each triangle using the EBO.
   // This means the VBO can have gaps in its data as a result of clipping but those will be skipped
   //    if the indexing here is done purely using the EBO!
   //    (i.e.) indicies can be easily swapped elsewhere without having to rearrange the VBO on each clip operation.
-  for (std::size_t i = 0; i < indexBuffer.GetWorkingSize(); i += 3) {
-    // Draw line connecting p1 to p2.
+  std::size_t stride = vertexBuffer.GetStride();
+  std::size_t end = indexBuffer.GetWorkingSize();
+  for (std::size_t i = 0; i < end; i += 3) {
+    const T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
+    const T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
+    const T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
+
+    // Draw line connecting v1 to v2.
     DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i] + 1)),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 1])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 1] + 1)),
+                 static_cast<std::size_t>(*(v1)),
+                 static_cast<std::size_t>(*(v1 + 1)),
+                 static_cast<std::size_t>(*(v2)),
+                 static_cast<std::size_t>(*(v2 + 1)),
                  color);
 
-    // Draw line connecting p2 to p3.
+    // Draw line connecting v2 to v3.
     DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 1])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 1] + 1)),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 2])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 2] + 1)),
+                 static_cast<std::size_t>(*(v2)),
+                 static_cast<std::size_t>(*(v2 + 1)),
+                 static_cast<std::size_t>(*(v3)),
+                 static_cast<std::size_t>(*(v3 + 1)),
                  color);
 
-    // Draw line connecting p3 to p1.
+    // Draw line connecting v3 to v1.
     DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 2])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i + 2] + 1)),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i])),
-                 static_cast<std::size_t>(*(vertexBuffer.GetData() + indexBuffer[i] + 1)),
+                 static_cast<std::size_t>(*(v3)),
+                 static_cast<std::size_t>(*(v3 + 1)),
+                 static_cast<std::size_t>(*(v1)),
+                 static_cast<std::size_t>(*(v1 + 1)),
                  color);
   }
 }
