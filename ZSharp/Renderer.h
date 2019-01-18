@@ -6,9 +6,7 @@
 #include "AssetLoader.h"
 #include "Camera.h"
 #include "Framebuffer.h"
-#include "IndexBuffer.h"
 #include "Model.h"
-#include "VertexBuffer.h"
 #include "ZColor.h"
 
 namespace ZSharp {
@@ -29,9 +27,6 @@ class Renderer {
 
   std::shared_ptr<IndexBuffer> mIndexBuffer;
   std::shared_ptr<VertexBuffer<float>> mVertexBuffer;
-
-  template<typename T>
-  void DrawTriangles(const VertexBuffer<T>& vertexBuffer, const IndexBuffer& indexBuffer, ZColor color);
 };
 }
 

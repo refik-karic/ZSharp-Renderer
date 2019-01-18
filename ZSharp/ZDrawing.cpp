@@ -5,7 +5,12 @@
 
 namespace ZSharp {
 
-void DrawRunSlice(Framebuffer& framebuffer, std::int32_t x1, std::int32_t y1, std::int32_t x2, std::int32_t y2, ZColor color) {
+void DrawRunSlice(Framebuffer& framebuffer, 
+                  std::int32_t x1, 
+                  std::int32_t y1, 
+                  std::int32_t x2, 
+                  std::int32_t y2, 
+                  ZColor color) {
   if (x1 == x2) {
     // Special case for vertical lines.
     if (y1 == y2) {

@@ -4,6 +4,7 @@
 
 #include "Constants.h"
 #include "Renderer.h"
+#include "Triangle.h"
 #include "UtilMath.h"
 #include "ZDrawing.h"
 #include "ZColor.h"
@@ -21,12 +22,12 @@ Renderer::Renderer() {
 
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
     // Must account for the possibility of clipping the max amount on each triangle.
-    indexBufSize += (mesh.GetTriangleFaceTable().size() * 3);
+    indexBufSize += (mesh.GetTriangleFaceTable().size() * TRI_VERTS);
     vertexBufSize += mesh.GetVertTable().size();
   }
 
   mIndexBuffer = std::make_shared<IndexBuffer>(indexBufSize);
-  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, 3);
+  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, TRI_VERTS);
   
   Vec3f_t cameraDefaultPos;
   cameraDefaultPos[0] = 4.0f;
@@ -50,11 +51,11 @@ void Renderer::RenderNextFrame() {
     // Fill EBO.
     for (std::size_t i = 0; i < mesh.GetTriangleFaceTable().size(); ++i) {
       Triangle<float>& triangle = mesh.GetTriangleFaceTable()[i];
-      mIndexBuffer->CopyData(triangle.GetData(), i * 3, 3);
+      mIndexBuffer->CopyData(triangle.GetData(), i * TRI_VERTS, TRI_VERTS);
     }
 
     // Update the size of the EBO.
-    mIndexBuffer->SetWorkingSize(mesh.GetTriangleFaceTable().size() * 3);
+    mIndexBuffer->SetWorkingSize(mesh.GetTriangleFaceTable().size() * TRI_VERTS);
 
     // Fill VBO.
     mVertexBuffer->CopyData(mesh.GetVertTable().data(), 0, mesh.GetVertTable().size());
@@ -77,9 +78,9 @@ void Renderer::RenderNextFrame() {
   for (std::size_t i = 0; i < mVertexBuffer->GetWorkingSize(); i += mVertexBuffer->GetStride()) {
     Vec4f_t vertexVector;
     vertexVector[3] = 1.0F;
-    vertexVector.LoadRawData(mVertexBuffer->GetData() + i, 3);
+    vertexVector.LoadRawData(mVertexBuffer->GetData() + i, TRI_VERTS);
     vertexVector = Mat4x4f_t::ApplyTransform(rotationMatrix, vertexVector);
-    vertexVector.StoreRawData(mVertexBuffer->GetData() + i, 3);
+    vertexVector.StoreRawData(mVertexBuffer->GetData() + i, TRI_VERTS);
   }
 
   // Color is stored in ARGB format.
@@ -104,7 +105,7 @@ void Renderer::RenderNextFrame() {
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
   // Draw the primitives onto the framebuffer.
-  DrawTriangles(*mVertexBuffer, *mIndexBuffer, colorRed);
+  DrawTriangles(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
 
   // Time the frame.
   frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
@@ -112,45 +113,6 @@ void Renderer::RenderNextFrame() {
 
 Framebuffer* Renderer::GetFrameBuffer() {
   return &mBuffer;
-}
-
-template<typename T>
-void Renderer::DrawTriangles(const VertexBuffer<T>& vertexBuffer, const IndexBuffer& indexBuffer, ZColor color) {
-  // Iterate over each triangle using the EBO.
-  // This means the VBO can have gaps in its data as a result of clipping but those will be skipped
-  //    if the indexing here is done purely using the EBO!
-  //    (i.e.) indicies can be easily swapped elsewhere without having to rearrange the VBO on each clip operation.
-  std::size_t stride = vertexBuffer.GetStride();
-  std::size_t end = indexBuffer.GetWorkingSize();
-  for (std::size_t i = 0; i < end; i += 3) {
-    const T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
-    const T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
-    const T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
-
-    // Draw line connecting v1 to v2.
-    DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(v1)),
-                 static_cast<std::size_t>(*(v1 + 1)),
-                 static_cast<std::size_t>(*(v2)),
-                 static_cast<std::size_t>(*(v2 + 1)),
-                 color);
-
-    // Draw line connecting v2 to v3.
-    DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(v2)),
-                 static_cast<std::size_t>(*(v2 + 1)),
-                 static_cast<std::size_t>(*(v3)),
-                 static_cast<std::size_t>(*(v3 + 1)),
-                 color);
-
-    // Draw line connecting v3 to v1.
-    DrawRunSlice(mBuffer,
-                 static_cast<std::size_t>(*(v3)),
-                 static_cast<std::size_t>(*(v3 + 1)),
-                 static_cast<std::size_t>(*(v1)),
-                 static_cast<std::size_t>(*(v1 + 1)),
-                 color);
-  }
 }
 
 }
