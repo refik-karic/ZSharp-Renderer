@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "ZMatrix.h"
+#include "ZVector.h"
+
 namespace ZSharp {
 
 template<typename T>
@@ -75,6 +78,17 @@ class VertexBuffer {
 
   void Clear() {
     std::memset(mData.data(), 0, mData.size() * sizeof(T));
+  }
+
+  void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
+    // Apply the rotation transform to each vertex in the VBO.
+    for (std::size_t i = 0; i < mWorkingSize; i += mStride) {
+      ZVector<4, T> vertexVector;
+      vertexVector[3] = static_cast<T>(1);
+      vertexVector.LoadRawData(mData.data() + i, TRI_VERTS);
+      vertexVector = ZMatrix<4, 4, T>::ApplyTransform(transform, vertexVector);
+      vertexVector.StoreRawData(mData.data() + i, TRI_VERTS);
+    }
   }
 
   private:

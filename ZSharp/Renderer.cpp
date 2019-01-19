@@ -39,9 +39,6 @@ Renderer::Renderer() {
 void Renderer::RenderNextFrame() {
   using namespace std::chrono_literals;
 
-  // TODO: Figure out why the triangles are showing up in a different orientation this time.
-  // This probably has something to do with the new way I'm indexing into the VBO/EBO.
-
   // Clear the VBO/EBO to ease debugging for now.
   mIndexBuffer->Clear();
   mVertexBuffer->Clear();
@@ -74,14 +71,8 @@ void Renderer::RenderNextFrame() {
     mFrameCount = 0;
   }
 
-  // Apply the rotation transform to each vertex in the VBO.
-  for (std::size_t i = 0; i < mVertexBuffer->GetWorkingSize(); i += mVertexBuffer->GetStride()) {
-    Vec4f_t vertexVector;
-    vertexVector[3] = 1.0F;
-    vertexVector.LoadRawData(mVertexBuffer->GetData() + i, TRI_VERTS);
-    vertexVector = Mat4x4f_t::ApplyTransform(rotationMatrix, vertexVector);
-    vertexVector.StoreRawData(mVertexBuffer->GetData() + i, TRI_VERTS);
-  }
+  // Apply rotation transform to all verticies.
+  mVertexBuffer->ApplyTransform(rotationMatrix);
 
   // Color is stored in ARGB format.
   ZColor colorRed;
