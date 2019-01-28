@@ -62,6 +62,25 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       mRenderer->RenderNextFrame();
       mGdiWrapper->UpdateWindow(*(mRenderer->GetFrameBuffer()));
       break;
+    case WM_KEYDOWN:
+      // Just treat wParam as an ASCII character press for simplicity at the moment.
+      switch (wParam) {
+        case 'W':
+          mRenderer->MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
+          break;
+        case 'S':
+          mRenderer->MoveCamera(ZSharp::Renderer::Direction::DOWN, 1.0F);
+          break;
+        case 'A':
+          mRenderer->MoveCamera(ZSharp::Renderer::Direction::RIGHT, 1.0F);
+          break;
+        case 'D':
+          mRenderer->MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
+          break;
+      }
+      break;
+    // TODO: Add a case for WM_CHAR and cast wParam to a wchar_t type.
+    // https://docs.microsoft.com/en-us/windows/desktop/learnwin32/keyboard-input#character-messages
     case WM_CLOSE:
       DestroyWindow(hwnd);
       break;

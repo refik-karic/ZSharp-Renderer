@@ -3,7 +3,7 @@
 namespace ZSharp {
 
 IndexBuffer::IndexBuffer(std::size_t size) :
-  mData(size * 4),
+  mData(size * MAX_INDICIES_AFTER_CLIP),
   mRequestedSize(size)
 {
 

@@ -12,10 +12,20 @@
 namespace ZSharp {
 class Renderer {
   public:
+
+  enum class Direction {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+  };
+
   Renderer();
 
   void RenderNextFrame();
   Framebuffer* GetFrameBuffer();
+
+  void MoveCamera(Direction direction, float amount);
 
   private:
   Camera<float> mCamera;

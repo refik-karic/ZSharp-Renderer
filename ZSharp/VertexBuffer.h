@@ -14,7 +14,7 @@ class VertexBuffer {
   public:
 
   VertexBuffer(std::size_t size, std::size_t stride) :
-    mData(size * 2),
+    mData(size * MAX_VERTS_AFTER_CLIP),
     mRequestedSize(size),
     mStride(stride)
   {
@@ -92,6 +92,8 @@ class VertexBuffer {
   }
 
   private:
+  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 3;
+
   std::vector<T> mData;
   std::size_t mRequestedSize = 0;
   std::size_t mWorkingSize = 0;

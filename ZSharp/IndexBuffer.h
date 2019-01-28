@@ -31,6 +31,8 @@ class IndexBuffer {
   void Clear();
 
   private:
+  static constexpr std::size_t MAX_INDICIES_AFTER_CLIP = 4;
+
   std::vector<std::size_t> mData;
   std::size_t mRequestedSize = 0;
   std::size_t mWorkingSize = 0;

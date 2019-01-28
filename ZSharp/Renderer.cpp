@@ -30,7 +30,7 @@ Renderer::Renderer() {
   mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, TRI_VERTS);
   
   Vec3f_t cameraDefaultPos;
-  cameraDefaultPos[0] = 4.0f;
+  cameraDefaultPos[0] = 0.0f;
   cameraDefaultPos[1] = 0.0f;
   cameraDefaultPos[2] = 25.0f;
   mCamera.MoveCamera(cameraDefaultPos);
@@ -104,6 +104,27 @@ void Renderer::RenderNextFrame() {
 
 Framebuffer* Renderer::GetFrameBuffer() {
   return &mBuffer;
+}
+
+void Renderer::MoveCamera(Direction direction, float amount) {
+  ZVector<3, float> currentPositon(mCamera.GetPosition());
+  
+  switch (direction) {
+    case Direction::UP:
+      currentPositon[1] = currentPositon[1] + amount;
+      break;
+    case Direction::DOWN:
+      currentPositon[1] = currentPositon[1] - amount;
+      break;
+    case Direction::LEFT:
+      currentPositon[0] = currentPositon[0] + amount;
+      break;
+    case Direction::RIGHT:
+      currentPositon[0] = currentPositon[0] - amount;
+      break;
+  }
+
+  mCamera.MoveCamera(currentPositon);
 }
 
 }

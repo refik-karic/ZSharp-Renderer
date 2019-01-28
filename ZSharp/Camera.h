@@ -47,6 +47,10 @@ class Camera {
     mFarPlane = static_cast<T>(100);
   }
 
+  ZVector<3, T> GetPosition() const {
+    return mPosition;
+  }
+
   /// <summary>
   /// Move the camera to a new point in space.
   /// </summary>
@@ -124,7 +128,7 @@ class Camera {
     unhing[2][3] = mNearPlane;
     unhing[3][2] = (mFarPlane - mNearPlane) * static_cast<T>(-1);
 
-    // Compound the three transforms to create the standard perspective projection transform (SPPT).
+    // Compound the three transforms to create the standard parallel view volume (SPVV).
     unhing = unhing * (scale * (uToE * translation));
 
     /*
@@ -152,9 +156,13 @@ class Camera {
       // Apply the "unhing" transform to each vertex.
       vertex = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertex);
 
-      // Homogenize the verticies.
+      // Homogenize the verticies to bring them into SPVV space.
       ZVector<4, T>::Homogenize(vertex, 3);
 
+      // At this point the vertex is transformed into the "SPVV".
+      // TODO: Clip to the near plane for points with Z < 0.
+
+      /*
       // Drop the W component since it is no longer needed.
       ZVector<4, T>::Homogenize(vertex, 2);
 
@@ -165,7 +173,17 @@ class Camera {
       vertex.StoreRawData(vertexBuffer.GetData() + i, 2);
 
       // At this point the current vertex has been converted to screen space and is ready to be drawn.
+      */
     }
+
+    // All verticies are in "SPVV" space (i.e. view/camera space), clip edges where necessary.
+    // We are using a RHCS, meaning that all verticies are defined in CLOCKWISE order!
+    // TODO: Use the clockwise ordering of the NDC cubic-volume to calculate the Normal "orientation vectors"
+    // Then use these orientation vectors to perform Sutherland-Hodgeman clipping on all necessary planes of the cubic volume.
+    //    **Still don't know if clipping to all 6 planes will be necessary, look into this futher.**
+
+    // Send all remaining verticies to screen space.
+    // TODO: Write the loop over the clipped edges here that sends them back to screen space.
   }
 
   private:
