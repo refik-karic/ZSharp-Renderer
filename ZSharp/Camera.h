@@ -32,8 +32,10 @@ class Camera {
     mWidth = config.GetViewportWidth();
     mHeight = config.GetViewportHeight();
 
+    // TODO: Double check to make sure that I'm specifying the (U, V, W) vectors correctly here.
+
     // Default the look direction is along the negative Z axis.
-    mLook[2] = static_cast<T>(-1);
+    mLook[2] = static_cast<T>(1);
 
     // Default the up direction is along the positive Y axis.
     mUp[1] = static_cast<T>(1);
@@ -145,35 +147,60 @@ class Camera {
     windowTransform[1][1] = static_cast<T>(mHeight);
     windowTransform[1][2] = static_cast<T>(mHeight);
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
+    // TODO: MAke sure that the coordinates I'm expecting are the way GDI+ is setup.
 
-    // Iterate over each vertex in the VBO.
-    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += vertexBuffer.GetStride()) {
-      // Wrap the vertex data at the current index in a format that can be computed easily.
-      ZVector<4, T> vertex;
-      vertex.LoadRawData(vertexBuffer.GetData() + i, 3);
-      vertex[3] = static_cast<T>(1);
+    std::size_t stride = vertexBuffer.GetStride();
+    std::size_t end = indexBuffer.GetWorkingSize();
+    for (std::size_t i = 0; i < end; i += TRI_VERTS) {
+      // Get the indicies into the VBO from the EBO.
+      T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
+      T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
+      T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
 
-      // Apply the "unhing" transform to each vertex.
-      vertex = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertex);
+      // Store the data in a format we can compute.
+      ZVector<4, T> p1;
+      p1.LoadRawData(v1, TRI_VERTS);
+      p1[3] = static_cast<T>(1);
+
+      ZVector<4, T> p2;
+      p2.LoadRawData(v2, TRI_VERTS);
+      p2[3] = static_cast<T>(1);
+
+      ZVector<4, T> p3;
+      p3.LoadRawData(v3, TRI_VERTS);
+      p3[3] = static_cast<T>(1);
+
+      // Apply the "unhing" transform to each vertex in the primitive.
+      p1 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p1);
+      p2 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p2);
+      p3 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p3);
+
+      // TODO: Clip in R4 to remove points with Z < 0.
 
       // Homogenize the verticies to bring them into SPVV space.
-      ZVector<4, T>::Homogenize(vertex, 3);
+      ZVector<4, T>::Homogenize(p1, 3);
+      ZVector<4, T>::Homogenize(p2, 3);
+      ZVector<4, T>::Homogenize(p3, 3);
 
       // At this point the vertex is transformed into the "SPVV".
       // TODO: Clip to the near plane for points with Z < 0.
 
-      /*
       // Drop the W component since it is no longer needed.
-      ZVector<4, T>::Homogenize(vertex, 2);
+      ZVector<4, T>::Homogenize(p1, 2);
+      ZVector<4, T>::Homogenize(p2, 2);
+      ZVector<4, T>::Homogenize(p3, 2);
 
       // Multiply by the windowing transform to get pixel coodinates.
-      vertex = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertex);
+      p1 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p1);
+      p2 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p2);
+      p3 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p3);
 
-      // Store the resulting vectors back into the vertex table of the mesh.
-      vertex.StoreRawData(vertexBuffer.GetData() + i, 2);
+      // Store the resulting vectors back into the VBO.
+      p1.StoreRawData(v1, 2);
+      p2.StoreRawData(v2, 2);
+      p3.StoreRawData(v3, 2);
 
-      // At this point the current vertex has been converted to screen space and is ready to be drawn.
-      */
+      // At this point the current primitive has been converted to screen space and is ready to be drawn.
     }
 
     // All verticies are in "SPVV" space (i.e. view/camera space), clip edges where necessary.
