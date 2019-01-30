@@ -32,10 +32,8 @@ class Camera {
     mWidth = config.GetViewportWidth();
     mHeight = config.GetViewportHeight();
 
-    // TODO: Double check to make sure that I'm specifying the (U, V, W) vectors correctly here.
-
     // Default the look direction is along the negative Z axis.
-    mLook[2] = static_cast<T>(1);
+    mLook[2] = static_cast<T>(-1);
 
     // Default the up direction is along the positive Y axis.
     mUp[1] = static_cast<T>(1);
@@ -64,19 +62,30 @@ class Camera {
   void PerspectiveProjection(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     // Create perspective projection matrix.
 
+    /*
+    * Computer Graphics: Principles and Practice (3rd Edition)
+    * John F. Hughes, Andries van Dam, Morgan McGuire, David F. Sklar, James D. Foley, Steven K. Feiner, Kurt Akeley
+    *
+    * Equations [13.2, 13.5] p.304
+    * Note that this uses the approach described in Inline Exercise 13.1 which doesn't negate the W vector.
+    * Part of the reasoning for this is performance, since that approach requires an extra scalar multiply to negate the look vector.
+    * The actual reason is because the camera was pointing in the opposite direction that I was expecting.
+    * Ignoring the negation fixed the issue, which I think may have been because the text was describing a LHCS camera view (Figure 13.6 is quite confusing).
+    */
+
     // Calculate the W unit vector (opposite of look vector).
-    ZVector<3, T> w(mLook);
-    w = w * static_cast<T>(-1);
+    ZVector<3, T> w;
+    w = mLook;
     ZVector<3, T>::Normalize(w);
 
     // Calculate V unit vector (up vector).
-    ZVector<3, T> v(mUp);
-    v = v - (w * (mUp * w));
+    ZVector<3, T> v;
+    v = mUp - (w * (mUp * w));
     ZVector<3, T>::Normalize(v);
 
     // Calculate the U unit vector pointing to the right.
-    ZVector<3, T> u(v);
-    u = ZVector<3, T>::Cross(u, w);
+    ZVector<3, T> u;
+    u = ZVector<3, T>::Cross(w, v);
 
     // At this point U, V, and W have been calculated.
     // Next step is to construct the perspective projection linear transform based off of these unit vectors.
@@ -142,12 +151,11 @@ class Camera {
     * See Figure 13.1 p.300
     */
     ZMatrix<2, 3, T> windowTransform;
-    windowTransform[0][0] = static_cast<T>(static_cast<std::intptr_t>(mWidth) * static_cast<std::intptr_t>(-1));
+    windowTransform[0][0] = static_cast<T>(mWidth);
     windowTransform[0][2] = static_cast<T>(mWidth);
-    windowTransform[1][1] = static_cast<T>(mHeight);
+    windowTransform[1][1] = static_cast<T>((mHeight * static_cast<T>(-1)));
     windowTransform[1][2] = static_cast<T>(mHeight);
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
-    // TODO: MAke sure that the coordinates I'm expecting are the way GDI+ is setup.
 
     std::size_t stride = vertexBuffer.GetStride();
     std::size_t end = indexBuffer.GetWorkingSize();
@@ -176,6 +184,7 @@ class Camera {
       p3 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p3);
 
       // TODO: Clip in R4 to remove points with Z < 0.
+      // This step can be skipped for now since my primitives should always be in front of the camera.
 
       // Homogenize the verticies to bring them into SPVV space.
       ZVector<4, T>::Homogenize(p1, 3);
@@ -183,7 +192,7 @@ class Camera {
       ZVector<4, T>::Homogenize(p3, 3);
 
       // At this point the vertex is transformed into the "SPVV".
-      // TODO: Clip to the near plane for points with Z < 0.
+      // TODO: Clip to the SPVV view volume on all sides but the near plane.
 
       // Drop the W component since it is no longer needed.
       ZVector<4, T>::Homogenize(p1, 2);
@@ -249,9 +258,9 @@ class Camera {
   /// </summary>
   T mFovVert;
 
-  std::size_t mWidth;
+  std::intptr_t mWidth;
   
-  std::size_t mHeight;
+  std::intptr_t mHeight;
 };
 }
 
