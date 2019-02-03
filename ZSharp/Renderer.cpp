@@ -32,7 +32,7 @@ Renderer::Renderer() {
   Vec3f_t cameraDefaultPos;
   cameraDefaultPos[0] = 0.0f;
   cameraDefaultPos[1] = 0.0f;
-  cameraDefaultPos[2] = 25.0f;
+  cameraDefaultPos[2] = 15.0f;
   mCamera.MoveCamera(cameraDefaultPos);
 }
 

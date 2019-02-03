@@ -10,6 +10,9 @@ class GDIWrapper {
   GDIWrapper(HWND hwnd);
   ~GDIWrapper();
 
+  GDIWrapper(const GDIWrapper&) = delete;
+  void operator=(const GDIWrapper&) = delete;
+
   void UpdateWindow(const ZSharp::Framebuffer& frameData);
 
   private:
