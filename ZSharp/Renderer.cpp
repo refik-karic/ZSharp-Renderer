@@ -65,7 +65,8 @@ void Renderer::RenderNextFrame() {
   Mat4x4f_t rotationMatrix;
   Mat4x4f_t::SetRotation(rotationMatrix,
                                     static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
-                                    Mat4x4f_t::Axis::Z);
+                                    Mat4x4f_t::Axis::Y);
+
   mFrameCount++;
   if (mFrameCount > 360) {
     mFrameCount = 0;

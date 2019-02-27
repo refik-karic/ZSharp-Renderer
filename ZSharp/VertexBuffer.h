@@ -9,16 +9,18 @@
 
 namespace ZSharp {
 
+// TODO: Make the usage of the VBO more consistent across the application.
+// Users want to work in R# but the VBO needs to work in R4!
 template<typename T>
 class VertexBuffer {
   public:
-
   VertexBuffer(std::size_t size, std::size_t stride) :
-    mData(size * MAX_VERTS_AFTER_CLIP),
-    mRequestedSize(size),
-    mStride(stride)
+    mData((size + (size / TRI_VERTS)) * MAX_VERTS_AFTER_CLIP),
+    mRequestedSize(size + (size / TRI_VERTS)),
+    mHomogenizedStride(stride + (stride / TRI_VERTS)),
+    mRequestedStride(stride)
   {
-
+    
   }
 
   VertexBuffer(const VertexBuffer<T>& rhs) {
@@ -56,16 +58,25 @@ class VertexBuffer {
   }
 
   void SetWorkingSize(std::size_t size) {
-    mWorkingSize = size;
+    mWorkingSize = size + (size / TRI_VERTS);
   }
 
   std::size_t GetStride() const {
-    return mStride;
+    return mHomogenizedStride;
   }
 
   void CopyData(const T* data, std::size_t index, std::size_t length) {
     // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
-    std::memcpy(mData.data() + index, data, length * sizeof(T));
+    //std::memcpy(mData.data() + index, data, length * sizeof(T));
+    T wDefault{1};
+    T* currentIndex = mData.data() + index;
+    for (std::size_t i = 0; i < length; i += mRequestedStride) {
+      for (std::size_t j = 0; j < mRequestedStride / TRI_VERTS; j++) {
+        std::memcpy(currentIndex, (data + i) + (j * TRI_VERTS), TRI_VERTS * sizeof(T));
+        currentIndex[3] = wDefault;
+        currentIndex += HOMOGENOUS_3D_SPACE;
+      }
+    }
   }
 
   T* GetData() {
@@ -81,8 +92,9 @@ class VertexBuffer {
   }
 
   void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
-    // Apply the rotation transform to each vertex in the VBO.
-    for (std::size_t i = 0; i < mWorkingSize; i += mStride) {
+    // TODO: Come back to this later and figure out if the transforms will need to apply to things like texture coordinates as well.
+    // Apply the transform to each vertex in the VBO.
+    for (std::size_t i = 0; i < mWorkingSize; i += mHomogenizedStride) {
       ZVector<4, T> vertexVector;
       vertexVector[3] = static_cast<T>(1);
       vertexVector.LoadRawData(mData.data() + i, TRI_VERTS);
@@ -93,11 +105,13 @@ class VertexBuffer {
 
   private:
   static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 3;
+  static constexpr std::size_t HOMOGENOUS_3D_SPACE = 4;
 
   std::vector<T> mData;
   std::size_t mRequestedSize = 0;
   std::size_t mWorkingSize = 0;
-  std::size_t mStride = 0;
+  std::size_t mHomogenizedStride = 0;
+  std::size_t mRequestedStride = 0;
 };
 
 }

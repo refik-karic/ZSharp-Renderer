@@ -163,43 +163,28 @@ class Camera {
     windowTransform[1][2] = static_cast<T>(mHeight);
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
-    std::size_t stride = vertexBuffer.GetStride();
-    std::size_t end = indexBuffer.GetWorkingSize();
-    for (std::size_t i = 0; i < end; i += TRI_VERTS) {
-      // Get the indicies into the VBO from the EBO.
-      T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
-      T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
-      T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
+    // TODO: This implementation will currently apply the transformaton to ALL verticies in the VBO, regardless if they are vertex data in a stride or texture coordinates!
+    // TODO: Keep in mind clipped verticies when performing operations over all verticies in the VBO!
+    // TODO: Also, be wary of shared verticies when implementing clipping to preserve memory for shared input verticies!
+    
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
+      T* vertexData = vertexBuffer.GetData() + i;
+      ZVector<4, T> vertexVector;
+      vertexVector.LoadRawData(vertexData, TRI_VERTS);
+      vertexVector[3] = static_cast<T>(1);
+      vertexVector = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertexVector);
+      vertexVector.StoreRawData(vertexData, 4);
+    }
 
-      // Store the data in a format we can compute.
-      ZVector<4, T> p1;
-      p1.LoadRawData(v1, TRI_VERTS);
-      p1[3] = static_cast<T>(1);
+    // TODO: Clip in R4 to remove points with Z < 0.
+    // This step can be skipped for now since my primitives should always be in front of the camera.
 
-      ZVector<4, T> p2;
-      p2.LoadRawData(v2, TRI_VERTS);
-      p2[3] = static_cast<T>(1);
-
-      ZVector<4, T> p3;
-      p3.LoadRawData(v3, TRI_VERTS);
-      p3[3] = static_cast<T>(1);
-
-      // Apply the "unhing" transform to each vertex in the primitive.
-      p1 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p1);
-      p2 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p2);
-      p3 = ZMatrix<4, 4, T>::ApplyTransform(unhing, p3);
-
-      // TODO: Clip in R4 to remove points with Z < 0.
-      // This step can be skipped for now since my primitives should always be in front of the camera.
-
-      // Homogenize the verticies to bring them into SPVV space.
-      ZVector<4, T>::Homogenize(p1, 3);
-      ZVector<4, T>::Homogenize(p2, 3);
-      ZVector<4, T>::Homogenize(p3, 3);
-
-      p1.StoreRawData(v1, 3);
-      p2.StoreRawData(v2, 3);
-      p3.StoreRawData(v3, 3);
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
+      T* vertexData = vertexBuffer.GetData() + i;
+      ZVector<4, T> vertexVector;
+      vertexVector.LoadRawData(vertexData, 4);
+      ZVector<4, T>::Homogenize(vertexVector, 3);
+      vertexVector.StoreRawData(vertexData, 3);
     }
 
     // At this point the vertex is transformed into the "SPVV".
@@ -208,48 +193,14 @@ class Camera {
     // At this point the current primitive has been converted to screen space and is ready to be drawn.
     // TODO: Call SutherlandHodgmanClip()
 
-    // Get the update sizes of each buffer after clipping.
-    stride = vertexBuffer.GetStride();
-    end = indexBuffer.GetWorkingSize();
-    for (std::size_t i = 0; i < end; i += TRI_VERTS) {
-      T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
-      T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
-      T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
-
-      // Store the data in a format we can compute.
-      ZVector<3, T> p1;
-      p1.LoadRawData(v1, TRI_VERTS);
-
-      ZVector<3, T> p2;
-      p2.LoadRawData(v2, TRI_VERTS);
-
-      ZVector<3, T> p3;
-      p3.LoadRawData(v3, TRI_VERTS);
-
-      // Drop the W component since it is no longer needed.
-      ZVector<3, T>::Homogenize(p1, 2);
-      ZVector<3, T>::Homogenize(p2, 2);
-      ZVector<3, T>::Homogenize(p3, 2);
-
-      // Multiply by the windowing transform to get pixel coodinates.
-      p1 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p1);
-      p2 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p2);
-      p3 = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, p3);
-
-      // Store the resulting vectors back into the VBO.
-      p1.StoreRawData(v1, 2);
-      p2.StoreRawData(v2, 2);
-      p3.StoreRawData(v3, 2);
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
+      T* vertexData = vertexBuffer.GetData() + i;
+      ZVector<4, T> vertexVector;
+      vertexVector.LoadRawData(vertexData, TRI_VERTS);
+      ZVector<4, T>::Homogenize(vertexVector, 2);
+      vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
+      vertexVector.StoreRawData(vertexData, 2);
     }
-
-    // All verticies are in "SPVV" space (i.e. view/camera space), clip edges where necessary.
-    // We are using a RHCS, meaning that all verticies are defined in CLOCKWISE order!
-    // TODO: Use the clockwise ordering of the NDC cubic-volume to calculate the Normal "orientation vectors"
-    // Then use these orientation vectors to perform Sutherland-Hodgeman clipping on all necessary planes of the cubic volume.
-    //    **Still don't know if clipping to all 6 planes will be necessary, look into this futher.**
-
-    // Send all remaining verticies to screen space.
-    // TODO: Write the loop over the clipped edges here that sends them back to screen space.
   }
 
   private:
@@ -398,7 +349,7 @@ class Camera {
       plane[1] = edge;
 
       p1 = p2;
-      p2[0] = static_cast<T>(0);
+      p2[2] = static_cast<T>(0);
       edge[0] = p1;
       edge[1] = p2;
       plane[2] = edge;
