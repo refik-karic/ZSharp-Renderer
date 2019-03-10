@@ -1,9 +1,9 @@
-﻿#ifndef ZDRAWING_H
-#define ZDRAWING_H
+﻿#pragma once
 
 #include <cstdint>
 #include <cstddef>
 
+#include "Constants.h"
 #include "Framebuffer.h"
 #include "IndexBuffer.h"
 #include "Triangle.h"
@@ -30,7 +30,7 @@ void DrawTriangles(Framebuffer& framebuffer,
   //    (i.e.) indicies can be easily swapped elsewhere without having to rearrange the VBO on each clip operation.
   std::size_t stride = vertexBuffer.GetStride();
   std::size_t end = indexBuffer.GetWorkingSize();
-  for (std::size_t i = 0; i < end; i += TRI_VERTS) {
+  for (std::size_t i = 0; i < end; i += Constants::TRI_VERTS) {
     const T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
     const T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
     const T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
@@ -62,5 +62,3 @@ void DrawTriangles(Framebuffer& framebuffer,
 }
 
 }
-
-#endif

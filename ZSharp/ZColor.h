@@ -1,5 +1,4 @@
-#ifndef ZCOLOR_H
-#define ZCOLOR_H
+#pragma once
 
 #include <cstdint>
 
@@ -19,5 +18,3 @@ enum ZColors : std::uint32_t {
 };
 
 }
-
-#endif

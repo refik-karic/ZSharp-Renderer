@@ -1,5 +1,4 @@
-﻿#ifndef RENDERER_H
-#define RENDERER_H
+﻿#pragma once
 
 #include <memory>
 
@@ -39,5 +38,3 @@ class Renderer {
   std::shared_ptr<VertexBuffer<float>> mVertexBuffer;
 };
 }
-
-#endif

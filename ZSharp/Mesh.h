@@ -1,5 +1,4 @@
-#ifndef MESH_H
-#define MESH_H
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -86,5 +85,3 @@ class Mesh {
   std::vector<Triangle<T>> mTriangleFaceTable;
 };
 }
-
-#endif

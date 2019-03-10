@@ -1,6 +1,4 @@
-﻿#ifndef CONSTANTS_H
-#define CONSTANTS_H
-
+﻿#pragma once
 
 namespace ZSharp {
 
@@ -19,8 +17,14 @@ class Constants {
   static constexpr double PI = 3.14159265358979;
 
   static constexpr double PI_OVER_180 = PI / 180.0;
+
+  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 2;
+
+  // This is obvious and seemingly makes the code more verbose than necessary.
+  // It's just meant to be an aid for finding instances in the code where something might need to know this.
+  static constexpr std::size_t TRI_VERTS = 3;
+
+  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = (TRI_VERTS * MAX_VERTS_AFTER_CLIP) * 2;
 };
 
 }
-
-#endif

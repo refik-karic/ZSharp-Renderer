@@ -1,5 +1,4 @@
-﻿#ifndef FRAMEBUFFER_H
-#define FRAMEBUFFER_H
+﻿#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -26,5 +25,3 @@ class Framebuffer {
   std::size_t mTotalSize;
 };
 }
-
-#endif

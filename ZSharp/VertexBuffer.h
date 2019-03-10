@@ -1,9 +1,9 @@
-#ifndef VERTEX_BUFFER_H
-#define VERTEX_BUFFER_H
+#pragma once
 
 #include <string>
 #include <vector>
 
+#include "Constants.h"
 #include "ZMatrix.h"
 #include "ZVector.h"
 
@@ -13,8 +13,8 @@ template<typename T>
 class VertexBuffer {
   public:
   VertexBuffer(std::size_t size, std::size_t stride) :
-    mData((size + (size / TRI_VERTS)) * MAX_VERTS_AFTER_CLIP),
-    mHomogenizedStride(stride + (stride / TRI_VERTS))
+    mData((size + (size / Constants::TRI_VERTS)) * Constants::MAX_VERTS_AFTER_CLIP),
+    mHomogenizedStride(stride + (stride / Constants::TRI_VERTS))
   {
     
   }
@@ -52,7 +52,7 @@ class VertexBuffer {
   }
 
   void SetWorkingSize(std::size_t size) {
-    mWorkingSize = size + (size / TRI_VERTS);
+    mWorkingSize = size + (size / Constants::TRI_VERTS);
   }
 
   std::size_t GetStride() const {
@@ -63,10 +63,10 @@ class VertexBuffer {
     // NOTE: It may not necessarily be required to explicitly set the 4th dimension like this but for the purposes of debugging right now, just going to leave this in.
     static constexpr T wDefault{1};
     T* currentIndex = mData.data() + index;
-    std::size_t originalStride = mHomogenizedStride - (mHomogenizedStride / TRI_VERTS);
+    std::size_t originalStride = mHomogenizedStride - (mHomogenizedStride / Constants::TRI_VERTS);
     for (std::size_t i = 0; i < length; i += originalStride) {
-      for (std::size_t j = 0; j < originalStride / TRI_VERTS; j++) {
-        std::memcpy(currentIndex, (data + i) + (j * TRI_VERTS), TRI_VERTS * sizeof(T));
+      for (std::size_t j = 0; j < originalStride / Constants::TRI_VERTS; j++) {
+        std::memcpy(currentIndex, (data + i) + (j * Constants::TRI_VERTS), Constants::TRI_VERTS * sizeof(T));
         currentIndex[3] = wDefault;
         currentIndex += HOMOGENOUS_3D_SPACE;
       }
@@ -91,14 +91,13 @@ class VertexBuffer {
     for (std::size_t i = 0; i < mWorkingSize; i += mHomogenizedStride) {
       ZVector<4, T> vertexVector;
       vertexVector[3] = static_cast<T>(1);
-      vertexVector.LoadRawData(mData.data() + i, TRI_VERTS);
+      vertexVector.LoadRawData(mData.data() + i, Constants::TRI_VERTS);
       vertexVector = ZMatrix<4, 4, T>::ApplyTransform(transform, vertexVector);
-      vertexVector.StoreRawData(mData.data() + i, TRI_VERTS);
+      vertexVector.StoreRawData(mData.data() + i, Constants::TRI_VERTS);
     }
   }
 
   private:
-  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 3;
   static constexpr std::size_t HOMOGENOUS_3D_SPACE = 4;
 
   std::vector<T> mData;
@@ -107,5 +106,3 @@ class VertexBuffer {
 };
 
 }
-
-#endif

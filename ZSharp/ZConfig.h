@@ -1,5 +1,4 @@
-﻿#ifndef CONFIG_H
-#define CONFIG_H
+﻿#pragma once
 
 #include <cstdint>
 #include <cstddef>
@@ -54,4 +53,3 @@ class ZConfig {
   std::size_t mViewportStride = 0;
 };
 }
-#endif

@@ -1,11 +1,6 @@
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#pragma once
 
 #include <cstddef>
-
-// This is obvious and seemingly makes the code more verbose than necessary.
-// It's just meant to be an aid for finding instances in the code where something might need to know this.
-static constexpr std::size_t TRI_VERTS = 3;
 
 namespace ZSharp {
 
@@ -57,5 +52,3 @@ class Triangle {
 };
 
 }
-
-#endif

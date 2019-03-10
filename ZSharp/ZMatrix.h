@@ -1,5 +1,4 @@
-﻿#ifndef ZMATRIX_H
-#define ZMATRIX_H
+﻿#pragma once
 
 #include <cstddef>
 #include <cmath>
@@ -183,5 +182,3 @@ class ZMatrix {
 typedef ZMatrix<4, 4, float> Mat4x4f_t;
 
 }
-
-#endif

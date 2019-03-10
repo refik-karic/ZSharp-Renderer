@@ -77,6 +77,9 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case 'D':
           mRenderer->MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
           break;
+        case VK_ESCAPE:
+          DestroyWindow(hwnd);
+          break;
       }
       break;
     // TODO: Add a case for WM_CHAR and cast wParam to a wchar_t type.

@@ -1,5 +1,4 @@
-#ifndef SCANNER_H
-#define SCANNER_H
+#pragma once
 
 #include <fstream>
 #include <iostream> // TODO: Replace this with some kind of global logger singleton.
@@ -130,5 +129,3 @@ class Scanner {
 };
 
 }
-
-#endif

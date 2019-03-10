@@ -1,5 +1,4 @@
-﻿#ifndef ZVECTOR_H
-#define ZVECTOR_H
+﻿#pragma once
 
 #include <cstddef>
 
@@ -177,4 +176,3 @@ typedef ZVector<3, float> Vec3f_t;
 typedef ZVector<4, float> Vec4f_t;
 
 }
-#endif

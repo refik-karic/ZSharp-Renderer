@@ -1,5 +1,4 @@
-#ifndef JSONOBJECT_H
-#define JSONOBJECT_H
+#pragma once
 
 #include <cstdint>
 
@@ -102,5 +101,3 @@ class JsonObject {
 };
 
 }
-
-#endif

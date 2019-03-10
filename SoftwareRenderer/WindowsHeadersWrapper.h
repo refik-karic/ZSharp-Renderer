@@ -1,5 +1,4 @@
-#ifndef WINDOWSHEADERSWRAPPER_H
-#define WINDOWSHEADERSWRAPPER_H
+#pragma once
 
 // Even though this header only includes the minimum requirements at any given time.
 // It is still useful to ignore excess things in the event where another header, such as objidl.h from GDI+/COM, include windows.h themselves.
@@ -54,5 +53,3 @@
 #include <windef.h>
 #include <winbase.h>
 #include <winuser.h>
-
-#endif

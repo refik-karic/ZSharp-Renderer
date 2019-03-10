@@ -1,5 +1,4 @@
-#ifndef INDEX_BUFFER_H
-#define INDEX_BUFFER_H
+#pragma once
 
 #include <vector>
 
@@ -39,5 +38,3 @@ class IndexBuffer {
 };
 
 }
-
-#endif

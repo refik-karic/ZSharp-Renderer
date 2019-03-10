@@ -1,5 +1,4 @@
-﻿#ifndef ASSETLOADER_H
-#define ASSETLOADER_H
+﻿#pragma once
 
 #include <list>
 #include <string>
@@ -85,5 +84,3 @@ class AssetLoader {
   void ProcessJsonData(JsonObject& jsonObject, std::list<JsonObject::JsonToken>::iterator& begin, std::list<JsonObject::JsonToken>::iterator& end, bool isArray);
 };
 }
-
-#endif

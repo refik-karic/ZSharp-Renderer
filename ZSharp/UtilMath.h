@@ -1,5 +1,4 @@
-﻿#ifndef UTILMATH_H
-#define UTILMATH_H
+﻿#pragma once
 
 #include <cstddef>
 
@@ -35,5 +34,3 @@ T NewtonRaphsonSqrt(T val) {
   return x0;
 }
 }
-
-#endif

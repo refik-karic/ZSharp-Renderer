@@ -22,12 +22,12 @@ Renderer::Renderer() {
 
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
     // Must account for the possibility of clipping the max amount on each triangle.
-    indexBufSize += (mesh.GetTriangleFaceTable().size() * TRI_VERTS);
+    indexBufSize += (mesh.GetTriangleFaceTable().size() * Constants::TRI_VERTS);
     vertexBufSize += mesh.GetVertTable().size();
   }
 
   mIndexBuffer = std::make_shared<IndexBuffer>(indexBufSize);
-  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, TRI_VERTS);
+  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, Constants::TRI_VERTS);
   
   Vec3f_t cameraDefaultPos;
   cameraDefaultPos[0] = 0.0f;
@@ -48,11 +48,11 @@ void Renderer::RenderNextFrame() {
     // Fill EBO.
     for (std::size_t i = 0; i < mesh.GetTriangleFaceTable().size(); ++i) {
       Triangle<float>& triangle = mesh.GetTriangleFaceTable()[i];
-      mIndexBuffer->CopyData(triangle.GetData(), i * TRI_VERTS, TRI_VERTS);
+      mIndexBuffer->CopyData(triangle.GetData(), i * Constants::TRI_VERTS, Constants::TRI_VERTS);
     }
 
     // Update the size of the EBO.
-    mIndexBuffer->SetWorkingSize(mesh.GetTriangleFaceTable().size() * TRI_VERTS);
+    mIndexBuffer->SetWorkingSize(mesh.GetTriangleFaceTable().size() * Constants::TRI_VERTS);
 
     // Fill VBO.
     mVertexBuffer->CopyData(mesh.GetVertTable().data(), 0, mesh.GetVertTable().size());

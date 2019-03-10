@@ -1,5 +1,4 @@
-﻿#ifndef GDIWRAPPER_H
-#define GDIWRAPPER_H
+﻿#pragma once
 
 #include "WindowsHeadersWrapper.h"
 
@@ -19,5 +18,3 @@ class GDIWrapper {
   HWND mHwnd;
   ULONG_PTR mGdiToken;
 };
-
-#endif

@@ -1,5 +1,4 @@
-﻿#ifndef CAMERA_H
-#define CAMERA_H
+﻿#pragma once
 
 #include <cmath>
 #include <cstdint>
@@ -7,6 +6,7 @@
 #include <array>
 #include <map>
 
+#include "ClipBuffer.h"
 #include "Constants.h"
 #include "IndexBuffer.h"
 #include "Triangle.h"
@@ -49,8 +49,7 @@ class Camera {
     mNearPlane = static_cast<T>(10);
     mFarPlane = static_cast<T>(100);
 
-    // Setup the planes for clipping.
-    BuildClipPlanes();
+
   }
 
   ZVector<3, T> GetPosition() const {
@@ -170,7 +169,7 @@ class Camera {
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
       T* vertexData = vertexBuffer.GetData() + i;
       ZVector<4, T> vertexVector;
-      vertexVector.LoadRawData(vertexData, TRI_VERTS);
+      vertexVector.LoadRawData(vertexData, Constants::TRI_VERTS);
       vertexVector[3] = static_cast<T>(1);
       vertexVector = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertexVector);
       vertexVector.StoreRawData(vertexData, 4);
@@ -187,16 +186,13 @@ class Camera {
       vertexVector.StoreRawData(vertexData, 3);
     }
 
-    // At this point the vertex is transformed into the "SPVV".
-    // TODO: Clip to the SPVV view volume on all sides but the near plane.
-    // NOTE: Only need to clip to +-1x, +-1y, and -1z. Near clipping should be done before homogenizing the W factor.
-    // At this point the current primitive has been converted to screen space and is ready to be drawn.
-    // TODO: Call SutherlandHodgmanClip()
+    // At this point all verticies have been transformed into the "SPVV".
+    mClipBuffer.ClipTriangles(vertexBuffer, indexBuffer);
 
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
       T* vertexData = vertexBuffer.GetData() + i;
       ZVector<4, T> vertexVector;
-      vertexVector.LoadRawData(vertexData, TRI_VERTS);
+      vertexVector.LoadRawData(vertexData, Constants::TRI_VERTS);
       ZVector<4, T>::Homogenize(vertexVector, 2);
       vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
       vertexVector.StoreRawData(vertexData, 2);
@@ -243,197 +239,6 @@ class Camera {
   
   std::intptr_t mHeight;
 
-  enum class ClipPlane {
-    BACK,
-    LEFT,
-    RIGHT,
-    BOTTOM,
-    TOP
-  };
-
-  typedef std::array<ZVector<3, T>, 2> ClipEdge_t;
-
-  typedef std::array<ClipEdge_t, 4> PlaneEdges_t;
-
-  std::map<ClipPlane, PlaneEdges_t> mClipPlanes;
-
-  void BuildClipPlanes() {
-    // NOTE: All planes are defined in counter-clockwise order so that the normal points away from the inside of each clip plane.
-    ZVector<3, T> p1;
-    ZVector<3, T> p2;
-    ClipEdge_t edge;
-    PlaneEdges_t plane;
-
-    // BACK
-    {
-      p1[0] = static_cast<T>(1);
-      p1[1] = static_cast<T>(1);
-      p1[2] = static_cast<T>(-1);
-      p2[0] = static_cast<T>(-1);
-      p2[1] = static_cast<T>(1);
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[0] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[1] = edge;
-
-      p1 = p2;
-      p2[0] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[2] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[3] = edge;
-
-      mClipPlanes.insert(std::pair<ClipPlane, PlaneEdges_t>(ClipPlane::BACK, plane));
-    }
-
-    // LEFT
-    {
-      p1[0] = static_cast<T>(-1);
-      p1[1] = static_cast<T>(1);
-      p1[2] = static_cast<T>(-1);
-      p2[0] = static_cast<T>(-1);
-      p2[1] = static_cast<T>(1);
-      p2[2] = static_cast<T>(0);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[0] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[1] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[2] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[3] = edge;
-
-      mClipPlanes.insert(std::pair<ClipPlane, PlaneEdges_t>(ClipPlane::LEFT, plane));
-    }
-
-    // RIGHT
-    {
-      p1[0] = static_cast<T>(1);
-      p1[1] = static_cast<T>(1);
-      p1[2] = static_cast<T>(0);
-      p2[0] = static_cast<T>(1);
-      p2[1] = static_cast<T>(1);
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[0] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[1] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(0);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[2] = edge;
-
-      p1 = p2;
-      p2[1] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[3] = edge;
-
-      mClipPlanes.insert(std::pair<ClipPlane, PlaneEdges_t>(ClipPlane::RIGHT, plane));
-    }
-
-    // BOTTOM
-    {
-      p1[0] = static_cast<T>(1);
-      p1[1] = static_cast<T>(-1);
-      p1[2] = static_cast<T>(-1);
-      p2[0] = static_cast<T>(-1);
-      p2[1] = static_cast<T>(-1);
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[0] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(0);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[1] = edge;
-
-      p1 = p2;
-      p2[0] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[2] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[3] = edge;
-
-      mClipPlanes.insert(std::pair<ClipPlane, PlaneEdges_t>(ClipPlane::BOTTOM, plane));
-    }
-
-    // TOP
-    {
-      p1[0] = static_cast<T>(1);
-      p1[1] = static_cast<T>(1);
-      p1[2] = static_cast<T>(0);
-      p2[0] = static_cast<T>(-1);
-      p2[1] = static_cast<T>(1);
-      p2[2] = static_cast<T>(0);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[0] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(-1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[1] = edge;
-
-      p1 = p2;
-      p2[0] = static_cast<T>(1);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[2] = edge;
-
-      p1 = p2;
-      p2[2] = static_cast<T>(0);
-      edge[0] = p1;
-      edge[1] = p2;
-      plane[3] = edge;
-
-      mClipPlanes.insert(std::pair<ClipPlane, PlaneEdges_t>(ClipPlane::TOP, plane));
-    }
-  }
-
-  void SutherlandHodgman3dClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, PlaneEdges_t planeEdges) {
-    // TODO: Implement this.
-  }
+  ClipBuffer<T, Constants::TRI_CLIP_BUFFER_SIZE> mClipBuffer;
 };
 }
-
-#endif
