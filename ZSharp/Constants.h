@@ -24,7 +24,7 @@ class Constants {
   // It's just meant to be an aid for finding instances in the code where something might need to know this.
   static constexpr std::size_t TRI_VERTS = 3;
 
-  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = (TRI_VERTS * MAX_VERTS_AFTER_CLIP) * 2;
+  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = TRI_VERTS * MAX_VERTS_AFTER_CLIP;
 };
 
 }

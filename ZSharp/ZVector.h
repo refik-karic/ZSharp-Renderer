@@ -57,6 +57,16 @@ class ZVector {
     }
   }
 
+  bool operator==(const ZVector<elements, T>& vector) const {
+    bool result = true;
+
+    for (std::size_t i = 0; (i < elements) && result; i++) {
+      result = result && (mData[i] == vector[i]);
+    }
+
+    return result;
+  }
+
   T operator[](std::size_t index) const {
     return mData[index];
   }
