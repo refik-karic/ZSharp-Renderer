@@ -3,8 +3,6 @@
 #include <cstddef>
 #include <cstring>
 
-#include <array>
-
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "ZVector.h"
@@ -29,7 +27,7 @@ class ClipBuffer {
       return;
     }
 
-    mData = rhs.mData;
+    std::memcpy(mData, rhs.mData, size * sizeof(T));
   }
 
   T operator[](std::size_t index) const {
@@ -41,33 +39,45 @@ class ClipBuffer {
   }
 
   void Clear() {
-    std::memset(mData.data(), 0, size * sizeof(T));
+    std::memset(mData, 0, size * sizeof(T));
     mInputIndex = 0;
     mOutputIndex = size / 2;
   }
 
   void ClipTriangles(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
-    SutherlandHodgmanClip(vertexBuffer, indexBuffer, ClipEdge::POSITIVE_X);
-    SutherlandHodgmanClip(vertexBuffer, indexBuffer, ClipEdge::POSITIVE_Y);
-    SutherlandHodgmanClip(vertexBuffer, indexBuffer, ClipEdge::NEGATIVE_X);
-    SutherlandHodgmanClip(vertexBuffer, indexBuffer, ClipEdge::NEGATIVE_Y);
-    SutherlandHodgmanClip(vertexBuffer, indexBuffer, ClipEdge::NEGATIVE_Z);
+    ZVector<3, T> currentEdge;
+    
+    // Positive X (right edge).
+    currentEdge[0] = static_cast<T>(1);
+    SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
+
+    // Positive Y (top edge).
+    currentEdge[0] = static_cast<T>(0);
+    currentEdge[1] = static_cast<T>(1);
+    SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
+    
+    // Negative X (left edge).
+    currentEdge[0] = static_cast<T>(-1);
+    currentEdge[1] = static_cast<T>(0);
+    SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
+    
+    // Negative Y (bottom edge).
+    currentEdge[0] = static_cast<T>(0);
+    currentEdge[1] = static_cast<T>(-1);
+    SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
+    
+    // Negative Z (back edge).
+    currentEdge[1] = static_cast<T>(0);
+    currentEdge[2] = static_cast<T>(-1);
+    SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
   }
 
   private:
-  std::array<T, size> mData;
+  T mData[size];
   std::size_t mInputIndex = 0;
   std::size_t mOutputIndex = size / 2;
 
-  enum class ClipEdge {
-    POSITIVE_X,
-    POSITIVE_Y,
-    NEGATIVE_X,
-    NEGATIVE_Y,
-    NEGATIVE_Z
-  };
-
-  void SutherlandHodgmanClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, ClipEdge clipEdge) {
+  void SutherlandHodgmanClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, ZVector<3, T> clipEdge) {
     std::size_t stride = vertexBuffer.GetStride();
     std::size_t end = indexBuffer.GetWorkingSize();
     for (std::size_t i = 0; i < end; i += Constants::TRI_VERTS, Clear()) {
@@ -77,65 +87,100 @@ class ClipBuffer {
 
       ZVector<3, T> start;
       ZVector<3, T> end;
-      ZVector<3, T> currentEdge;
 
-      switch (clipEdge) {
-        case ClipEdge::POSITIVE_X:
-          currentEdge[0] = static_cast<T>(1);
+      start.LoadRawData(v1, Constants::TRI_VERTS);
+      end.LoadRawData(v2, Constants::TRI_VERTS);
 
-          start.LoadRawData(v1, Constants::TRI_VERTS);
-          end.LoadRawData(v2, Constants::TRI_VERTS);
+      // TODO: Check for zero length lines to avoid a divide by 0!
 
-          if (start == end) {
-            start[0] += end[0];
-          }
+      if (!Inside(start, end, clipEdge) && !Inside(end, start, clipEdge)) {
+        // Both verticies are outside the clip region, skip.
+        continue;
+        // TODO: Need to update the VBO/EBO here when verticies are skipped.
+      }
+      else if (!Inside(start, end, clipEdge)) {
+        // End point is outside clip region, add to output section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
+      
+      }
+      else if(!Inside(end, start, clipEdge)) {
+        // Start point is outside clip region, add to input section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
 
-          if (v2[0] > currentEdge[0]) {
-            T parametricValue = ParametricClipIntersection(start, end, currentEdge, currentEdge);
-            ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
-            // TODO: Come up with a cleaner way to access/store the internal vector data here.
-            //AddInputVertex(&clippedEnd[0]);
+      }
+      else {
+        // Add existing vertex to input section of the clip buffer.
 
-            if (start == end) {
-              start[0] += end[0];
-            }
-          }
-          else {
-            AddInputVertex(v2);
-          }
-          break;
-        case ClipEdge::POSITIVE_Y:
-          currentEdge[1] = static_cast<T>(1);
+      }
 
+      // Second edge.
+      start.LoadRawData(v2, Constants::TRI_VERTS);
+      end.LoadRawData(v3, Constants::TRI_VERTS);
 
-          break;
-        case ClipEdge::NEGATIVE_X:
-          currentEdge[0] = static_cast<T>(-1);
+      if (!Inside(start, end, clipEdge) && !Inside(end, start, clipEdge)) {
+        // Both verticies are outside the clip region, skip.
+        continue;
+        // TODO: Need to update the VBO/EBO here when verticies are skipped.
+      } else if (!Inside(start, end, clipEdge)) {
+        // End point is outside clip region, add to output section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
+      } else if (!Inside(end, start, clipEdge)) {
+        // Start point is outside clip region, add to input section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
 
-          break;
-        case ClipEdge::NEGATIVE_Y:
-          currentEdge[1] = static_cast<T>(-1);
+      } else {
+        // Add existing vertex to input section of the clip buffer.
 
+      }
+      
+      // Third and final edge.
+      start.LoadRawData(v3, Constants::TRI_VERTS);
+      end.LoadRawData(v1, Constants::TRI_VERTS);
 
-          break;
-        case ClipEdge::NEGATIVE_Z:
-          currentEdge[2] = static_cast<T>(-1);
+      if (!Inside(start, end, clipEdge) && !Inside(end, start, clipEdge)) {
+        // Both verticies are outside the clip region, skip.
+        continue;
+        // TODO: Need to update the VBO/EBO here when verticies are skipped.
+      } else if (!Inside(start, end, clipEdge)) {
+        // End point is outside clip region, add to output section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
+      } else if (!Inside(end, start, clipEdge)) {
+        // Start point is outside clip region, add to input section of clip buffer.
+        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
+        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
 
-          break;
+      } else {
+        // Add existing vertex to input section of the clip buffer.
+
       }
     }
   }
 
   void AddInputVertex(const T* vboData) {
-    std::memcpy(mData.data() + mInputIndex, vboData, Constants::TRI_VERTS * sizeof(T));
+    std::memcpy(mData + mInputIndex, vboData, Constants::TRI_VERTS * sizeof(T));
     mInputIndex += Constants::TRI_VERTS;
   }
 
   void AddOutputVertex(const T* vboData) {
-    std::memcpy(mData.data() + mOutputIndex, vboData, Constants::TRI_VERTS * sizeof(T));
+    std::memcpy(mData + mOutputIndex, vboData, Constants::TRI_VERTS * sizeof(T));
     mOutputIndex += Constants::TRI_VERTS;
+  }
+
+  /// <summary>
+  /// Determine whether or not the endpoint is on the inside of the clip edge.
+  /// </summary>
+  /// <returns>
+  /// True if the endpoint is inside the clip edge region.
+  /// </returns>
+  bool Inside(ZVector<3, T> start, ZVector<3, T> end, ZVector<3, T> clipEdge) {
+    return ((clipEdge * (end - start)) < static_cast<T>(0));
   }
 
   ZVector<3, T> GetParametricVector(T point, ZVector<3, T> start, ZVector<3, T> end) {
@@ -145,13 +190,6 @@ class ClipBuffer {
   T ParametricClipIntersection(ZVector<3, T> start, ZVector<3, T> end, ZVector<3, T> edgeNormal, ZVector<3, T> edgePoint) {
     T numerator = edgeNormal * (start - edgePoint);
     T denominator = (edgeNormal * static_cast<T>(-1)) * (end - start);
-
-    // TODO: Debug, remove.
-    // Was getting a BSOD without this here, which makes me think it was the OS/HW panicking when a divide by 0 was happening.
-    if (denominator == static_cast<T>(0)) {
-      denominator = static_cast<T>(1);
-    }
-
     return (numerator / denominator);
   }
 };

@@ -186,6 +186,7 @@ class Camera {
       vertexVector.StoreRawData(vertexData, 3);
     }
 
+    // TODO: Figure out why the SPVV is not in the correct coordinate space.
     // At this point all verticies have been transformed into the "SPVV".
     mClipBuffer.ClipTriangles(vertexBuffer, indexBuffer);
 
