@@ -163,9 +163,6 @@ class Camera {
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // TODO: This implementation will currently apply the transformaton to ALL verticies in the VBO, regardless if they are vertex data in a stride or texture coordinates!
-    // TODO: Keep in mind clipped verticies when performing operations over all verticies in the VBO!
-    // TODO: Also, be wary of shared verticies when implementing clipping to preserve memory for shared input verticies!
-    
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
       T* vertexData = vertexBuffer.GetData() + i;
       ZVector<4, T> vertexVector;

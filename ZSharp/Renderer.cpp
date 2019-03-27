@@ -83,12 +83,8 @@ void Renderer::RenderNextFrame() {
   colorBlue.Color = ZColors::BLUE;
 
   // Track frame times.
-  std::chrono::high_resolution_clock::time_point mainLoopStart(std::chrono::high_resolution_clock::now());
-  std::chrono::high_resolution_clock::time_point frameStart;
+  std::chrono::high_resolution_clock::time_point frameStart(std::chrono::high_resolution_clock::now());
   std::chrono::milliseconds frameDelta;
-
-  // Time the start of the current frame.
-  frameStart = std::chrono::high_resolution_clock::now();
 
   // Clear the last frame before drawing the next set of primitives.
   mBuffer.Clear(colorBlue);

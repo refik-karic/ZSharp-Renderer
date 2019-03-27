@@ -6,15 +6,14 @@
 
 class GDIWrapper {
   public:
-  GDIWrapper(HWND hwnd);
+  GDIWrapper();
   ~GDIWrapper();
 
   GDIWrapper(const GDIWrapper&) = delete;
   void operator=(const GDIWrapper&) = delete;
 
-  void UpdateWindow(const ZSharp::Framebuffer& frameData);
+  void UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData);
 
   private:
-  HWND mHwnd;
   ULONG_PTR mGdiToken;
 };

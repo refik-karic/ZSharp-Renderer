@@ -3,8 +3,7 @@
 namespace ZSharp {
 
 IndexBuffer::IndexBuffer(std::size_t size) :
-  mData(size * MAX_INDICIES_AFTER_CLIP),
-  mRequestedSize(size)
+  mData(size * MAX_INDICIES_AFTER_CLIP)
 {
 
 }
@@ -29,14 +28,6 @@ std::size_t IndexBuffer::operator[](std::size_t index) const {
 
 std::size_t& IndexBuffer::operator[](std::size_t index) {
   return mData[index];
-}
-
-std::size_t IndexBuffer::GetTotalSize() const {
-  return mData.size();
-}
-
-std::size_t IndexBuffer::GetRequestedSize() const {
-  return mRequestedSize;
 }
 
 std::size_t IndexBuffer::GetWorkingSize() const {

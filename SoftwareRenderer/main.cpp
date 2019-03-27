@@ -4,6 +4,8 @@
 #include <Renderer.h>
 #include <ZConfig.h>
 
+#include <chrono>
+
 #include "WindowsHeadersWrapper.h"
 #include "GDIWrapper.h"
 
@@ -12,6 +14,8 @@ ZSharp::Renderer* mRenderer = nullptr;
 GDIWrapper* mGdiWrapper = nullptr;
 
 const wchar_t mClassName[] = L"Test Class Name";
+
+static std::chrono::high_resolution_clock::time_point LAST_FRAME;
 
 bool InitializeRenderer();
 
@@ -25,7 +29,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /// <summary>
 /// Main entry point for the application.
 /// </summary>
-int WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow) {
+int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int nCmdShow) {
   if (!InitializeRenderer()) {
     return -1;
   }
@@ -35,7 +39,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow) {
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
-  mGdiWrapper = new GDIWrapper(hwnd);
+  mGdiWrapper = new GDIWrapper();
+
+  LAST_FRAME = std::chrono::high_resolution_clock::now();
 
   // Run the message loop.
   MSG msg;
@@ -57,10 +63,41 @@ int WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow) {
 }
 
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+  static constexpr long long FRAMERATE_60_HZ_MS = 1000 / 60;
+  static UINT_PTR windowsFrameTimer;
+
   switch (uMsg) {
+    case WM_CREATE:
+      windowsFrameTimer = SetTimer(hwnd, 1, static_cast<UINT>(FRAMERATE_60_HZ_MS), NULL);
+
+      if(windowsFrameTimer == 0){
+        DestroyWindow(hwnd);
+      }
+
+      break;
+    case WM_TIMER:
+      // TODO: Figure out if the stuff for calculating the frame delta would be useful later.
+      /*std::chrono::milliseconds frameDelta;
+      frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - LAST_FRAME);
+
+      if(frameDelta.count() > FRAMERATE_60_HZ_MS){
+        RECT activeWindowSize;
+        GetClientRect(hwnd, &activeWindowSize);
+        // TODO: This uses lazy "dirty rectangle" drawing and re-draws the entire frame on each pass.
+        // It would be much better to track the changed area and only update that.
+        InvalidateRect(hwnd, &activeWindowSize, false);
+      }
+
+      LAST_FRAME = std::chrono::high_resolution_clock::now();*/
+      
+      RECT activeWindowSize;
+      GetClientRect(hwnd, &activeWindowSize);
+      InvalidateRect(hwnd, &activeWindowSize, false);
+
+      break;
     case WM_PAINT:
       mRenderer->RenderNextFrame();
-      mGdiWrapper->UpdateWindow(*(mRenderer->GetFrameBuffer()));
+      mGdiWrapper->UpdateWindow(hwnd, *(mRenderer->GetFrameBuffer()));
       break;
     case WM_KEYDOWN:
       // Just treat wParam as an ASCII character press for simplicity at the moment.
@@ -88,6 +125,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       DestroyWindow(hwnd);
       break;
     case WM_DESTROY:
+      KillTimer(hwnd, windowsFrameTimer);
       PostQuitMessage(0);
       break;
     case WM_QUIT:
@@ -101,9 +139,9 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 bool InitializeRenderer() {
   ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
-  config.SetBytesPerPixel(4);
   config.SetViewportWidth(640);
   config.SetViewportHeight(480);
+  config.SetBytesPerPixel(4);
 
   // Prepare renderer and hook GDI+ to its framebuffer.
   mRenderer = new ZSharp::Renderer();
