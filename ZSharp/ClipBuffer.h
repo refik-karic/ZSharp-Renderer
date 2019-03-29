@@ -13,7 +13,7 @@ template<typename T, std::size_t size>
 class ClipBuffer {
   public:
   ClipBuffer() {
-    Clear();
+    //Clear();
   }
 
   ClipBuffer(const ClipBuffer<T, size>& rhs) {
@@ -196,12 +196,8 @@ class ClipBuffer {
     * Section 3.12.4, A Parametric Line Clipping Algorithm
     * See p.118
     */
-    (void)start;
-    (void)end;
-    (void)clipEdge;
-
-    return true;
-    //return ((clipEdge * (end - start)) < static_cast<T>(0));
+    // TODO: Figure out why this is returning the wrong value for the +/-Y edge.
+    return ((clipEdge * (end - start)) < static_cast<T>(0));
   }
 
   ZVector<3, T> GetParametricVector(T point, ZVector<3, T> start, ZVector<3, T> end) {

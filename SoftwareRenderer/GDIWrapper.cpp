@@ -56,6 +56,7 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
 
   if(hdc != nullptr) {
     Gdiplus::Graphics graphics(hdc);
+    // TODO: Figure out a way to rotate the bitmap 180 degrees quickly since it is being drawn upside down right now.
     graphics.DrawImage(&bitmap, drawRect);
   }
 

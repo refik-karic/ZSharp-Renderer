@@ -3,9 +3,6 @@
 #include <cmath>
 #include <cstdint>
 
-#include <array>
-#include <map>
-
 #include "ClipBuffer.h"
 #include "Constants.h"
 #include "IndexBuffer.h"
@@ -48,8 +45,6 @@ class Camera {
     // Default to a near plane of 10 and far plane of 100.
     mNearPlane = static_cast<T>(10);
     mFarPlane = static_cast<T>(100);
-
-
   }
 
   ZVector<3, T> GetPosition() const {
@@ -80,7 +75,7 @@ class Camera {
 
     // Calculate the W unit vector (opposite of look vector).
     ZVector<3, T> w;
-    w = mLook;
+    w = mLook * static_cast<T>(-1);
     ZVector<3, T>::Normalize(w);
 
     // Calculate V unit vector (up vector).
@@ -90,7 +85,7 @@ class Camera {
 
     // Calculate the U unit vector pointing to the right.
     ZVector<3, T> u;
-    u = ZVector<3, T>::Cross(w, v);
+    u = ZVector<3, T>::Cross(v, w);
 
     // At this point U, V, and W have been calculated.
     // Next step is to construct the perspective projection linear transform based off of these unit vectors.

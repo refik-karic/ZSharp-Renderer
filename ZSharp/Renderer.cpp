@@ -32,7 +32,7 @@ Renderer::Renderer() {
   Vec3f_t cameraDefaultPos;
   cameraDefaultPos[0] = 0.0f;
   cameraDefaultPos[1] = 0.0f;
-  cameraDefaultPos[2] = 15.0f;
+  cameraDefaultPos[2] = 35.0f;
   mCamera.MoveCamera(cameraDefaultPos);
 }
 
@@ -67,7 +67,7 @@ void Renderer::RenderNextFrame() {
                                     static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
                                     Mat4x4f_t::Axis::Y);
 
-  mFrameCount++;
+  mFrameCount+=4;
   if (mFrameCount > 360) {
     mFrameCount = 0;
   }
