@@ -78,7 +78,7 @@ class ClipBuffer {
   std::size_t mInputIndex = 0;
   std::size_t mOutputIndex = size / 2;
 
-  void SutherlandHodgmanClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, ZVector<3, T> clipEdge) {
+  void SutherlandHodgmanClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, ZVector<3, T>& clipEdge) {
     std::size_t stride = vertexBuffer.GetStride();
     std::size_t endEBO = indexBuffer.GetWorkingSize();
     for (std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
@@ -94,19 +94,19 @@ class ClipBuffer {
 
       // TODO: Check for zero length lines to avoid a divide by 0!
 
-      if (!Inside(startPoint, endPoint, clipEdge) && !Inside(endPoint, startPoint, clipEdge)) {
+      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
 
       }
-      else if (!Inside(startPoint, endPoint, clipEdge)) {
+      else if (!Inside(endPoint, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
         T parametricValue = ParametricClipIntersection(startPoint, endPoint, clipEdge, clipEdge);
         ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, startPoint, endPoint);
 
       }
-      else if(!Inside(endPoint, startPoint, clipEdge)) {
+      else if(!Inside(startPoint, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
@@ -123,16 +123,16 @@ class ClipBuffer {
       startPoint.LoadRawData(v2, Constants::TRI_VERTS);
       endPoint.LoadRawData(v3, Constants::TRI_VERTS);
 
-      if (!Inside(startPoint, endPoint, clipEdge) && !Inside(endPoint, startPoint, clipEdge)) {
+      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(startPoint, endPoint, clipEdge)) {
+      } else if (!Inside(endPoint, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
         //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
-      } else if (!Inside(endPoint, startPoint, clipEdge)) {
+      } else if (!Inside(endPoint, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
@@ -146,16 +146,16 @@ class ClipBuffer {
       startPoint.LoadRawData(v3, Constants::TRI_VERTS);
       endPoint.LoadRawData(v1, Constants::TRI_VERTS);
 
-      if (!Inside(startPoint, endPoint, clipEdge) && !Inside(endPoint, startPoint, clipEdge)) {
+      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(startPoint, endPoint, clipEdge)) {
+      } else if (!Inside(endPoint, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
         //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
-      } else if (!Inside(endPoint, startPoint, clipEdge)) {
+      } else if (!Inside(startPoint, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
@@ -185,9 +185,9 @@ class ClipBuffer {
   /// <returns>
   /// True if the endpoint is inside the clip edge region.
   /// </returns>
-  bool Inside(ZVector<3, T>& start, ZVector<3, T>& end, ZVector<3, T>& clipEdge) {
+  bool Inside(ZVector<3, T>& point, ZVector<3, T>& clipEdge) {
     /*
-    * Check the sign of the dot product of the clip edge and the difference vector of the line.
+    * Check the sign of the dot product of the clip edge with it's difference against and a point in space.
     * Positive means outside, negative means inside, 0 is on the line.
     *
     * Computer Graphics: Principles and Practice Second Edition in C (1995)
@@ -196,8 +196,18 @@ class ClipBuffer {
     * Section 3.12.4, A Parametric Line Clipping Algorithm
     * See p.118
     */
-    // TODO: Figure out why this is returning the wrong value for the +/-Y edge.
-    return ((clipEdge * (end - start)) < static_cast<T>(0));
+
+    /*
+    * Computer Graphics: Principles and Practice (3rd Edition)
+    * John F. Hughes, Andries van Dam, Morgan McGuire, David F. Sklar, James D. Foley, Steven K. Feiner, Kurt Akeley
+    *
+    * See Listing 36.3 on p.1045, Lines 12 and 13. (The listing is in R2 not R3)
+    */
+
+    // For some reason that I have yet to understand, both the 2nd and 3rd editions of CGPP define this equation with accepting a different points for subtraction and dot.
+    // That is to say, those equations do not share the clip edge in the calculations below like I have.
+    // Maybe that is for generalizing the algorithm? At any rate, this does the job for me.
+    return ((clipEdge * (point - clipEdge)) <= static_cast<T>(0));
   }
 
   ZVector<3, T> GetParametricVector(T point, ZVector<3, T> start, ZVector<3, T> end) {

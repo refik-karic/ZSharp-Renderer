@@ -132,7 +132,7 @@
       <EnableModules>false</EnableModules>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
-      <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8 </AdditionalOptions>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>

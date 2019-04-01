@@ -46,10 +46,19 @@
 #define NOPROFILER
 #define NODEFERWINDOWPOS
 #define NOMCX
+// WinUser.h defines.
+#define NOAPISET
+#define NOSYSPARAMSINFO
+#define NOWINABLE
+// Objidl.h defines.
+#define COM_NO_WINDOWS_H
+// rpc.h defines.
+#define RPC_NO_WINDOWS_H
 
 // Thanks to Aras for the tip on reducing Windows includes.
 // https://aras-p.info/blog/2018/01/12/Minimizing-windows.h/
 #define _AMD64_
 #include <windef.h>
 #include <winbase.h>
+#include <wingdi.h>
 #include <winuser.h>

@@ -3,20 +3,20 @@
 
 #include "GDIWrapper.h"
 
+#include <objbase.h>
+
 // Need to disable this warning in order to compile without warnings in /W4
 #pragma warning(push)
 #pragma warning(disable:4458)
-
-#include <objidl.h>
 #include <gdiplus.h>
+#pragma warning(pop)
+
 #include <gdiplusinit.h>
 #include <gdiplusimaging.h>
 #include <gdiplusgraphics.h>
 #include <gdiplusheaders.h>
 #include <gdipluspixelformats.h>
 #include <gdiplustypes.h>
-
-#pragma warning(pop)
 
 GDIWrapper::GDIWrapper()
 {
@@ -42,7 +42,6 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
                          static_cast<int>(activeWindowSize.right),
                          static_cast<int>(activeWindowSize.bottom));
   
-  //Gdiplus::BitmapData bitmapData;
   Gdiplus::Bitmap bitmap(drawRect.Width, 
     drawRect.Height,
     drawRect.Width * 4,
@@ -50,13 +49,11 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
     static_cast<BYTE*>(frameData.GetBuffer()));
 
   // Use GDI+ to draw the bitmap onto our viewport.
-  HDC hdc;
   PAINTSTRUCT ps;
-  hdc = BeginPaint(hWnd, &ps);
+  HDC hdc = BeginPaint(hWnd, &ps);
 
   if(hdc != nullptr) {
     Gdiplus::Graphics graphics(hdc);
-    // TODO: Figure out a way to rotate the bitmap 180 degrees quickly since it is being drawn upside down right now.
     graphics.DrawImage(&bitmap, drawRect);
   }
 
