@@ -73,12 +73,12 @@ class VertexBuffer {
     }
   }
 
-  T* GetData() {
-    return mData.data();
+  T* GetData(std::size_t index = 0, std::size_t stride = 1) {
+    return mData.data() + (index * stride);
   }
 
-  const T* GetData() const {
-    return mData.data();
+  const T* GetData(std::size_t index = 0, std::size_t stride = 1) const {
+    return mData.data() + (index * stride);
   }
 
   void Clear() {
@@ -89,11 +89,9 @@ class VertexBuffer {
     // TODO: Come back to this later and figure out if the transforms will need to apply to things like texture coordinates as well.
     // Apply the transform to each vertex in the VBO.
     for (std::size_t i = 0; i < mWorkingSize; i += mHomogenizedStride) {
-      ZVector<4, T> vertexVector;
+      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(mData.data() + i));
       vertexVector[3] = static_cast<T>(1);
-      vertexVector.LoadRawData(mData.data() + i, Constants::TRI_VERTS);
       vertexVector = ZMatrix<4, 4, T>::ApplyTransform(transform, vertexVector);
-      vertexVector.StoreRawData(mData.data() + i, Constants::TRI_VERTS);
     }
   }
 

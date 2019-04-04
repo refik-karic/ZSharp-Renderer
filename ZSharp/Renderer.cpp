@@ -11,7 +11,7 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-static const std::string ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
+static const std::string ASSET_FILE("C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json");
 
 namespace ZSharp {
 Renderer::Renderer() {
@@ -99,8 +99,8 @@ void Renderer::RenderNextFrame() {
   frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
 }
 
-Framebuffer* Renderer::GetFrameBuffer() {
-  return &mBuffer;
+Framebuffer& Renderer::GetFrameBuffer() {
+  return mBuffer;
 }
 
 void Renderer::MoveCamera(Direction direction, float amount) {

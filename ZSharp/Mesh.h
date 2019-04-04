@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <array>
 #include <vector>
 
 #include "Triangle.h"
@@ -34,8 +35,8 @@ class Mesh {
       return;
     }
 
-    mVertTable = rhs.GetVertTable();
-    mTriangleFaceTable = rhs.GetTriangleFaceTable();
+    mVertTable = rhs.mVertTable;
+    mTriangleFaceTable = rhs.mTriangleFaceTable;
   }
 
   void SetData(const T* vertData, std::size_t numVerts, std::size_t numTriangleFaces) {
@@ -57,7 +58,7 @@ class Mesh {
     }
   }
 
-  void SetTriangle(const std::size_t* triangleFaceData, std::size_t index) {
+  void SetTriangle(const std::array<size_t, 3>& triangleFaceData, std::size_t index) {
     Triangle<T>& triangle = mTriangleFaceTable[index];
     triangle[0] = triangleFaceData[0];
     triangle[1] = triangleFaceData[1];

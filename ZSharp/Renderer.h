@@ -21,8 +21,11 @@ class Renderer {
 
   Renderer();
 
+  Renderer(const Renderer&) = delete;
+  void operator=(const Renderer&) = delete;
+
   void RenderNextFrame();
-  Framebuffer* GetFrameBuffer();
+  Framebuffer& GetFrameBuffer();
 
   void MoveCamera(Direction direction, float amount);
 

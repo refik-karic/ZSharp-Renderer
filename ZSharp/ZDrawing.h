@@ -31,9 +31,9 @@ void DrawTriangles(Framebuffer& framebuffer,
   std::size_t stride = vertexBuffer.GetStride();
   std::size_t end = indexBuffer.GetWorkingSize();
   for (std::size_t i = 0; i < end; i += Constants::TRI_VERTS) {
-    const T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
-    const T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
-    const T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
+    const T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
+    const T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
+    const T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
 
     // Draw line connecting v1 to v2.
     DrawRunSlice(framebuffer,

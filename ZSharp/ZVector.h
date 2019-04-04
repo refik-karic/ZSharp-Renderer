@@ -165,18 +165,6 @@ class ZVector {
     }
   }
 
-  void LoadRawData(const T* const data, std::size_t length) {
-    for (std::size_t i = 0; i < length; ++i) {
-      mData[i] = data[i];
-    }
-  }
-
-  void StoreRawData(T* data, std::size_t length) const {
-    for (std::size_t i = 0; i < length; ++i) {
-      data[i] = mData[i];
-    }
-  }
-
   private:
   T mData[elements];
 };

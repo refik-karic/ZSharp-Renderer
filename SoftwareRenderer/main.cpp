@@ -1,6 +1,4 @@
-﻿// See this for information about Visual Studio C++ XML comments: https://docs.microsoft.com/en-us/cpp/ide/xml-documentation-visual-cpp
-
-// Headers.
+﻿// Headers.
 #include <Renderer.h>
 #include <ZConfig.h>
 
@@ -9,39 +7,29 @@
 #include "WindowsHeadersWrapper.h"
 #include "GDIWrapper.h"
 
-ZSharp::Renderer* mRenderer = nullptr;
+static ZSharp::Renderer* mRenderer = nullptr;
+static GDIWrapper* mGdiWrapper = nullptr;
 
-GDIWrapper* mGdiWrapper = nullptr;
-
-const wchar_t mClassName[] = L"Test Class Name";
-
-static std::chrono::high_resolution_clock::time_point LAST_FRAME;
+//static std::chrono::high_resolution_clock::time_point LAST_FRAME;
 
 bool InitializeRenderer();
-
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className);
-
-/// <summary>
-/// Message loop run on the GUI thread for processing Windows messages to the current Window. 
-/// </summary>
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-/// <summary>
-/// Main entry point for the application.
-/// </summary>
 int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int nCmdShow) {
   if (!InitializeRenderer()) {
     return -1;
   }
-  
-  HWND hwnd = SetupWindow(hInstance, mClassName);
+
+  static constexpr wchar_t className[] = L"Test Class Name";
+  HWND hwnd = SetupWindow(hInstance, className);
   if (hwnd == nullptr) {
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
   mGdiWrapper = new GDIWrapper();
 
-  LAST_FRAME = std::chrono::high_resolution_clock::now();
+  //LAST_FRAME = std::chrono::high_resolution_clock::now();
 
   // Run the message loop.
   MSG msg;
@@ -55,7 +43,7 @@ int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ L
     DispatchMessageW(&msg);
   }
 
-  UnregisterClassW(mClassName, hInstance);
+  UnregisterClassW(className, hInstance);
   delete mGdiWrapper;
   delete mRenderer;
 
@@ -97,7 +85,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       break;
     case WM_PAINT:
       mRenderer->RenderNextFrame();
-      mGdiWrapper->UpdateWindow(hwnd, *(mRenderer->GetFrameBuffer()));
+      mGdiWrapper->UpdateWindow(hwnd, mRenderer->GetFrameBuffer());
       break;
     case WM_KEYDOWN:
       // Just treat wParam as an ASCII character press for simplicity at the moment.
@@ -145,7 +133,6 @@ bool InitializeRenderer() {
 
   // Prepare renderer and hook GDI+ to its framebuffer.
   mRenderer = new ZSharp::Renderer();
-
   return true;
 }
 

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <array>
 #include <list>
 #include <string>
 #include <vector>
@@ -56,7 +57,7 @@ class AssetLoader {
 
       // Set each individual triangle with its indicies into the mesh vertex table.
       for (std::size_t triIndex = 0; triIndex < indicies->GetValue().dataArray.size(); ++triIndex) {
-        std::size_t triIndicies[3];
+        std::array<size_t, 3> triIndicies;
         triIndicies[0] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[0].dataInt);
         triIndicies[1] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[1].dataInt);
         triIndicies[2] = static_cast<std::size_t>(indicies->GetValue().dataArray[triIndex].dataArray[2].dataInt);

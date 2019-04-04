@@ -159,35 +159,29 @@ class Camera {
 
     // TODO: This implementation will currently apply the transformaton to ALL verticies in the VBO, regardless if they are vertex data in a stride or texture coordinates!
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
-      T* vertexData = vertexBuffer.GetData() + i;
-      ZVector<4, T> vertexVector;
-      vertexVector.LoadRawData(vertexData, Constants::TRI_VERTS);
+      T* vertexData = vertexBuffer.GetData(i);
+      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       vertexVector[3] = static_cast<T>(1);
       vertexVector = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertexVector);
-      vertexVector.StoreRawData(vertexData, 4);
     }
 
     // TODO: Clip in R4 to remove points with Z < 0.
     // This step can be skipped for now since my primitives should always be in front of the camera.
 
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
-      T* vertexData = vertexBuffer.GetData() + i;
-      ZVector<4, T> vertexVector;
-      vertexVector.LoadRawData(vertexData, 4);
+      T* vertexData = vertexBuffer.GetData(i);
+      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       ZVector<4, T>::Homogenize(vertexVector, 3);
-      vertexVector.StoreRawData(vertexData, 3);
     }
 
     // At this point all verticies have been transformed into the "SPVV".
     mClipBuffer.ClipTriangles(vertexBuffer, indexBuffer);
 
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
-      T* vertexData = vertexBuffer.GetData() + i;
-      ZVector<4, T> vertexVector;
-      vertexVector.LoadRawData(vertexData, Constants::TRI_VERTS);
+      T* vertexData = vertexBuffer.GetData(i);
+      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       ZVector<4, T>::Homogenize(vertexVector, 2);
       vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
-      vertexVector.StoreRawData(vertexData, 2);
     }
   }
 

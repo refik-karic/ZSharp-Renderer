@@ -1,5 +1,4 @@
 ﻿#include <cstddef>
-#include <cstring>
 
 #include "GDIWrapper.h"
 
@@ -12,7 +11,6 @@
 #pragma warning(pop)
 
 #include <gdiplusinit.h>
-#include <gdiplusimaging.h>
 #include <gdiplusgraphics.h>
 #include <gdiplusheaders.h>
 #include <gdipluspixelformats.h>
@@ -47,6 +45,7 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
     drawRect.Width * 4,
     PixelFormat32bppARGB, 
     static_cast<BYTE*>(frameData.GetBuffer()));
+  //bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone);
 
   // Use GDI+ to draw the bitmap onto our viewport.
   PAINTSTRUCT ps;

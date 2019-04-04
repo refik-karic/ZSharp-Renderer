@@ -82,36 +82,33 @@ class ClipBuffer {
     std::size_t stride = vertexBuffer.GetStride();
     std::size_t endEBO = indexBuffer.GetWorkingSize();
     for (std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
-      const T* v1 = vertexBuffer.GetData() + (indexBuffer[i] * stride);
-      const T* v2 = vertexBuffer.GetData() + (indexBuffer[i + 1] * stride);
-      const T* v3 = vertexBuffer.GetData() + (indexBuffer[i + 2] * stride);
-
-      ZVector<3, T> startPoint;
-      ZVector<3, T> endPoint;
-
-      startPoint.LoadRawData(v1, Constants::TRI_VERTS);
-      endPoint.LoadRawData(v2, Constants::TRI_VERTS);
+      T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
+      T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
+      T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
+      ZVector<3, T>& v1Vec = *(reinterpret_cast<ZVector<3, T>*>(v1));
+      ZVector<3, T>& v2Vec = *(reinterpret_cast<ZVector<3, T>*>(v2));
+      ZVector<3, T>& v3Vec = *(reinterpret_cast<ZVector<3, T>*>(v3));
 
       // TODO: Check for zero length lines to avoid a divide by 0!
 
-      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
+      if (!Inside(v1Vec, clipEdge) && !Inside(v2Vec, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
 
       }
-      else if (!Inside(endPoint, clipEdge)) {
+      else if (!Inside(v2Vec, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
-        T parametricValue = ParametricClipIntersection(startPoint, endPoint, clipEdge, clipEdge);
-        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, startPoint, endPoint);
+        T parametricValue = ParametricClipIntersection(v1Vec, v2Vec, clipEdge, clipEdge);
+        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, v1Vec, v2Vec);
 
       }
-      else if(!Inside(startPoint, clipEdge)) {
+      else if(!Inside(v1Vec, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
-        T parametricValue = ParametricClipIntersection(startPoint, endPoint, clipEdge, clipEdge);
-        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, startPoint, endPoint);
+        T parametricValue = ParametricClipIntersection(v1Vec, v2Vec, clipEdge, clipEdge);
+        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, v1Vec, v2Vec);
 
       }
       else {
@@ -120,19 +117,16 @@ class ClipBuffer {
       }
 
       // Second edge.
-      startPoint.LoadRawData(v2, Constants::TRI_VERTS);
-      endPoint.LoadRawData(v3, Constants::TRI_VERTS);
-
-      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
+      if (!Inside(v2Vec, clipEdge) && !Inside(v3Vec, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(endPoint, clipEdge)) {
+      } else if (!Inside(v3Vec, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
         //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
-      } else if (!Inside(endPoint, clipEdge)) {
+      } else if (!Inside(v2Vec, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
@@ -143,19 +137,16 @@ class ClipBuffer {
       }
       
       // Third and final edge.
-      startPoint.LoadRawData(v3, Constants::TRI_VERTS);
-      endPoint.LoadRawData(v1, Constants::TRI_VERTS);
-
-      if (!Inside(startPoint, clipEdge) && !Inside(endPoint, clipEdge)) {
+      if (!Inside(v3Vec, clipEdge) && !Inside(v1Vec, clipEdge)) {
         // Both verticies are outside the clip region, skip.
         continue;
         // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(endPoint, clipEdge)) {
+      } else if (!Inside(v1Vec, clipEdge)) {
         // End point is outside clip region, add to output section of clip buffer.
         //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
 
-      } else if (!Inside(startPoint, clipEdge)) {
+      } else if (!Inside(v3Vec, clipEdge)) {
         // Start point is outside clip region, add to input section of clip buffer.
         //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
         //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
