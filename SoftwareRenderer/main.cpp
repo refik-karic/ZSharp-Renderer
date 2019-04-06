@@ -84,8 +84,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       break;
     case WM_PAINT:
-      mRenderer->RenderNextFrame();
-      mGdiWrapper->UpdateWindow(hwnd, mRenderer->GetFrameBuffer());
+      mGdiWrapper->UpdateWindow(hwnd, mRenderer->RenderNextFrame());
       break;
     case WM_KEYDOWN:
       // Just treat wParam as an ASCII character press for simplicity at the moment.

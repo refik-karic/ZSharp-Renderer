@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 #include <array>
-#include <list>
-#include <string>
 #include <vector>
 
 #include "Model.h"
@@ -17,24 +15,24 @@ namespace ZSharp {
 /// </summary>
 class AssetLoader {
   public:
-  /// <summary>
-  /// Default constructor.
-  /// </summary>
-  AssetLoader() {
-
-  }
+  AssetLoader() = delete;
 
   template <typename T>
-  void LoadModel(const std::string& fileName, Model<T>& model) {
+  static void LoadModel(const char* fileName, Model<T>& model) {
     // Scan the asset file for data and generate a model from that data.
     Scanner scanner;
     JsonObject jsonObject;
 
     // Convert the output of the scanner to a JSON object and fill it with data.
-    auto& tokenList = scanner.ScanTokens(fileName);
+    std::vector<JsonObject::JsonToken> tokens;
+    scanner.ScanTokens(fileName, tokens);
+
+    if(tokens.empty()){
+      return;
+    }
 
     // Fill in the JSON object with data.
-    PopulateJsonObject(jsonObject, tokenList);
+    PopulateJsonObject(jsonObject, tokens);
 
     // Make room for the amount of meshes loaded in the requested model.
     model = Model<T>(jsonObject.GetValue().dataArray.size());
@@ -73,7 +71,7 @@ class AssetLoader {
   /// </summary>
   /// <param name='jsonObject'>The JSON object to fill in with data.</param>
   /// <param name='tokenList'>A list of tokens scanned in by the parser.</param>
-  void PopulateJsonObject(JsonObject& jsonObject, std::list<JsonObject::JsonToken>& tokenList);
+  static void PopulateJsonObject(JsonObject& jsonObject, std::vector<JsonObject::JsonToken>& tokenList);
 
   /// <summary>
   /// Recursively add data to a JSON object.
@@ -82,6 +80,6 @@ class AssetLoader {
   /// <param name='begin'>An iterator pointing to the current index.</param>
   /// <param name='end'>An iterator pointing the end.</param>
   /// <param name='isArray'>Flag for representing whether or not the current call should store upcoming values in the included array.</param>
-  void ProcessJsonData(JsonObject& jsonObject, std::list<JsonObject::JsonToken>::iterator& begin, std::list<JsonObject::JsonToken>::iterator& end, bool isArray);
+  static void ProcessJsonData(JsonObject& jsonObject, std::vector<JsonObject::JsonToken>::iterator& begin, std::vector<JsonObject::JsonToken>::iterator& end, bool isArray);
 };
 }

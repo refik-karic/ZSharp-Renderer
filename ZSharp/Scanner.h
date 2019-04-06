@@ -1,13 +1,9 @@
 #pragma once
 
-#include <fstream>
-#include <iostream> // TODO: Replace this with some kind of global logger singleton.
-#include <list>
-#include <string>
-#include <vector>
-
 #include <cstdint>
 #include <cstdlib>
+
+#include <vector>
 
 #include "JsonObject.h"
 
@@ -33,7 +29,7 @@ class Scanner {
   /// A reference to the list of scanned tokens.
   /// The list will be empty if there were errors when scanning the requested file.
   /// </returns>
-  std::list<JsonObject::JsonToken>& ScanTokens(const std::string& fileName);
+  void ScanTokens(const char* fileName, std::vector<JsonObject::JsonToken>& tokens);
 
   private:
   /// <summary>
@@ -52,62 +48,52 @@ class Scanner {
   std::size_t mLine = 0;
 
   /// <summary>
-  /// A buffer containing the contents of a file read into memory.
-  /// </summary>
-  std::vector<char> mFileBuffer;
-
-  /// <summary>
-  /// A list of the tokens scanned in from a file.
-  /// </summary>
-  std::list<JsonObject::JsonToken> mTokens;
-
-  /// <summary>
   /// Read the entire file into memory and store it in the buffer.
   /// </summary>
   /// <param name='fileName'>Name of the file to open.</param>
   /// <param name='buffer'>The buffer to hold the contents of the file in memory.</param>
   /// <returns>True if successfully read from the file, False otherwise.</returns>
-  bool ReadFromFile(const std::string& fileName);
+  void ReadFromFile(const char* fileName, std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Check whether or not the scanner has reached the end of the file buffer.
   /// </summary>
   /// <returns>True if end has been reached, False otherwise.</returns>
-  bool IsAtEnd();
+  bool IsAtEnd(std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Scan the next token into the list.
   /// </summary>
-  void ScanToken();
+  void ScanToken(std::vector<JsonObject::JsonToken>& tokens, std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Advance the scanners position in the current lexeme.
   /// </summary>
   /// <returns>The character at the current position prior to advancing.</returns>
-  char Advance();
+  char Advance(std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Peek into which character is at the current position in the buffer.
   /// </summary>
   /// <returns>The character at the current position, NULL if the end of buffer has been reached.</returns>
-  char Peek();
+  char Peek(std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Add a non-data token to the list.
   /// </summary>
   /// <param name='token'>The type of token to add.</param>
-  void AddToken(JsonObject::JsonTokenType token);
+  void AddToken(JsonObject::JsonTokenType token, std::vector<JsonObject::JsonToken>& tokens);
 
   /// <summary>
   /// Add a token with some data to the list.
   /// </summary>
   /// <param name='token'>The token containing its data member.</param>
-  void AddToken(JsonObject::JsonToken token);
+  void AddToken(JsonObject::JsonToken token, std::vector<JsonObject::JsonToken>& tokens);
 
   /// <summary>
   /// Scan a string literal token into the list.
   /// </summary>
-  void ScanString();
+  void ScanString(std::vector<JsonObject::JsonToken>& tokens, std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Checks whether or not the current ASCII character is a digit.
@@ -119,13 +105,13 @@ class Scanner {
   /// <summary>
   /// Scans the next lexeme for a number token.
   /// </summary>
-  void ScanNumber();
+  void ScanNumber(std::vector<JsonObject::JsonToken>& tokens, std::vector<char>& fileBuffer);
 
   /// <summary>
   /// Lookahead of one for parsing longer lexemes.
   /// </summary>
   /// <returns>The character two positions ahead in the buffer.</returns>
-  char PeekNext();
+  char PeekNext(std::vector<char>& fileBuffer);
 };
 
 }

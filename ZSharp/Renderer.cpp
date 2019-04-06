@@ -2,6 +2,7 @@
 #include <chrono>
 #include <string>
 
+#include "AssetLoader.h"
 #include "Constants.h"
 #include "Renderer.h"
 #include "Triangle.h"
@@ -11,11 +12,11 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-static const std::string ASSET_FILE("C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json");
+static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
 
 namespace ZSharp {
 Renderer::Renderer() {
-  mAssetLoader.LoadModel<float>(ASSET_FILE, mModel);
+  AssetLoader::LoadModel<float>(ASSET_FILE, mModel);
   
   std::size_t indexBufSize = 0;
   std::size_t vertexBufSize = 0;
@@ -36,7 +37,7 @@ Renderer::Renderer() {
   mCamera.MoveCamera(cameraDefaultPos);
 }
 
-void Renderer::RenderNextFrame() {
+Framebuffer& Renderer::RenderNextFrame() {
   using namespace std::chrono_literals;
 
   // Clear the VBO/EBO to ease debugging for now.
@@ -97,9 +98,7 @@ void Renderer::RenderNextFrame() {
 
   // Time the frame.
   frameDelta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
-}
 
-Framebuffer& Renderer::GetFrameBuffer() {
   return mBuffer;
 }
 

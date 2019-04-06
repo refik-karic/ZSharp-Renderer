@@ -2,7 +2,7 @@
 
 namespace ZSharp {
 
-void AssetLoader::PopulateJsonObject(JsonObject & jsonObject, std::list<JsonObject::JsonToken>& tokenList) {
+void AssetLoader::PopulateJsonObject(JsonObject & jsonObject, std::vector<JsonObject::JsonToken>& tokenList) {
   // Chop off the first open curly brace before beginning to process the rest.
   // Otherwise the first object would assume it is a value for a key that does not actually exist.
   for (auto iter = tokenList.begin(); iter != tokenList.end(); ++iter) {
@@ -17,7 +17,7 @@ void AssetLoader::PopulateJsonObject(JsonObject & jsonObject, std::list<JsonObje
   }
 }
 
-void AssetLoader::ProcessJsonData(JsonObject& jsonObject, std::list<JsonObject::JsonToken>::iterator& begin, std::list<JsonObject::JsonToken>::iterator& end, bool isArray) {
+void AssetLoader::ProcessJsonData(JsonObject& jsonObject, std::vector<JsonObject::JsonToken>::iterator& begin, std::vector<JsonObject::JsonToken>::iterator& end, bool isArray) {
   bool keyDetected = false;
 
   // Search the remaining items in the list for data.

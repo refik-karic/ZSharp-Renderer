@@ -15,7 +15,7 @@ class Model {
   Model() {}
 
   Model(std::size_t numMesh) : mData(numMesh) {
-
+    
   }
 
   Model(const Model<T>& copy) {
@@ -31,7 +31,7 @@ class Model {
       return;
     }
 
-    mData = rhs.GetMeshData();
+    mData = rhs.mData;
   }
 
   Mesh<T>& operator[](std::size_t index) {
