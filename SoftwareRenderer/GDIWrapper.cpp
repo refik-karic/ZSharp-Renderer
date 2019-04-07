@@ -45,7 +45,7 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
     drawRect.Width * 4,
     PixelFormat32bppARGB, 
     static_cast<BYTE*>(frameData.GetBuffer()));
-  //bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone);
+  bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone);
 
   // Use GDI+ to draw the bitmap onto our viewport.
   PAINTSTRUCT ps;

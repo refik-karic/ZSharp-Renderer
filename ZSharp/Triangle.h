@@ -2,6 +2,8 @@
 
 #include <cstddef>
 
+#include "Constants.h"
+
 namespace ZSharp {
 
 template<typename T>
@@ -11,7 +13,7 @@ class Triangle {
   Triangle() {}
 
   Triangle(std::size_t p1, std::size_t p2, std::size_t p3) :
-    mIndicies({p1, p2, p3})
+    mIndicies{p1, p2, p3}
   { }
 
   Triangle(const Triangle<T>& copy) {
@@ -48,7 +50,7 @@ class Triangle {
   }
 
   private:
-  std::size_t mIndicies[3] = {0, 0, 0};
+  std::size_t mIndicies[Constants::TRI_VERTS] = {0, 0, 0};
 };
 
 }

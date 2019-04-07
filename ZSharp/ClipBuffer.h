@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <cstring>
 
+#include <array>
+
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "ZVector.h"
@@ -48,6 +50,94 @@ class ClipBuffer {
   void ClipTriangles(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     ZVector<3, T> currentEdge;
     
+    std::size_t stride = vertexBuffer.GetStride();
+    std::size_t endEBO = indexBuffer.GetWorkingSize();
+    for(std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
+      T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
+      T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
+      T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
+      ZVector<3, T>& v1Vec = *(reinterpret_cast<ZVector<3, T>*>(v1));
+      ZVector<3, T>& v2Vec = *(reinterpret_cast<ZVector<3, T>*>(v2));
+      ZVector<3, T>& v3Vec = *(reinterpret_cast<ZVector<3, T>*>(v3));
+
+      std::size_t numClippedVerts = 3;
+      std::array<ZVector<3, T>, 6> clippedVerts;
+      clippedVerts[0] = v1Vec;
+      clippedVerts[1] = v2Vec;
+      clippedVerts[2] = v3Vec;
+
+      // Positive X (right edge).
+      currentEdge[0] = static_cast<T>(1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Positive Y (top edge).
+      currentEdge[0] = static_cast<T>(0);
+      currentEdge[1] = static_cast<T>(1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative X (left edge).
+      currentEdge[0] = static_cast<T>(-1);
+      currentEdge[1] = static_cast<T>(0);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative Y (bottom edge).
+      currentEdge[0] = static_cast<T>(0);
+      currentEdge[1] = static_cast<T>(-1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative Z (back edge).
+      currentEdge[1] = static_cast<T>(0);
+      currentEdge[2] = static_cast<T>(-1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Add clipped vertices/indices to the output section of the VBO/EBO.
+      if(numClippedVerts > 0) {
+        std::size_t currentClipIndex = (vertexBuffer.GetWorkingSize() / 4) + (vertexBuffer.GetClipLength() / 3);
+        // Verticies are just added to the end in the order they were clipped.
+        const T* clippedVertData = reinterpret_cast<const T*>(clippedVerts.data());
+        vertexBuffer.Append(clippedVertData, numClippedVerts * Constants::TRI_VERTS);
+
+        // Add the first clipped triangle to the EBO.
+        Triangle<T> nextTriangle(currentClipIndex, currentClipIndex + 1, currentClipIndex + 2);
+        indexBuffer.Append(nextTriangle);
+
+        // TODO: Hacky solution for now, look for a more general way to solve this since it seems really simple.
+        switch(numClippedVerts - Constants::TRI_VERTS) {
+          case 1:
+            nextTriangle[0] = currentClipIndex + 2;
+            nextTriangle[1] = currentClipIndex + 3;
+            nextTriangle[2] = currentClipIndex;
+            indexBuffer.Append(nextTriangle);
+            break;
+          case 2:
+            nextTriangle[0] = currentClipIndex + 2;
+            nextTriangle[1] = currentClipIndex + 3;
+            nextTriangle[2] = currentClipIndex + 4;
+            indexBuffer.Append(nextTriangle);
+            // TODO: It might make more sense to order these 0, 2, 4 here?
+            nextTriangle[0] = currentClipIndex + 4;
+            nextTriangle[1] = currentClipIndex;
+            nextTriangle[2] = currentClipIndex + 0;
+            indexBuffer.Append(nextTriangle);
+            break;
+          case 3:
+            nextTriangle[0] = currentClipIndex + 2;
+            nextTriangle[1] = currentClipIndex + 3;
+            nextTriangle[2] = currentClipIndex + 4;
+            indexBuffer.Append(nextTriangle);
+            nextTriangle[0] = currentClipIndex + 4;
+            nextTriangle[1] = currentClipIndex + 5;
+            nextTriangle[2] = currentClipIndex;
+            indexBuffer.Append(nextTriangle);
+            nextTriangle[0] = currentClipIndex;
+            nextTriangle[1] = currentClipIndex + 2;
+            nextTriangle[2] = currentClipIndex + 4;
+            indexBuffer.Append(nextTriangle);
+            break;
+        }
+      }
+    }
+#if 0
     // Positive X (right edge).
     currentEdge[0] = static_cast<T>(1);
     SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
@@ -71,6 +161,7 @@ class ClipBuffer {
     currentEdge[1] = static_cast<T>(0);
     currentEdge[2] = static_cast<T>(-1);
     SutherlandHodgmanClip(vertexBuffer, indexBuffer, currentEdge);
+#endif
   }
 
   private:
@@ -78,86 +169,45 @@ class ClipBuffer {
   std::size_t mInputIndex = 0;
   std::size_t mOutputIndex = size / 2;
 
-  void SutherlandHodgmanClip(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer, ZVector<3, T>& clipEdge) {
-    std::size_t stride = vertexBuffer.GetStride();
-    std::size_t endEBO = indexBuffer.GetWorkingSize();
-    for (std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
-      T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
-      T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
-      T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
-      ZVector<3, T>& v1Vec = *(reinterpret_cast<ZVector<3, T>*>(v1));
-      ZVector<3, T>& v2Vec = *(reinterpret_cast<ZVector<3, T>*>(v2));
-      ZVector<3, T>& v3Vec = *(reinterpret_cast<ZVector<3, T>*>(v3));
+  std::size_t SutherlandHodgmanClip(std::array<ZVector<3, T>, 6>& inputVerts, std::size_t numInputVerts, ZVector<3, T>& clipEdge) {
+    std::size_t numOutputVerts = 0;
+    std::array<ZVector<3, T>, 6> outputVerts;
 
-      // TODO: Check for zero length lines to avoid a divide by 0!
+    for(std::size_t i = 0; i < numInputVerts; ++i) {
+      std::size_t nextIndex = (i + 1) % numInputVerts;
 
-      if (!Inside(v1Vec, clipEdge) && !Inside(v2Vec, clipEdge)) {
+      if(!Inside(inputVerts[i], clipEdge) && !Inside(inputVerts[nextIndex], clipEdge)){
         // Both verticies are outside the clip region, skip.
         continue;
-        // TODO: Need to update the VBO/EBO here when verticies are skipped.
-
       }
-      else if (!Inside(v2Vec, clipEdge)) {
-        // End point is outside clip region, add to output section of clip buffer.
-        T parametricValue = ParametricClipIntersection(v1Vec, v2Vec, clipEdge, clipEdge);
-        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, v1Vec, v2Vec);
-
-      }
-      else if(!Inside(v1Vec, clipEdge)) {
-        // Start point is outside clip region, add to input section of clip buffer.
-        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
-        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
-        T parametricValue = ParametricClipIntersection(v1Vec, v2Vec, clipEdge, clipEdge);
-        ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, v1Vec, v2Vec);
-
+      else if(Inside(inputVerts[i], clipEdge) && Inside(inputVerts[nextIndex], clipEdge)) {
+        // Both inside, add unmodified to output.
+        outputVerts[numOutputVerts] = inputVerts[i];
+        ++numOutputVerts;
       }
       else {
-        // Add existing vertex to input section of the clip buffer.
+        T parametricValue = ParametricClipIntersection(inputVerts[i], inputVerts[nextIndex], clipEdge, clipEdge);
+        ZVector<3, T> clipPoint = GetParametricVector(parametricValue, inputVerts[i], inputVerts[nextIndex]);
 
+        if(!Inside(inputVerts[nextIndex], clipEdge)){
+          // End point is outside clip region, add to output section of clip buffer.
+          outputVerts[numOutputVerts] = inputVerts[i];
+          ++numOutputVerts;
+          outputVerts[numOutputVerts] = clipPoint;
+          ++numOutputVerts;
+        }
+        else if(!Inside(inputVerts[i], clipEdge)){
+          // Start point is outside clip region, add to input section of clip buffer.
+          outputVerts[numOutputVerts] = clipPoint;
+          ++numOutputVerts;
+          outputVerts[numOutputVerts] = inputVerts[i];
+          ++numOutputVerts;
+        }
       }
-
-      // Second edge.
-      if (!Inside(v2Vec, clipEdge) && !Inside(v3Vec, clipEdge)) {
-        // Both verticies are outside the clip region, skip.
-        continue;
-        // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(v3Vec, clipEdge)) {
-        // End point is outside clip region, add to output section of clip buffer.
-        //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
-        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
-
-      } else if (!Inside(v2Vec, clipEdge)) {
-        // Start point is outside clip region, add to input section of clip buffer.
-        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
-        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
-
-      } else {
-        // Add existing vertex to input section of the clip buffer.
-
-      }
-      
-      // Third and final edge.
-      if (!Inside(v3Vec, clipEdge) && !Inside(v1Vec, clipEdge)) {
-        // Both verticies are outside the clip region, skip.
-        continue;
-        // TODO: Need to update the VBO/EBO here when verticies are skipped.
-      } else if (!Inside(v1Vec, clipEdge)) {
-        // End point is outside clip region, add to output section of clip buffer.
-        //T parametricValue = ParametricClipIntersection(start, end, clipEdge, clipEdge);
-        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, start, end);
-
-      } else if (!Inside(v3Vec, clipEdge)) {
-        // Start point is outside clip region, add to input section of clip buffer.
-        //T parametricValue = ParametricClipIntersection(end, start, clipEdge, clipEdge);
-        //ZVector<3, T> clippedEnd = GetParametricVector(parametricValue, end, start);
-
-      } else {
-        // Add existing vertex to input section of the clip buffer.
-
-      }
-
-      //Clear();
     }
+
+    inputVerts = outputVerts;
+    return numOutputVerts;
   }
 
   void AddInputVertex(const T* vboData) {
@@ -195,7 +245,7 @@ class ClipBuffer {
     * See Listing 36.3 on p.1045, Lines 12 and 13. (The listing is in R2 not R3)
     */
 
-    // For some reason that I have yet to understand, both the 2nd and 3rd editions of CGPP define this equation with accepting a different points for subtraction and dot.
+    // For some reason that I have yet to understand, both the 2nd and 3rd editions of CGPP define this equation with accepting a different point for subtraction and dot.
     // That is to say, those equations do not share the clip edge in the calculations below like I have.
     // Maybe that is for generalizing the algorithm? At any rate, this does the job for me.
     return ((clipEdge * (point - clipEdge)) <= static_cast<T>(0));

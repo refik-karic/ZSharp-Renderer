@@ -1,9 +1,11 @@
+#include "Constants.h"
 #include "IndexBuffer.h"
 
 namespace ZSharp {
 
 IndexBuffer::IndexBuffer(std::size_t size) :
-  mData(size * MAX_INDICIES_AFTER_CLIP)
+  mAllocatedSize(size* Constants::MAX_INDICIES_AFTER_CLIP),
+  mData(size * Constants::MAX_INDICIES_AFTER_CLIP)
 {
 
 }
@@ -20,6 +22,8 @@ void IndexBuffer::operator=(const IndexBuffer& rhs) {
   }
 
   mData = rhs.mData;
+  mWorkingSize = rhs.mWorkingSize;
+  mClipLength = rhs.mClipLength;
 }
 
 std::size_t IndexBuffer::operator[](std::size_t index) const {
@@ -45,6 +49,12 @@ void IndexBuffer::CopyData(const std::size_t* data, std::size_t index, std::size
 
 void IndexBuffer::Clear() {
   std::memset(mData.data(), 0, mData.size() * sizeof(std::size_t));
+  mClipLength = 0;
+  mWorkingSize = 0;
+}
+
+std::size_t IndexBuffer::GetClipLength() const {
+  return mClipLength;
 }
 
 }

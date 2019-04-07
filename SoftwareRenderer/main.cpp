@@ -101,6 +101,19 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case 'D':
           mRenderer->MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
           break;
+        case VK_SPACE:
+          if(windowsFrameTimer == 0) {
+            windowsFrameTimer = SetTimer(hwnd, 1, static_cast<UINT>(FRAMERATE_60_HZ_MS), NULL);
+
+            if(windowsFrameTimer == 0){
+              DestroyWindow(hwnd);
+            }
+          }
+          else {
+            KillTimer(hwnd, windowsFrameTimer);
+            windowsFrameTimer = 0;
+          }
+          break;
         case VK_ESCAPE:
           DestroyWindow(hwnd);
           break;

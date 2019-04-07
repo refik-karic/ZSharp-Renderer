@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstddef>
+
 namespace ZSharp {
 
 /// <summary>
@@ -18,13 +20,16 @@ class Constants {
 
   static constexpr double PI_OVER_180 = PI / 180.0;
 
-  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 2;
+  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 3;
+  static constexpr std::size_t MAX_INDICIES_AFTER_CLIP = 4;
 
   // This is obvious and seemingly makes the code more verbose than necessary.
   // It's just meant to be an aid for finding instances in the code where something might need to know this.
   static constexpr std::size_t TRI_VERTS = 3;
 
-  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = TRI_VERTS * MAX_VERTS_AFTER_CLIP;
+  static constexpr std::size_t R3 = 3;
+
+  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = ((TRI_VERTS * R3) * MAX_VERTS_AFTER_CLIP);
 };
 
 }

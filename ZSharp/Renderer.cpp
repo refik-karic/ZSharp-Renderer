@@ -107,16 +107,16 @@ void Renderer::MoveCamera(Direction direction, float amount) {
   
   switch (direction) {
     case Direction::UP:
-      currentPositon[1] = currentPositon[1] + amount;
-      break;
-    case Direction::DOWN:
       currentPositon[1] = currentPositon[1] - amount;
       break;
+    case Direction::DOWN:
+      currentPositon[1] = currentPositon[1] + amount;
+      break;
     case Direction::LEFT:
-      currentPositon[0] = currentPositon[0] + amount;
+      currentPositon[0] = currentPositon[0] - amount;
       break;
     case Direction::RIGHT:
-      currentPositon[0] = currentPositon[0] - amount;
+      currentPositon[0] = currentPositon[0] + amount;
       break;
   }
 

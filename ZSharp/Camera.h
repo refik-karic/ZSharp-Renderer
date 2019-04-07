@@ -177,10 +177,10 @@ class Camera {
     // At this point all verticies have been transformed into the "SPVV".
     mClipBuffer.ClipTriangles(vertexBuffer, indexBuffer);
 
-    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += 4) {
+    for (std::size_t i = vertexBuffer.GetWorkingSize(); i < vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength(); i += 3) {
       T* vertexData = vertexBuffer.GetData(i);
-      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
-      ZVector<4, T>::Homogenize(vertexVector, 2);
+      ZVector<3, T>& vertexVector = *(reinterpret_cast<ZVector<3, T>*>(vertexData));
+      ZVector<3, T>::Homogenize(vertexVector, 2);
       vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
     }
   }

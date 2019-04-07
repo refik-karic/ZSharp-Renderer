@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#include "Constants.h"
+#include "Triangle.h"
+
 namespace ZSharp {
 
 class IndexBuffer {
@@ -25,11 +28,24 @@ class IndexBuffer {
 
   void Clear();
 
-  private:
-  static constexpr std::size_t MAX_INDICIES_AFTER_CLIP = 4;
+  template<typename T>
+  void Append(const Triangle<T>& triangle) {
+    if(mWorkingSize + mClipLength + Constants::TRI_VERTS > mAllocatedSize) {
+      return;
+    }
 
+    const std::size_t* data = reinterpret_cast<const std::size_t*>(&triangle);
+    std::memcpy(mData.data() + mWorkingSize + mClipLength, data, Constants::TRI_VERTS * sizeof(std::size_t));
+    mClipLength += Constants::TRI_VERTS;
+  }
+
+  std::size_t GetClipLength() const;
+
+  private:
   std::vector<std::size_t> mData;
+  std::size_t mAllocatedSize = 0;
   std::size_t mWorkingSize = 0;
+  std::size_t mClipLength = 0;
 };
 
 }

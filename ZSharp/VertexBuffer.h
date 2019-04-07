@@ -13,6 +13,8 @@ template<typename T>
 class VertexBuffer {
   public:
   VertexBuffer(std::size_t size, std::size_t stride) :
+    mClipLength(0),
+    mAllocatedSize((size + (size / Constants::TRI_VERTS)) * Constants::MAX_VERTS_AFTER_CLIP),
     mData((size + (size / Constants::TRI_VERTS)) * Constants::MAX_VERTS_AFTER_CLIP),
     mHomogenizedStride(stride + (stride / Constants::TRI_VERTS))
   {
@@ -32,6 +34,7 @@ class VertexBuffer {
 
     mData = rhs.mData;
     mWorkingSize = rhs.mWorkingSize;
+    mClipLength = rhs.mClipLength;
     mHomogenizedStride = rhs.mHomogenizedStride;
   }
 
@@ -83,6 +86,8 @@ class VertexBuffer {
 
   void Clear() {
     std::memset(mData.data(), 0, mData.size() * sizeof(T));
+    mWorkingSize = 0;
+    mClipLength = 0;
   }
 
   void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
@@ -95,11 +100,26 @@ class VertexBuffer {
     }
   }
 
+  void Append(const T* data, std::size_t length) {
+    if(mWorkingSize + mClipLength + length > mAllocatedSize) {
+      return;
+    }
+
+    std::memcpy(mData.data() + mWorkingSize + mClipLength, data, length * sizeof(T));
+    mClipLength += length;
+  }
+
+  std::size_t GetClipLength() const {
+    return mClipLength;
+  }
+
   private:
   static constexpr std::size_t HOMOGENOUS_3D_SPACE = 4;
 
   std::vector<T> mData;
+  std::size_t mAllocatedSize = 0;
   std::size_t mWorkingSize = 0;
+  std::size_t mClipLength = 0;
   std::size_t mHomogenizedStride = 0;
 };
 
