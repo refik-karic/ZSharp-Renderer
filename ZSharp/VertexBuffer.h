@@ -100,13 +100,22 @@ class VertexBuffer {
     }
   }
 
-  void Append(const T* data, std::size_t length) {
-    if(mWorkingSize + mClipLength + length > mAllocatedSize) {
+  void Append(const T* data, std::size_t length, std::size_t stride) {
+    // TODO: Add an overflow check here for when the strides are not equal.
+    if(length == 0 || stride == 0 || (mWorkingSize + mClipLength + length > mAllocatedSize)) {
       return;
     }
 
-    std::memcpy(mData.data() + mWorkingSize + mClipLength, data, length * sizeof(T));
-    mClipLength += length;
+    if(stride != mHomogenizedStride) {
+      for(std::size_t i = 0; i < ((length / mHomogenizedStride) + 1); ++i) {
+        std::memcpy(mData.data() + mWorkingSize + mClipLength, data + (i * stride), stride * sizeof(T));
+        mClipLength += mHomogenizedStride;
+      }
+    }
+    else {
+      std::memcpy(mData.data() + mWorkingSize + mClipLength, data, length * sizeof(T));
+      mClipLength += length;
+    }
   }
 
   std::size_t GetClipLength() const {

@@ -114,6 +114,12 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             windowsFrameTimer = 0;
           }
           break;
+        case VK_UP:
+          mRenderer->ChangeSpeed(1);
+          break;
+        case VK_DOWN:
+          mRenderer->ChangeSpeed(-1);
+          break;
         case VK_ESCAPE:
           DestroyWindow(hwnd);
           break;

@@ -3,7 +3,8 @@
 #include <cmath>
 #include <cstdint>
 
-#include "ClipBuffer.h"
+#include <array>
+
 #include "Constants.h"
 #include "IndexBuffer.h"
 #include "Triangle.h"
@@ -175,9 +176,9 @@ class Camera {
     }
 
     // At this point all verticies have been transformed into the "SPVV".
-    mClipBuffer.ClipTriangles(vertexBuffer, indexBuffer);
+    ClipTriangles(vertexBuffer, indexBuffer);
 
-    for (std::size_t i = vertexBuffer.GetWorkingSize(); i < vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength(); i += 3) {
+    for (std::size_t i = vertexBuffer.GetWorkingSize(); i < vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength(); i += 4) {
       T* vertexData = vertexBuffer.GetData(i);
       ZVector<3, T>& vertexVector = *(reinterpret_cast<ZVector<3, T>*>(vertexData));
       ZVector<3, T>::Homogenize(vertexVector, 2);
@@ -225,6 +226,161 @@ class Camera {
   
   std::intptr_t mHeight;
 
-  ClipBuffer<T, Constants::TRI_CLIP_BUFFER_SIZE> mClipBuffer;
+  /// <summary>
+  /// Determine whether or not the endpoint is on the inside of the clip edge.
+  /// </summary>
+  /// <returns>
+  /// True if the endpoint is inside the clip edge region.
+  /// </returns>
+  bool Inside(ZVector<3, T>& point, ZVector<3, T>& clipEdge) {
+    /*
+    * Check the sign of the dot product of the clip edge with it's difference against and a point in space.
+    * Positive means outside, negative means inside, 0 is on the line.
+    *
+    * Computer Graphics: Principles and Practice Second Edition in C (1995)
+    * Foley, van Dam, Feiner, Hughes.
+    *
+    * Section 3.12.4, A Parametric Line Clipping Algorithm
+    * See p.118
+    */
+
+    /*
+    * Computer Graphics: Principles and Practice (3rd Edition)
+    * John F. Hughes, Andries van Dam, Morgan McGuire, David F. Sklar, James D. Foley, Steven K. Feiner, Kurt Akeley
+    *
+    * See Listing 36.3 on p.1045, Lines 12 and 13. (The listing is in R2 not R3)
+    */
+
+    // For some reason that I have yet to understand, both the 2nd and 3rd editions of CGPP define this equation with accepting a different point for subtraction and dot.
+    // That is to say, those equations do not share the clip edge in the calculations below like I have.
+    // Maybe that is for generalizing the algorithm? At any rate, this does the job for me.
+    return ((clipEdge * (point - clipEdge)) <= static_cast<T>(0));
+  }
+
+  ZVector<3, T> GetParametricVector(T point, ZVector<3, T> start, ZVector<3, T> end) {
+    return (start + ((end - start) * point));
+  }
+
+  T ParametricClipIntersection(ZVector<3, T> start, ZVector<3, T> end, ZVector<3, T> edgeNormal, ZVector<3, T> edgePoint) {
+    T numerator = edgeNormal * (start - edgePoint);
+    T denominator = (edgeNormal * static_cast<T>(-1)) * (end - start);
+    return (numerator / denominator);
+  }
+
+  void ClipTriangles(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
+    ZVector<3, T> currentEdge;
+
+    std::size_t stride = vertexBuffer.GetStride();
+    std::size_t endEBO = indexBuffer.GetWorkingSize();
+    for(std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
+      T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
+      T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
+      T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
+      ZVector<3, T>& v1Vec = *(reinterpret_cast<ZVector<3, T>*>(v1));
+      ZVector<3, T>& v2Vec = *(reinterpret_cast<ZVector<3, T>*>(v2));
+      ZVector<3, T>& v3Vec = *(reinterpret_cast<ZVector<3, T>*>(v3));
+
+      std::size_t numClippedVerts = 3;
+      std::array<ZVector<3, T>, 6> clippedVerts;
+      clippedVerts[0] = v1Vec;
+      clippedVerts[1] = v2Vec;
+      clippedVerts[2] = v3Vec;
+
+      // TODO: Figure out why the clipped triangles sometimes span the entire viewport.
+
+      // Positive X (right edge).
+      currentEdge[0] = static_cast<T>(1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Positive Y (top edge).
+      currentEdge[0] = static_cast<T>(0);
+      currentEdge[1] = static_cast<T>(1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative X (left edge).
+      currentEdge[0] = static_cast<T>(-1);
+      currentEdge[1] = static_cast<T>(0);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative Y (bottom edge).
+      currentEdge[0] = static_cast<T>(0);
+      currentEdge[1] = static_cast<T>(-1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Negative Z (back edge).
+      currentEdge[1] = static_cast<T>(0);
+      currentEdge[2] = static_cast<T>(-1);
+      numClippedVerts = SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
+
+      // Add clipped vertices/indices to the output section of the VBO/EBO.
+      if(numClippedVerts > 0) {
+        std::size_t currentClipIndex = ((vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength()) / 4);
+        // Verticies are just added to the end in the order they were clipped.
+        const T* clippedVertData = reinterpret_cast<const T*>(clippedVerts.data());
+        vertexBuffer.Append(clippedVertData, numClippedVerts * Constants::TRI_VERTS, Constants::TRI_VERTS);
+
+        // Always add the first triangle by itself.
+        Triangle<T> nextTriangle(currentClipIndex, currentClipIndex + 1, currentClipIndex + 2);
+        indexBuffer.Append(nextTriangle);
+        
+        // TODO: Figure out what is causing the inserted triangles to display artifacts.
+        // Add additional triangles afterwards.
+        for(std::size_t j = 1; j <= numClippedVerts - Constants::TRI_VERTS; ++j) {
+          // TODO: This still feels a little hacky, need to simpify this.
+          if(j > 1 && j == numClippedVerts - Constants::TRI_VERTS) {
+            nextTriangle[0] = ((2 * j) % numClippedVerts) + currentClipIndex;
+            nextTriangle[1] = (((2 * j) + 2) % numClippedVerts) + currentClipIndex;
+            nextTriangle[2] = (((2 * j) + 4) % numClippedVerts) + currentClipIndex;
+          }
+          else {
+            nextTriangle[0] = ((2 * j) % numClippedVerts) + currentClipIndex;
+            nextTriangle[1] = (((2 * j) + 1) % numClippedVerts) + currentClipIndex;
+            nextTriangle[2] = (((2 * j) + 2) % numClippedVerts) + currentClipIndex;
+          }
+
+          indexBuffer.Append(nextTriangle);
+        }
+      }
+    }
+  }
+
+  std::size_t SutherlandHodgmanClip(std::array<ZVector<3, T>, 6>& inputVerts, std::size_t numInputVerts, ZVector<3, T>& clipEdge) {
+    std::size_t numOutputVerts = 0;
+    std::array<ZVector<3, T>, 6> outputVerts;
+
+    for(std::size_t i = 0; i < numInputVerts; ++i) {
+      std::size_t nextIndex = (i + 1) % numInputVerts;
+
+      if(!Inside(inputVerts[i], clipEdge) && !Inside(inputVerts[nextIndex], clipEdge)) {
+        // Both verticies are outside the clip region, skip.
+        continue;
+      }
+      else if(Inside(inputVerts[i], clipEdge) && Inside(inputVerts[nextIndex], clipEdge)) {
+        // Both inside, add unmodified to output.
+        outputVerts[numOutputVerts] = inputVerts[nextIndex];
+        ++numOutputVerts;
+      }
+      else {
+        T parametricValue = ParametricClipIntersection(inputVerts[i], inputVerts[nextIndex], clipEdge, clipEdge);
+        ZVector<3, T> clipPoint = GetParametricVector(parametricValue, inputVerts[i], inputVerts[nextIndex]);
+
+        if(!Inside(inputVerts[i], clipEdge)) {
+          // Start point is outside clip region.
+          outputVerts[numOutputVerts] = clipPoint;
+          ++numOutputVerts;
+          outputVerts[numOutputVerts] = inputVerts[nextIndex];
+          ++numOutputVerts;
+        }
+        else {
+          // End point is outside clip region.
+          outputVerts[numOutputVerts] = clipPoint;
+          ++numOutputVerts;
+        }
+      }
+    }
+
+    inputVerts = outputVerts;
+    return numOutputVerts;
+  }
 };
 }

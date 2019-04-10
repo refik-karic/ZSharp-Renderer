@@ -28,8 +28,6 @@ class Constants {
   static constexpr std::size_t TRI_VERTS = 3;
 
   static constexpr std::size_t R3 = 3;
-
-  static constexpr std::size_t TRI_CLIP_BUFFER_SIZE = ((TRI_VERTS * R3) * MAX_VERTS_AFTER_CLIP);
 };
 
 }

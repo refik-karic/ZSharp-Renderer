@@ -42,7 +42,6 @@
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="ClipBuffer.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ZConfig.h" />

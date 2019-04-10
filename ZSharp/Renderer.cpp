@@ -68,7 +68,7 @@ Framebuffer& Renderer::RenderNextFrame() {
                                     static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
                                     Mat4x4f_t::Axis::Y);
 
-  mFrameCount+=4;
+  mFrameCount+=mRotationSpeed;
   if (mFrameCount > 360) {
     mFrameCount = 0;
   }

@@ -27,12 +27,26 @@ class Renderer {
 
   void MoveCamera(Direction direction, float amount);
 
+  // TODO: Move this into the cpp file.
+  void ChangeSpeed(std::int64_t amount) {
+    if(mRotationSpeed + amount > 10) {
+      mRotationSpeed = 10;
+    }
+    else if(mRotationSpeed + amount < 1) {
+      mRotationSpeed = 1;
+    }
+    else {
+      mRotationSpeed += amount;
+    }
+  }
+
   private:
   Camera<float> mCamera;
   Framebuffer mBuffer;
   Model<float> mModel;
 
-  std::size_t mFrameCount = 0;
+  std::int64_t mFrameCount = 0;
+  std::int64_t mRotationSpeed = 4;
 
   std::shared_ptr<IndexBuffer> mIndexBuffer;
   std::shared_ptr<VertexBuffer<float>> mVertexBuffer;
