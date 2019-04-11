@@ -323,17 +323,20 @@ class Camera {
         Triangle<T> nextTriangle(currentClipIndex, currentClipIndex + 1, currentClipIndex + 2);
         indexBuffer.Append(nextTriangle);
         
-        // TODO: Figure out what is causing the inserted triangles to display artifacts.
         // Add additional triangles afterwards.
         for(std::size_t j = 1; j <= numClippedVerts - Constants::TRI_VERTS; ++j) {
-          // TODO: This still feels a little hacky, need to simpify this.
-          if(j > 1 && j == numClippedVerts - Constants::TRI_VERTS) {
-            nextTriangle[0] = ((2 * j) % numClippedVerts) + currentClipIndex;
-            nextTriangle[1] = (((2 * j) + 2) % numClippedVerts) + currentClipIndex;
-            nextTriangle[2] = (((2 * j) + 4) % numClippedVerts) + currentClipIndex;
+          nextTriangle[0] = ((2 * j) % numClippedVerts) + currentClipIndex;
+
+          if(j == numClippedVerts - Constants::TRI_VERTS) {
+            // Without branching any more than necessary, this gets the expected result.
+            // These temporary variables should get optimized out in release builds.
+            std::size_t secondPos = (((numClippedVerts - 4) >> 1) + 1);
+            std::size_t thirdPos = ((numClippedVerts - Constants::TRI_VERTS) + 1);
+
+            nextTriangle[1] = (((2 * j) + secondPos) % numClippedVerts) + currentClipIndex;
+            nextTriangle[2] = (((2 * j) + thirdPos) % numClippedVerts) + currentClipIndex;
           }
           else {
-            nextTriangle[0] = ((2 * j) % numClippedVerts) + currentClipIndex;
             nextTriangle[1] = (((2 * j) + 1) % numClippedVerts) + currentClipIndex;
             nextTriangle[2] = (((2 * j) + 2) % numClippedVerts) + currentClipIndex;
           }
