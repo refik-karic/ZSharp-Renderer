@@ -1,6 +1,5 @@
 ﻿#include <cstddef>
 #include <chrono>
-#include <string>
 
 #include "AssetLoader.h"
 #include "Constants.h"
@@ -22,7 +21,6 @@ Renderer::Renderer() {
   std::size_t vertexBufSize = 0;
 
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
-    // Must account for the possibility of clipping the max amount on each triangle.
     indexBufSize += (mesh.GetTriangleFaceTable().size() * Constants::TRI_VERTS);
     vertexBufSize += mesh.GetVertTable().size();
   }
@@ -77,11 +75,8 @@ Framebuffer& Renderer::RenderNextFrame() {
   mVertexBuffer->ApplyTransform(rotationMatrix);
 
   // Color is stored in ARGB format.
-  ZColor colorRed;
-  colorRed.Color = ZColors::RED;
-
-  ZColor colorBlue;
-  colorBlue.Color = ZColors::BLUE;
+  ZColor colorRed{ZColors::RED};
+  ZColor colorBlue{ZColors::BLUE};
 
   // Track frame times.
   std::chrono::high_resolution_clock::time_point frameStart(std::chrono::high_resolution_clock::now());
@@ -103,24 +98,36 @@ Framebuffer& Renderer::RenderNextFrame() {
 }
 
 void Renderer::MoveCamera(Direction direction, float amount) {
-  ZVector<3, float> currentPositon(mCamera.GetPosition());
+  Vec3f_t currentPositon(mCamera.GetPosition());
   
   switch (direction) {
     case Direction::UP:
-      currentPositon[1] = currentPositon[1] - amount;
+      currentPositon[1] -= amount;
       break;
     case Direction::DOWN:
-      currentPositon[1] = currentPositon[1] + amount;
+      currentPositon[1] += amount;
       break;
     case Direction::LEFT:
-      currentPositon[0] = currentPositon[0] - amount;
+      currentPositon[0] -= amount;
       break;
     case Direction::RIGHT:
-      currentPositon[0] = currentPositon[0] + amount;
+      currentPositon[0] += amount;
       break;
   }
 
   mCamera.MoveCamera(currentPositon);
+}
+
+void Renderer::ChangeSpeed(std::int64_t amount) {
+  if(mRotationSpeed + amount > 10) {
+    mRotationSpeed = 10;
+  }
+  else if(mRotationSpeed + amount < 1) {
+    mRotationSpeed = 1;
+  }
+  else {
+    mRotationSpeed += amount;
+  }
 }
 
 }

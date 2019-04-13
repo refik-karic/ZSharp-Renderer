@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="ZColor.cpp" />
     <ClCompile Include="ZConfig.cpp" />
@@ -44,6 +43,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="ZAlgorithm.h" />
     <ClInclude Include="ZConfig.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Framebuffer.h" />
