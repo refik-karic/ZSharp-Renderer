@@ -49,6 +49,10 @@ class Triangle {
     return mIndicies;
   }
 
+  const std::size_t* GetData() const {
+    return mIndicies;
+  }
+
   private:
   std::size_t mIndicies[Constants::TRI_VERTS] = {0, 0, 0};
 };

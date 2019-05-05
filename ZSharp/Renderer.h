@@ -6,6 +6,7 @@
 #include "Framebuffer.h"
 #include "Model.h"
 #include "ZColor.h"
+#include "ZMatrix.h"
 
 namespace ZSharp {
 class Renderer {
@@ -27,10 +28,14 @@ class Renderer {
 
   void MoveCamera(Direction direction, float amount);
 
+  void RotateCamera(Mat4x4f_t::Axis direction, float angleDegrees);
+
   void ChangeSpeed(std::int64_t amount);
 
   private:
   Camera<float> mCamera;
+  Vec3f_t mCameraPos;
+
   Framebuffer mBuffer;
   Model<float> mModel;
 

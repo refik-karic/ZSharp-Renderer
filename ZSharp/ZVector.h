@@ -31,6 +31,11 @@ class ZVector {
     }
   }
 
+  template <std::size_t argElements>
+  ZVector(const ZVector<argElements, T>& copy) {
+    *this = copy;
+  }
+
   void operator=(const ZVector<elements, T>& vector) {
     // Self assignment guard.
     // TODO: Look into whether branching here, at least for vectors in R3 or R4, is faster than actually performing the operations.
@@ -52,8 +57,16 @@ class ZVector {
 
   template <std::size_t argElements>
   void operator=(const ZVector<argElements, T>& vector) {
+    ZVector<elements, T>::Clear(*this);
+    
     for (std::size_t i = 0; i < argElements; i++) {
       mData[i] = vector[i];
+    }
+
+    T one{1};
+
+    for(std::size_t i = argElements; i < elements; ++i) {
+      mData[i] = one;
     }
   }
 

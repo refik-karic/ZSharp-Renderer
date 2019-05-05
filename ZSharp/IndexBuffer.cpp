@@ -4,10 +4,10 @@
 namespace ZSharp {
 
 IndexBuffer::IndexBuffer(std::size_t size) :
-  mAllocatedSize(size* Constants::MAX_INDICIES_AFTER_CLIP),
-  mData(size * Constants::MAX_INDICIES_AFTER_CLIP)
+  mData(size * Constants::MAX_INDICIES_AFTER_CLIP),
+  mInputSize(size)
 {
-
+  mClipData = mData.data() + mInputSize;
 }
 
 IndexBuffer::IndexBuffer(const IndexBuffer& rhs) {
@@ -22,8 +22,10 @@ void IndexBuffer::operator=(const IndexBuffer& rhs) {
   }
 
   mData = rhs.mData;
-  mWorkingSize = rhs.mWorkingSize;
+  mInputSize = rhs.mInputSize;
   mClipLength = rhs.mClipLength;
+  mClipData = mData.data() + mInputSize;
+  mWorkingSize = rhs.mWorkingSize;
 }
 
 std::size_t IndexBuffer::operator[](std::size_t index) const {
@@ -38,23 +40,25 @@ std::size_t IndexBuffer::GetWorkingSize() const {
   return mWorkingSize;
 }
 
-void IndexBuffer::SetWorkingSize(std::size_t size) {
-  mWorkingSize = size;
-}
-
-void IndexBuffer::CopyData(const std::size_t* data, std::size_t index, std::size_t length) {
+void IndexBuffer::CopyInputData(const std::size_t* data, std::size_t index, std::size_t length) {
   // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
   std::memcpy(mData.data() + index, data, length * sizeof(std::size_t));
+  mWorkingSize += length;
 }
 
 void IndexBuffer::Clear() {
   std::memset(mData.data(), 0, mData.size() * sizeof(std::size_t));
   mClipLength = 0;
   mWorkingSize = 0;
+  mClipData = mData.data() + mInputSize;
 }
 
 std::size_t IndexBuffer::GetClipLength() const {
   return mClipLength;
+}
+
+std::size_t IndexBuffer::GetClipData(std::size_t index) const {
+  return *(mClipData + index);
 }
 
 }

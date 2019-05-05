@@ -3,8 +3,10 @@
 #include <cstddef>
 #include <vector>
 
+#include "IndexBuffer.h"
 #include "Mesh.h"
-#include "ZVector.h"
+#include "Triangle.h"
+#include "VertexBuffer.h"
 
 namespace ZSharp {
 
@@ -48,6 +50,19 @@ class Model {
 
   const std::vector<Mesh<T>>& GetMeshData() const {
     return mData;
+  }
+
+  void FillBuffers(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) const {
+    for(const Mesh<T>& mesh : mData) {
+      // Fill EBO.
+      for(std::size_t i = 0; i < mesh.GetTriangleFaceTable().size(); ++i) {
+        const Triangle<T>& triangle = mesh.GetTriangleFaceTable()[i];
+        indexBuffer.CopyInputData(triangle.GetData(), i * Constants::TRI_VERTS, Constants::TRI_VERTS);
+      }
+
+      // Fill VBO.
+      vertexBuffer.CopyInputData(mesh.GetVertTable().data(), 0, mesh.GetVertTable().size());
+    }
   }
 
   private:

@@ -61,6 +61,24 @@ class Camera {
     mPosition = position;
   }
 
+  void RotateCamera(const ZMatrix<4, 4, T>& rotationMatrix) {
+    ZVector<4, T> rotatedVec(mLook);
+    rotatedVec = ZMatrix<4, 4, T>::ApplyTransform(rotationMatrix, rotatedVec);
+
+    Vec4f_t::Homogenize(rotatedVec, 3);
+    mLook[0] = rotatedVec[0];
+    mLook[1] = rotatedVec[1];
+    mLook[2] = rotatedVec[2];
+
+    rotatedVec = mUp;
+    rotatedVec = ZMatrix<4, 4, T>::ApplyTransform(rotationMatrix, rotatedVec);
+
+    Vec4f_t::Homogenize(rotatedVec, 3);
+    mUp[0] = rotatedVec[0];
+    mUp[1] = rotatedVec[1];
+    mUp[2] = rotatedVec[2];
+  }
+
   void PerspectiveProjection(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     // Create perspective projection matrix.
 
@@ -160,9 +178,9 @@ class Camera {
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
     // TODO: This implementation will currently apply the transformaton to ALL verticies in the VBO, regardless if they are vertex data in a stride or texture coordinates!
-    std::size_t stride = vertexBuffer.GetStride();
-    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += stride) {
-      T* vertexData = vertexBuffer.GetData(i);
+    std::size_t homogenizedStride = vertexBuffer.GetHomogenizedStride();
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += homogenizedStride) {
+      T* vertexData = vertexBuffer.GetInputData(i);
       ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       vertexVector[3] = static_cast<T>(1);
       vertexVector = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertexVector);
@@ -171,8 +189,8 @@ class Camera {
     // TODO: Clip in R4 to remove points with Z < 0.
     // This step can be skipped for now since my primitives should always be in front of the camera.
 
-    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += stride) {
-      T* vertexData = vertexBuffer.GetData(i);
+    for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += homogenizedStride) {
+      T* vertexData = vertexBuffer.GetInputData(i);
       ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       ZVector<4, T>::Homogenize(vertexVector, 3);
     }
@@ -180,8 +198,9 @@ class Camera {
     // At this point all verticies have been transformed into the "SPVV".
     ClipTriangles(vertexBuffer, indexBuffer);
 
-    for (std::size_t i = vertexBuffer.GetWorkingSize(); i < vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength(); i += stride) {
-      T* vertexData = vertexBuffer.GetData(i);
+    std::size_t inputStride = vertexBuffer.GetInputStride();
+    for (std::size_t i = 0; i < vertexBuffer.GetClipLength(); i += inputStride) {
+      T* vertexData = vertexBuffer.GetClipData(i);
       ZVector<3, T>& vertexVector = *(reinterpret_cast<ZVector<3, T>*>(vertexData));
       ZVector<3, T>::Homogenize(vertexVector, 2);
       vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
@@ -231,12 +250,12 @@ class Camera {
   void ClipTriangles(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     ZVector<3, T> currentEdge;
 
-    std::size_t stride = vertexBuffer.GetStride();
+    std::size_t inputStride = vertexBuffer.GetHomogenizedStride();
     std::size_t endEBO = indexBuffer.GetWorkingSize();
     for(std::size_t i = 0; i < endEBO; i += Constants::TRI_VERTS) {
-      T* v1 = vertexBuffer.GetData(indexBuffer[i], stride);
-      T* v2 = vertexBuffer.GetData(indexBuffer[i + 1], stride);
-      T* v3 = vertexBuffer.GetData(indexBuffer[i + 2], stride);
+      T* v1 = vertexBuffer.GetInputData(indexBuffer[i], inputStride);
+      T* v2 = vertexBuffer.GetInputData(indexBuffer[i + 1], inputStride);
+      T* v3 = vertexBuffer.GetInputData(indexBuffer[i + 2], inputStride);
       std::size_t numClippedVerts = 3;
       std::array<ZVector<3, T>, 6> clippedVerts{
         *(reinterpret_cast<ZVector<3, T>*>(v1)),
@@ -271,14 +290,14 @@ class Camera {
 
       // Add clipped vertices/indices to the output section of the VBO/EBO.
       if(numClippedVerts > 0) {
-        std::size_t currentClipIndex = ((vertexBuffer.GetWorkingSize() + vertexBuffer.GetClipLength()) / 4);
+        std::size_t currentClipIndex = vertexBuffer.GetClipLength() / Constants::TRI_VERTS;
         // Verticies are just added to the end in the order they were clipped.
         const T* clippedVertData = reinterpret_cast<const T*>(clippedVerts.data());
-        vertexBuffer.Append(clippedVertData, numClippedVerts * Constants::TRI_VERTS, Constants::TRI_VERTS);
+        vertexBuffer.AppendClipData(clippedVertData, numClippedVerts * Constants::TRI_VERTS);
 
         // Always add the first triangle by itself.
         Triangle<T> nextTriangle(currentClipIndex, currentClipIndex + 1, currentClipIndex + 2);
-        indexBuffer.Append(nextTriangle);
+        indexBuffer.AppendClipData(nextTriangle);
         
         // Add additional triangles afterwards.
         for(std::size_t j = 1; j <= numClippedVerts - Constants::TRI_VERTS; ++j) {
@@ -298,7 +317,7 @@ class Camera {
             nextTriangle[2] = (((2 * j) + 2) % numClippedVerts) + currentClipIndex;
           }
 
-          indexBuffer.Append(nextTriangle);
+          indexBuffer.AppendClipData(nextTriangle);
         }
       }
     }

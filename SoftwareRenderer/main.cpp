@@ -1,6 +1,7 @@
 ﻿// Headers.
 #include <Renderer.h>
 #include <ZConfig.h>
+#include <ZMatrix.h>
 
 #include <chrono>
 
@@ -100,6 +101,12 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           break;
         case 'D':
           mRenderer->MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
+          break;
+        case 'Q':
+          mRenderer->RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
+          break;
+        case 'E':
+          mRenderer->RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
           break;
         case VK_SPACE:
           if(windowsFrameTimer == 0) {

@@ -20,7 +20,7 @@ class Constants {
 
   static constexpr double PI_OVER_180 = PI / 180.0;
 
-  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 3;
+  static constexpr std::size_t MAX_VERTS_AFTER_CLIP = 2;
   static constexpr std::size_t MAX_INDICIES_AFTER_CLIP = 4;
 
   // This is obvious and seemingly makes the code more verbose than necessary.

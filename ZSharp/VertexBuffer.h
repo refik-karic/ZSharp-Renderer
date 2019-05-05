@@ -14,11 +14,13 @@ class VertexBuffer {
   public:
   VertexBuffer(std::size_t size, std::size_t stride) :
     mClipLength(0),
-    mAllocatedSize((size + (size / Constants::TRI_VERTS)) * Constants::MAX_VERTS_AFTER_CLIP),
-    mData((size + (size / Constants::TRI_VERTS)) * Constants::MAX_VERTS_AFTER_CLIP),
+    mInputSize(size + (size / Constants::TRI_VERTS)),
+    mAllocatedSize((size + (size / Constants::TRI_VERTS)) + (size * Constants::MAX_VERTS_AFTER_CLIP)),
+    mData((size + (size / Constants::TRI_VERTS)) + (size * Constants::MAX_VERTS_AFTER_CLIP)),
+    mInputStride(stride),
     mHomogenizedStride(stride + (stride / Constants::TRI_VERTS))
   {
-    
+    mClipData = mData.data() + mInputSize;
   }
 
   VertexBuffer(const VertexBuffer<T>& rhs) {
@@ -35,7 +37,10 @@ class VertexBuffer {
     mData = rhs.mData;
     mWorkingSize = rhs.mWorkingSize;
     mClipLength = rhs.mClipLength;
+    mInputStride = rhs.mInputStride;
     mHomogenizedStride = rhs.mHomogenizedStride;
+    mInputSize = rhs.mInputSize;
+    mClipData = mData.data() + mInputSize;
   }
 
   T operator[](std::size_t index) const {
@@ -47,47 +52,56 @@ class VertexBuffer {
   }
 
   std::size_t GetTotalSize() const {
-    return mData.size();
+    return mAllocatedSize;
   }
 
   std::size_t GetWorkingSize() const {
     return mWorkingSize;
   }
 
-  void SetWorkingSize(std::size_t size) {
-    mWorkingSize = size + (size / Constants::TRI_VERTS);
-  }
-
-  std::size_t GetStride() const {
+  std::size_t GetHomogenizedStride() const {
     return mHomogenizedStride;
   }
 
-  void CopyData(const T* data, std::size_t index, std::size_t length) {
+  std::size_t GetInputStride() const {
+    return mInputStride;
+  }
+
+  void CopyInputData(const T* data, std::size_t index, std::size_t length) {
     // NOTE: It may not necessarily be required to explicitly set the 4th dimension like this but for the purposes of debugging right now, just going to leave this in.
     static constexpr T wDefault{1};
     T* currentIndex = mData.data() + index;
-    std::size_t originalStride = mHomogenizedStride - (mHomogenizedStride / Constants::TRI_VERTS);
-    for (std::size_t i = 0; i < length; i += originalStride) {
-      for (std::size_t j = 0; j < originalStride / Constants::TRI_VERTS; j++) {
+    for (std::size_t i = 0; i < length; i += mInputStride) {
+      for (std::size_t j = 0; j < mInputStride / Constants::TRI_VERTS; j++) {
         std::memcpy(currentIndex, (data + i) + (j * Constants::TRI_VERTS), Constants::TRI_VERTS * sizeof(T));
         currentIndex[3] = wDefault;
         currentIndex += HOMOGENOUS_3D_SPACE;
+        mWorkingSize += HOMOGENOUS_3D_SPACE;
       }
     }
   }
 
-  T* GetData(std::size_t index = 0, std::size_t stride = 1) {
+  T* GetInputData(std::size_t index = 0, std::size_t stride = 1) {
     return mData.data() + (index * stride);
   }
 
-  const T* GetData(std::size_t index = 0, std::size_t stride = 1) const {
+  const T* GetInputData(std::size_t index = 0, std::size_t stride = 1) const {
     return mData.data() + (index * stride);
+  }
+
+  T* GetClipData(std::size_t index = 0, std::size_t stride = 1) {
+    return mClipData + (index * stride);
+  }
+
+  const T* GetClipData(std::size_t index = 0, std::size_t stride = 1) const {
+    return mClipData + (index * stride);
   }
 
   void Clear() {
     std::memset(mData.data(), 0, mData.size() * sizeof(T));
     mWorkingSize = 0;
     mClipLength = 0;
+    mClipData = mData.data() + mInputSize;
   }
 
   void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
@@ -100,22 +114,13 @@ class VertexBuffer {
     }
   }
 
-  void Append(const T* data, std::size_t length, std::size_t stride) {
-    // TODO: Add an overflow check here for when the strides are not equal.
-    if(length == 0 || stride == 0 || (mWorkingSize + mClipLength + length > mAllocatedSize)) {
+  void AppendClipData(const T* data, std::size_t length) {
+    if(mInputSize + mClipLength + length > mAllocatedSize) {
       return;
     }
 
-    if(stride != mHomogenizedStride) {
-      for(std::size_t i = 0; i < ((length / mHomogenizedStride) + 1); ++i) {
-        std::memcpy(mData.data() + mWorkingSize + mClipLength, data + (i * stride), stride * sizeof(T));
-        mClipLength += mHomogenizedStride;
-      }
-    }
-    else {
-      std::memcpy(mData.data() + mWorkingSize + mClipLength, data, length * sizeof(T));
-      mClipLength += length;
-    }
+    std::memcpy(mClipData + mClipLength, data, length * sizeof(T));
+    mClipLength += length;
   }
 
   std::size_t GetClipLength() const {
@@ -126,9 +131,12 @@ class VertexBuffer {
   static constexpr std::size_t HOMOGENOUS_3D_SPACE = 4;
 
   std::vector<T> mData;
+  T* mClipData;
+  std::size_t mInputSize = 0;
   std::size_t mAllocatedSize = 0;
   std::size_t mWorkingSize = 0;
   std::size_t mClipLength = 0;
+  std::size_t mInputStride = 0;
   std::size_t mHomogenizedStride = 0;
 };
 
