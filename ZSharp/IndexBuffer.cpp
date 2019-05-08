@@ -53,6 +53,17 @@ void IndexBuffer::Clear() {
   mClipData = mData.data() + mInputSize;
 }
 
+void IndexBuffer::RemoveTriangle(std::size_t index) {
+  std::memcpy(mData.data() + (index * Constants::TRI_VERTS), mData.data() + mWorkingSize - Constants::TRI_VERTS, Constants::TRI_VERTS * sizeof(std::size_t));
+  
+  if(mWorkingSize < Constants::TRI_VERTS) {
+    mWorkingSize = 0;
+  }
+  else {
+    mWorkingSize -= Constants::TRI_VERTS;
+  }
+}
+
 std::size_t IndexBuffer::GetClipLength() const {
   return mClipLength;
 }

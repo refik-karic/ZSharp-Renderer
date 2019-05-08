@@ -26,6 +26,8 @@ class IndexBuffer {
 
   void Clear();
 
+  void RemoveTriangle(std::size_t index);
+
   template<typename T>
   void AppendClipData(const Triangle<T>& triangle) {
     if(mWorkingSize + mClipLength + Constants::TRI_VERTS > mData.size()) {

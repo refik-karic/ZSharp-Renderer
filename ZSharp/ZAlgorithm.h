@@ -2,6 +2,10 @@
 
 #include <array>
 
+#include "Constants.h"
+#include "IndexBuffer.h"
+#include "VertexBuffer.h"
+#include "ZMatrix.h"
 #include "ZVector.h"
 
 namespace ZSharp {
@@ -99,6 +103,20 @@ class ZAlgorithm {
     }
 
     return numOutputVerts;
+  }
+
+  static void CullBackFacingPrimitives(const VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
+    const std::size_t stride = vertexBuffer.GetHomogenizedStride();
+    for(std::size_t i = indexBuffer.GetWorkingSize(); i >= Constants::TRI_VERTS; i -= Constants::TRI_VERTS) {
+      const T* v1 = vertexBuffer.GetInputData(indexBuffer[i - 3], stride);
+      const T* v3 = vertexBuffer.GetInputData(indexBuffer[i - 1], stride);
+      const ZVector<3, T>& firstEdge = *(reinterpret_cast<const ZVector<3, T>*>(v1));
+      const ZVector<3, T>& lastEdge = *(reinterpret_cast<const ZVector<3, T>*>(v3));
+      T zDirection = (firstEdge[0] * lastEdge[1]) - (firstEdge[1] * lastEdge[0]);
+      if(zDirection <= static_cast<T>(0)) {
+        indexBuffer.RemoveTriangle((i / Constants::TRI_VERTS) - 1);
+      }
+    }
   }
 
   private:

@@ -81,7 +81,6 @@ class Camera {
 
   void PerspectiveProjection(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
     // Create perspective projection matrix.
-
     /*
     * Computer Graphics: Principles and Practice (3rd Edition)
     * John F. Hughes, Andries van Dam, Morgan McGuire, David F. Sklar, James D. Foley, Steven K. Feiner, Kurt Akeley
@@ -194,6 +193,9 @@ class Camera {
       ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       ZVector<4, T>::Homogenize(vertexVector, 3);
     }
+
+    // Remove back facing primitives.
+    ZAlgorithm<T>::CullBackFacingPrimitives(vertexBuffer, indexBuffer);
 
     // At this point all verticies have been transformed into the "SPVV".
     ClipTriangles(vertexBuffer, indexBuffer);
