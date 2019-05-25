@@ -10,7 +10,7 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\world_db.json";
+static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\triangles.json";
 
 namespace ZSharp {
 Renderer::Renderer() {
@@ -50,7 +50,7 @@ Framebuffer& Renderer::RenderNextFrame() {
                                     static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
                                     Mat4x4f_t::Axis::Y);
 
-  mFrameCount+=mRotationSpeed;
+  mFrameCount += mRotationSpeed;
   if (mFrameCount > 360) {
     mFrameCount = 0;
   }
@@ -69,7 +69,7 @@ Framebuffer& Renderer::RenderNextFrame() {
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
   // Draw the primitives onto the framebuffer.
-  DrawTriangles(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
+  ZDrawing::DrawTriangles(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
 
   return mBuffer;
 }

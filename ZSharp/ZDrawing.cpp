@@ -5,7 +5,7 @@
 
 namespace ZSharp {
 
-void DrawRunSlice(Framebuffer& framebuffer, 
+void ZDrawing::DrawRunSlice(Framebuffer& framebuffer, 
                   std::int32_t x1, 
                   std::int32_t y1, 
                   std::int32_t x2, 

@@ -43,6 +43,9 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{32fa249f-243e-42af-abf4-ea5f234c9f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Asset\Models">
+      <UniqueIdentifier>{44279bea-e550-47bb-bc6e-851b9d86ce85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -137,10 +140,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="db_schema.json">
-      <Filter>Source Files\Asset</Filter>
+      <Filter>Source Files\Asset\Models</Filter>
     </None>
-    <None Include="world_db.json">
-      <Filter>Source Files\Asset</Filter>
+    <None Include="pyramid.json">
+      <Filter>Source Files\Asset\Models</Filter>
+    </None>
+    <None Include="triangles.json">
+      <Filter>Source Files\Asset\Models</Filter>
     </None>
   </ItemGroup>
 </Project>
