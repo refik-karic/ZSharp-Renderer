@@ -12,7 +12,6 @@ namespace ZSharp {
 template<typename T>
 class VertexBuffer {
   public:
-  // TODO: Do some more research on the shared vertex clipping problem, it's causing issues with the pyramid model right now.
   VertexBuffer(std::size_t size, std::size_t stride) :
     mClipLength(0),
     mInputSize(size + (size / Constants::TRI_VERTS)),

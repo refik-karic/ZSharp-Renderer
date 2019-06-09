@@ -10,23 +10,20 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\triangles.json";
+static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\pyramid.json";
 
 namespace ZSharp {
 Renderer::Renderer() {
   AssetLoader::LoadModel<float>(ASSET_FILE, mModel);
   
   std::size_t indexBufSize = 0;
-  std::size_t vertexBufSize = 0;
-
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
     indexBufSize += (mesh.GetTriangleFaceTable().size() * Constants::TRI_VERTS);
-    vertexBufSize += mesh.GetVertTable().size();
   }
 
   mIndexBuffer = std::make_shared<IndexBuffer>(indexBufSize);
-  mVertexBuffer = std::make_shared<VertexBuffer<float>>(vertexBufSize, Constants::TRI_VERTS);
-  
+  mVertexBuffer = std::make_shared<VertexBuffer<float>>(indexBufSize * Constants::TRI_VERTS, Constants::TRI_VERTS);
+
   mCameraPos[0] = 0.0f;
   mCameraPos[1] = 0.0f;
   mCameraPos[2] = 35.0f;
