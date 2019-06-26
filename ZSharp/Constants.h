@@ -7,7 +7,7 @@ namespace ZSharp {
 /// <summary>
 /// Collection of useful compile time constant values.
 /// </summary>
-class Constants {
+class Constants final {
   public:
   /// <summary>
   /// Don't allow this class to be instantiated.

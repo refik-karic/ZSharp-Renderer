@@ -11,7 +11,7 @@
 namespace ZSharp {
 
 template<typename T>
-class Model {
+class Model final {
   public:
 
   Model() {}

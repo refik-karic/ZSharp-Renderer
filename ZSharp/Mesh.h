@@ -10,7 +10,7 @@
 namespace ZSharp {
 
 template<typename T>
-class Mesh {
+class Mesh final {
   public:
 
   Mesh() {

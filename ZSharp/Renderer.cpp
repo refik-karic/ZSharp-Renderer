@@ -10,7 +10,7 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-static const constexpr char* ASSET_FILE = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\pyramid.json";
+char ASSET_FILE[] = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\pyramid.json";
 
 namespace ZSharp {
 Renderer::Renderer() {

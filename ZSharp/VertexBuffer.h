@@ -10,7 +10,7 @@
 namespace ZSharp {
 
 template<typename T>
-class VertexBuffer {
+class VertexBuffer final {
   public:
   VertexBuffer(std::size_t size, std::size_t stride) :
     mClipLength(0),

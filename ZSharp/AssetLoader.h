@@ -13,7 +13,7 @@ namespace ZSharp {
 /// Asset loader interface for loading things from persistent storage.
 /// i.e. NAND Flash, Hard Disks, etc.
 /// </summary>
-class AssetLoader {
+class AssetLoader final {
   public:
   AssetLoader() = delete;
 

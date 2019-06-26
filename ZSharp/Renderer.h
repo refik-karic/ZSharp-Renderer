@@ -9,7 +9,7 @@
 #include "ZMatrix.h"
 
 namespace ZSharp {
-class Renderer {
+class Renderer final {
   public:
 
   enum class Direction {

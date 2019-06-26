@@ -16,14 +16,10 @@
 #include <gdipluspixelformats.h>
 #include <gdiplustypes.h>
 
-GDIWrapper::GDIWrapper()
-{
+GDIWrapper::GDIWrapper() {
   // Initialize GDI+.
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  gdiplusStartupInput.GdiplusVersion = 1;
-  gdiplusStartupInput.DebugEventCallback = nullptr;
-  gdiplusStartupInput.SuppressBackgroundThread = false;
-  gdiplusStartupInput.SuppressExternalCodecs = false; // Ignored for GDI+ v1.0
+  gdiplusStartupInput.SuppressExternalCodecs = true;
   GdiplusStartup(&mGdiToken, &gdiplusStartupInput, nullptr);
 }
 
@@ -35,17 +31,24 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
   // Get the current window dimensions.
   RECT activeWindowSize;
   GetClientRect(hWnd, &activeWindowSize);
-  Gdiplus::Rect drawRect(static_cast<int>(activeWindowSize.left),
-                         static_cast<int>(activeWindowSize.top),
-                         static_cast<int>(activeWindowSize.right),
-                         static_cast<int>(activeWindowSize.bottom));
+  Gdiplus::Rect drawRect{
+    static_cast<int>(activeWindowSize.left),
+    static_cast<int>(activeWindowSize.top),
+    static_cast<int>(activeWindowSize.right),
+    static_cast<int>(activeWindowSize.bottom)
+  };
   
-  Gdiplus::Bitmap bitmap(drawRect.Width, 
+  Gdiplus::Bitmap bitmap(
+    drawRect.Width,
     drawRect.Height,
     drawRect.Width * 4,
-    PixelFormat32bppARGB, 
-    static_cast<BYTE*>(frameData.GetBuffer()));
-  bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone);
+    PixelFormat32bppARGB,
+    reinterpret_cast<BYTE*>(frameData.GetBuffer())
+  );
+
+  if(bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone) != Gdiplus::Status::Ok) {
+    return;
+  }
 
   // Use GDI+ to draw the bitmap onto our viewport.
   PAINTSTRUCT ps;
@@ -54,7 +57,6 @@ void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
   if(hdc != nullptr) {
     Gdiplus::Graphics graphics(hdc);
     graphics.DrawImage(&bitmap, drawRect);
+    EndPaint(hWnd, &ps);
   }
-
-  EndPaint(hWnd, &ps);
 }

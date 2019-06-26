@@ -21,7 +21,7 @@ namespace ZSharp {
 /// </summary>
 /// <typeparam name="T">The type this camera will represent.</typeparam>
 template <typename T>
-class Camera {
+class Camera final {
   public:
 
   /// <summary>
@@ -176,6 +176,9 @@ class Camera {
     windowTransform[1][2] = static_cast<T>(mHeight);
     windowTransform = windowTransform * (static_cast<T>(1.0 / 2.0));
 
+    // Remove back facing primitives.
+    ZAlgorithm<T>::CullBackFacingPrimitives(vertexBuffer, indexBuffer, mPosition);
+
     // TODO: This implementation will currently apply the transformaton to ALL verticies in the VBO, regardless if they are vertex data in a stride or texture coordinates!
     std::size_t homogenizedStride = vertexBuffer.GetHomogenizedStride();
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += homogenizedStride) {
@@ -193,9 +196,6 @@ class Camera {
       ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
       ZVector<4, T>::Homogenize(vertexVector, 3);
     }
-
-    // Remove back facing primitives.
-    ZAlgorithm<T>::CullBackFacingPrimitives(vertexBuffer, indexBuffer);
 
     // At this point all verticies have been transformed into the "SPVV".
     ClipTriangles(vertexBuffer, indexBuffer);

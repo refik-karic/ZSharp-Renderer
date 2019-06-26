@@ -12,7 +12,7 @@
 
 namespace ZSharp {
 
-class ZDrawing {
+class ZDrawing final {
   public:
 
   enum class DrawMode {

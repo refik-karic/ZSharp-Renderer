@@ -6,7 +6,7 @@
 #include "ZColor.h"
 
 namespace ZSharp {
-class Framebuffer {
+class Framebuffer final {
   public:
   Framebuffer();
   ~Framebuffer();

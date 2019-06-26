@@ -4,7 +4,7 @@
 
 #include <Framebuffer.h>
 
-class GDIWrapper {
+class GDIWrapper final {
   public:
   GDIWrapper();
   ~GDIWrapper();

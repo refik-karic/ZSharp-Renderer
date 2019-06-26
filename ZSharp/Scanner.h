@@ -14,7 +14,7 @@
 
 namespace ZSharp {
 
-class Scanner {
+class Scanner final {
   public:
 
   Scanner() {

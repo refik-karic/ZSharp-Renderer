@@ -8,7 +8,7 @@
 
 namespace ZSharp {
 
-class JsonObject {
+class JsonObject final {
   public:
 
   /// <summary>

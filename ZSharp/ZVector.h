@@ -15,7 +15,7 @@ namespace ZSharp {
 // Another major benefit is the ability for the compiler to decide at compile time the amount of loop iterations for common operations like addition and unroll them for you without you having to do it yourself.
 
 template<std::size_t elements, typename T>
-class ZVector {
+class ZVector final {
   public:
 
   // Create a new vector with the given dimensions and clears its contents.

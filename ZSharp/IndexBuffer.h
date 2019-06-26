@@ -7,7 +7,7 @@
 
 namespace ZSharp {
 
-class IndexBuffer {
+class IndexBuffer final {
   public:
 
   IndexBuffer(std::size_t size);

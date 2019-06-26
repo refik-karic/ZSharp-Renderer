@@ -5,7 +5,7 @@
 
 namespace ZSharp{
 
-class ZConfig {
+class ZConfig final {
   public:
 
   ZConfig(const ZConfig&) = delete;
@@ -13,35 +13,19 @@ class ZConfig {
 
   static ZConfig& GetInstance();
 
-  std::size_t GetViewportWidth() const {
-    return mViewportWidth;
-  }
+  std::size_t GetViewportWidth() const;
 
-  std::size_t GetViewportHeight() const {
-    return mViewportHeight;
-  }
+  std::size_t GetViewportHeight() const;
 
-  std::size_t GetViewportStride() const {
-    return mViewportStride;
-  }
+  std::size_t GetViewportStride() const;
 
-  std::size_t GetBytesPerPixel() const {
-    return mBytesPerPixel;
-  }
+  std::size_t GetBytesPerPixel() const;
 
-  void SetViewportWidth(std::size_t width) {
-    mViewportWidth = width;
-    mViewportStride = mBytesPerPixel * width;
-  }
+  void SetViewportWidth(std::size_t width);
 
-  void SetViewportHeight(std::size_t height) {
-    mViewportHeight = height;
-  }
+  void SetViewportHeight(std::size_t height);
 
-  void SetBytesPerPixel(std::size_t bytesPerPixel) {
-    mBytesPerPixel = bytesPerPixel;
-    mViewportStride = mViewportWidth * bytesPerPixel;
-  }
+  void SetBytesPerPixel(std::size_t bytesPerPixel);
 
   private:
 

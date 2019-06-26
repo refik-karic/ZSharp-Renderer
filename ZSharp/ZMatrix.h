@@ -8,7 +8,7 @@
 namespace ZSharp {
 
 template <std::size_t rows, std::size_t cols, typename T>
-class ZMatrix {
+class ZMatrix final {
   public:
   enum class Axis {
     TWO_DIMENSIONS,

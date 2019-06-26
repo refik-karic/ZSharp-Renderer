@@ -7,7 +7,7 @@
 namespace ZSharp {
 
 template<typename T>
-class Triangle {
+class Triangle final {
   public:
 
   Triangle() {}
