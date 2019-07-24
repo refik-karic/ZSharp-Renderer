@@ -46,14 +46,16 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
       windowsFrameTimer = SetTimer(hwnd, 1, FRAMERATE_60_HZ_MS, NULL);
 
-      if(windowsFrameTimer == 0){
+      if(windowsFrameTimer == 0) {
         DestroyWindow(hwnd);
       }
       break;
-    case WM_TIMER:      
+    case WM_TIMER: {
       RECT activeWindowSize;
-      GetClientRect(hwnd, &activeWindowSize);
-      InvalidateRect(hwnd, &activeWindowSize, false);
+      if(!(GetClientRect(hwnd, &activeWindowSize) && InvalidateRect(hwnd, &activeWindowSize, false))) {
+        DestroyWindow(hwnd);
+      }
+    }
       break;
     case WM_PAINT:
       mGdiWrapper->UpdateWindow(hwnd, mRenderer->RenderNextFrame());
@@ -103,8 +105,6 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           break;
       }
       break;
-    // TODO: Add a case for WM_CHAR and cast wParam to a wchar_t type.
-    // https://docs.microsoft.com/en-us/windows/desktop/learnwin32/keyboard-input#character-messages
     case WM_CLOSE:
       DestroyWindow(hwnd);
       break;
@@ -131,19 +131,20 @@ void InitializeRenderer() {
 }
 
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
-  WNDCLASSEXW wc;
-  wc.cbSize = sizeof(WNDCLASSEXW);
-  wc.style = 0;
-  wc.lpfnWndProc = &MessageLoop;
-  wc.cbClsExtra = 0;
-  wc.cbWndExtra = 0;
-  wc.hInstance = hInstance;
-  wc.hIcon = nullptr;
-  wc.hCursor = nullptr;
-  wc.hbrBackground = nullptr;
-  wc.lpszMenuName = nullptr;
-  wc.lpszClassName = className;
-  wc.hIconSm = nullptr;
+  WNDCLASSEXW wc{
+    sizeof(WNDCLASSEXW),
+    0,
+    &MessageLoop,
+    0,
+    0,
+    hInstance,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    className,
+    nullptr
+  };
 
   if (!RegisterClassExW(&wc)) {
     return nullptr;

@@ -114,8 +114,9 @@ class ZAlgorithm final {
       const ZVector<3, T>& firstEdge = *(reinterpret_cast<const ZVector<3, T>*>(v1));
       const ZVector<3, T>& secondEdge = *(reinterpret_cast<const ZVector<3, T>*>(v2));
       const ZVector<3, T>& thirdEdge = *(reinterpret_cast<const ZVector<3, T>*>(v3));
-      ZVector<3, T> triangleNormal = ZVector<3, T>::Cross(firstEdge, thirdEdge);
-      ZVector<3, T>::Normalize(triangleNormal);
+      ZVector<3, T> p1p0 = secondEdge - firstEdge;
+      ZVector<3, T> p2p1 = thirdEdge - secondEdge;
+      ZVector<3, T> triangleNormal = ZVector<3, T>::Cross(p1p0, p2p1);
       T dotResult = (viewer - secondEdge) * triangleNormal;
       if(dotResult <= static_cast<T>(0)) {
         indexBuffer.RemoveTriangle((i / Constants::TRI_VERTS) - 1);
