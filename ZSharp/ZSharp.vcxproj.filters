@@ -78,6 +78,9 @@
     <ClCompile Include="ZColor.cpp">
       <Filter>Source Files\Display</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalEdgeTable.cpp">
+      <Filter>Source Files\Display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="ZAlgorithm.h">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalEdgeTable.h">
+      <Filter>Header Files\Display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

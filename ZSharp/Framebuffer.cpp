@@ -25,6 +25,16 @@ void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
   }
 }
 
+void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor color) {
+  if (y >= 0 && y < mHeight && x1 >= 0 && x1 < mWidth && x2 >= 0 && x2 < mWidth && x1 < x2) {
+    std::size_t offset = (x1 * sizeof(std::uint32_t)) + (y * mStride);
+    for (std::size_t i = x1; i < x2; ++i) {
+      *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
+      offset += 4;
+    }
+  }
+}
+
 void Framebuffer::Clear(ZColor color) {
   std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
   std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);

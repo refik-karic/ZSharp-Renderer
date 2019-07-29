@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
+    <ClCompile Include="GlobalEdgeTable.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="ZColor.cpp" />
     <ClCompile Include="ZConfig.cpp" />
@@ -41,6 +42,7 @@
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GlobalEdgeTable.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ZAlgorithm.h" />

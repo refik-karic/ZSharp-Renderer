@@ -66,7 +66,7 @@ Framebuffer& Renderer::RenderNextFrame() {
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
   // Draw the primitives onto the framebuffer.
-  ZDrawing::DrawTriangles(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
+  ZDrawing::DrawTrianglesFlat(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
 
   return mBuffer;
 }

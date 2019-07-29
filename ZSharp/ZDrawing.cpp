@@ -142,4 +142,132 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
   }
 }
 
+void ZDrawing::TracePrimitive(GlobalEdgeTable& edgeTable, std::array<std::int32_t, 2>& p1, std::array<std::int32_t, 2>& p2, std::array<std::int32_t, 2>& p3, ZColor color) {
+  TraceLine(edgeTable, p1[0], p1[1], p2[0], p2[1], color);
+  TraceLine(edgeTable, p2[0], p2[1], p3[0], p3[1], color);
+  TraceLine(edgeTable, p3[0], p3[1], p1[0], p1[1], color);
+}
+
+void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32_t y1, std::int32_t x2, std::int32_t y2, ZColor color) {
+  if (x1 == x2) {
+    // Special case for vertical lines.
+    if (y1 == y2) {
+      // Zero length line, stop drawing.
+      return;
+    }
+
+    // Swap values if needed.
+    if (y2 < y1) {
+      std::int32_t temp = y2;
+      y2 = y1;
+      y1 = temp;
+    }
+
+    // Since Y access goes by column, cache efficiency can be ignored.
+    if (y1 + 1 < y2 && y2 - 1 > y1) {
+      while (y1 < y2) {
+        edgeTable.AddPoint(y1, x1, color);
+        y1++;
+      }
+    }
+  } else if (y1 == y2) {
+    // Special case for horizontal lines.
+    if (x1 == x2) {
+      // Zero length line, stop drawing.
+      return;
+    }
+
+    // Swap to always go left to right and maintain efficient use of HW cache.
+    if (x2 < x1) {
+      std::int32_t temp = x2;
+      x2 = x1;
+      x1 = temp;
+    }
+
+    if (x1 + 1 < x2 && x2 - 1 > x1) {
+      edgeTable.AddPoint(y1, x1 + 1, color);
+      edgeTable.AddPoint(y1, x2 - 1, color);
+    }
+  } else {
+    // Note that slope is always positive in all calculations.
+    // Slope is also flipped depending on the major axis.
+    double slope;
+    // Error is always treated as positive.
+    double error = 0.0;
+    // Keeps track of how many pixels the current row will draw.
+    std::int32_t slopeStep;
+    // Total number of iterations alone the minor axis.
+    std::int32_t delta;
+
+    // Always make sure to draw upwards by swapping points such that P1y is always less than P2y.
+    if (y2 < y1) {
+      std::int32_t temp = y2;
+      y2 = y1;
+      y1 = temp;
+
+      temp = x2;
+      x2 = x1;
+      x1 = temp;
+    }
+
+    // Diagonal lines.
+    // TODO: It may be worth special casing diagonals with a slope of 1 since the error term becomes meaningless.
+    if (std::abs(x2 - x1) >= std::abs(y2 - y1)) {
+      // Y minor axis.
+      delta = std::abs(y2 - y1);
+      slope = std::abs(static_cast<double>((x2 - x1)) / (y2 - y1));
+
+      for (std::size_t i = 0; i < delta; i++) {
+        // Drop fraction.
+        error = error + (slope - std::floor(slope));
+        slopeStep = static_cast<std::int32_t>(std::floor(slope) + error);
+
+        // Compensate for the extra pixel.
+        if (slopeStep > static_cast<std::int32_t>(slope)) {
+          error = std::max(error - 1.0, 0.0);
+        }
+
+        if (x2 <= x1) {
+          // Moving in the negative X direction but still drawing left to right.
+          edgeTable.AddPoint(y1, x2, color);
+          x1 -= slopeStep;
+        } else {
+          // Draw a horizontal run slice left to right.
+          edgeTable.AddPoint(y1, x1, color);
+          x1 += slopeStep;
+        }
+
+        y1++; // Y values are swapped so we always move up along the minor axis.
+      }
+    } else {
+      // X minor axis.
+      delta = std::abs(x2 - x1);
+      // Keeps track of how much, but more importantly which direction, to move along the minor axis.
+      std::int32_t minorStep = (x2 - x1) / delta;
+      slope = std::abs(static_cast<double>((y2 - y1)) / (x2 - x1));
+
+      for (std::size_t i = 0; i < delta; i++) {
+        // Drop fraction.
+        error = error + (slope - std::floor(slope));
+        slopeStep = static_cast<std::int32_t>(std::floor(slope) + error);
+
+        // Compensate for the extra pixel.
+        if (slopeStep > static_cast<std::int32_t>(slope)) {
+          error = std::max(error - 1.0, 0.0);
+        }
+
+        // Draw a vertical run slice.
+        for (std::size_t j = y1; j < y1 + slopeStep; j++) {
+          edgeTable.AddPoint(j, x1, color);
+        }
+
+        // Must adjust the x by this even since it only moves one pixel at a time.
+        // This is because it could be moving left or right.
+        x1 += minorStep;
+        y1 += slopeStep;
+      }
+    }
+  }
+}
+
 }
