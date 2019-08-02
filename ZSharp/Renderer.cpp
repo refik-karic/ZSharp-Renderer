@@ -44,17 +44,20 @@ Framebuffer& Renderer::RenderNextFrame() {
   Mat4x4f_t rotationMatrix;
   Mat4x4f_t::Identity(rotationMatrix);
   Mat4x4f_t::SetRotation(rotationMatrix,
-                                    static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))), 
-                                    Mat4x4f_t::Axis::Y);
+                          static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))),
+                          Mat4x4f_t::Axis::Y);
 
-  mFrameCount += mRotationSpeed;
+  if (!mPauseTransforms) {
+    mFrameCount += mRotationSpeed;
+  }
+
   if (mFrameCount > 360) {
     mFrameCount = 0;
   }
 
   // Apply rotation transform to all verticies.
   mVertexBuffer->ApplyTransform(rotationMatrix);
-
+  
   // Color is stored in ARGB format.
   ZColor colorRed{ZColors::RED};
   ZColor colorBlue{ZColors::BLUE};
@@ -66,7 +69,12 @@ Framebuffer& Renderer::RenderNextFrame() {
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
   // Draw the primitives onto the framebuffer.
-  ZDrawing::DrawTrianglesFlat(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
+  if (mRenderMode) {
+    ZDrawing::DrawTrianglesFlat(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
+  }
+  else {
+    ZDrawing::DrawTrianglesWireframe(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
+  }
 
   return mBuffer;
 }
@@ -108,6 +116,14 @@ void Renderer::ChangeSpeed(std::int64_t amount) {
   else {
     mRotationSpeed += amount;
   }
+}
+
+void Renderer::FlipRenderMode() {
+  mRenderMode = !mRenderMode;
+}
+
+void Renderer::PauseTransforms() {
+  mPauseTransforms = !mPauseTransforms;
 }
 
 }

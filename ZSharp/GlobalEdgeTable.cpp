@@ -2,44 +2,36 @@
 
 namespace ZSharp {
 
-void GlobalEdgeTable::AddPoint(std::size_t yIndex, std::size_t x, ZColor color) {
+void GlobalEdgeTable::AddPoint(std::size_t yIndex, std::size_t x, ZColor color, std::size_t primitiveIndex) {
   ScanLineList& list = mEdgeTable[yIndex];
 
-  if (list.empty() || mParity) {
+  if (list.empty() || primitiveIndex != mLastActivePrimitive) {
     ScanLine scanLine{
       x,
-      0,
+      x,
       color
     };
 
     list.push_back(scanLine);
-    mParity = false;
+    mLastActivePrimitive = primitiveIndex;
   }
   else {
-    std::size_t end = list.size() - 1;
-    ScanLine scanLine = list[end];
-    /*
-    if (scanLine.x1 == x || scanLine.x2 == x) {
-      list.pop_back();
-      return;
-    }
-    */
-    if (scanLine.x1 < x) {
-      scanLine.x2 = x;
-    }
-    else {
-      scanLine.x2 = scanLine.x1;
+    ScanLine& scanLine = list[list.size() - 1];
+
+    if (scanLine.x1 > x) {
       scanLine.x1 = x;
+    }
+    else if (scanLine.x2 < x) {
+      scanLine.x2 = x;
     }
 
     scanLine.color = color;
-    list[end] = scanLine;
-    mParity = true;
   }
 }
 
 void GlobalEdgeTable::Clear() {
   mEdgeTable.clear();
+  mLastActivePrimitive = 0;
 }
 
 void GlobalEdgeTable::Draw(Framebuffer& frameBuffer) {

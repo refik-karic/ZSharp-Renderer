@@ -32,6 +32,10 @@ class Renderer final {
 
   void ChangeSpeed(std::int64_t amount);
 
+  void FlipRenderMode();
+
+  void PauseTransforms();
+
   private:
   Camera<float> mCamera;
   Vec3f_t mCameraPos;
@@ -41,6 +45,8 @@ class Renderer final {
 
   std::int64_t mFrameCount = 0;
   std::int64_t mRotationSpeed = 4;
+  bool mRenderMode = false;
+  bool mPauseTransforms = false;
 
   std::shared_ptr<IndexBuffer> mIndexBuffer;
   std::shared_ptr<VertexBuffer<float>> mVertexBuffer;

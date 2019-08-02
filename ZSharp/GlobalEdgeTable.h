@@ -18,7 +18,7 @@ class GlobalEdgeTable final {
   GlobalEdgeTable(const GlobalEdgeTable&) = delete;
   void operator=(const GlobalEdgeTable&) = delete;
 
-  void AddPoint(std::size_t yIndex, std::size_t x, ZColor color);
+  void AddPoint(std::size_t yIndex, std::size_t x, ZColor color, std::size_t primitiveIndex);
   void Clear();
   void Draw(Framebuffer& frameBuffer);
 
@@ -33,7 +33,7 @@ class GlobalEdgeTable final {
   typedef std::vector<ScanLine> ScanLineList;
 
   std::map<std::size_t, ScanLineList> mEdgeTable;
-  bool mParity = false;
+  std::size_t mLastActivePrimitive = 0;
 };
 
 }

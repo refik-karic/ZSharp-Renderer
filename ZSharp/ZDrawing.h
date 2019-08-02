@@ -36,7 +36,7 @@ class ZDrawing final {
       std::array<std::int32_t, 2> p2{static_cast<std::int32_t>(*v2), static_cast<std::int32_t>(*(v2 + 1))};
       std::array<std::int32_t, 2> p3{static_cast<std::int32_t>(*v3), static_cast<std::int32_t>(*(v3 + 1))};
 
-      TracePrimitive(edgeTable, p1, p2, p3, color);
+      TracePrimitive(edgeTable, p1, p2, p3, color, i);
     }
 
     edgeTable.Draw(framebuffer);
@@ -93,14 +93,15 @@ class ZDrawing final {
     std::int32_t y2,
     ZColor color);
 
-  static void TracePrimitive(GlobalEdgeTable& edgeTable, std::array<std::int32_t, 2>& p1, std::array<std::int32_t, 2>& p2, std::array<std::int32_t, 2>& p3, ZColor color);
+  static void TracePrimitive(GlobalEdgeTable& edgeTable, std::array<std::int32_t, 2>& p1, std::array<std::int32_t, 2>& p2, std::array<std::int32_t, 2>& p3, ZColor color, std::size_t primitiveIndex);
 
   static void TraceLine(GlobalEdgeTable& edgeTable,
                         std::int32_t x1,
                         std::int32_t y1,
                         std::int32_t x2,
                         std::int32_t y2,
-                        ZColor color);
+                        ZColor color,
+                        std::size_t primitiveIndex);
 };
 
 }

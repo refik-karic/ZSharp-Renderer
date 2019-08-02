@@ -63,6 +63,12 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
       // Just treat wParam as an ASCII character press for simplicity at the moment.
       switch (wParam) {
+        case 'P':
+          mRenderer->PauseTransforms();
+          break;
+        case 'R':
+          mRenderer->FlipRenderMode();
+          break;
         case 'W':
           mRenderer->MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
           break;
@@ -123,8 +129,13 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void InitializeRenderer() {
   ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
-  config.SetViewportWidth(640);
-  config.SetViewportHeight(360);
+  
+  // Low res
+  //config.SetViewportWidth(640);
+  //config.SetViewportHeight(360);
+  // High res (pretty slow atm)
+  config.SetViewportWidth(1920);
+  config.SetViewportHeight(1080);
   config.SetBytesPerPixel(4);
 
   mRenderer = new ZSharp::Renderer();

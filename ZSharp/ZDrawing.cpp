@@ -20,9 +20,7 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
 
     // Swap values if needed.
     if (y2 < y1) {
-      std::int32_t temp = y2;
-      y2 = y1;
-      y1 = temp;
+      std::swap(y1, y2);
     }
 
     // Since Y access goes by column, cache efficiency can be ignored.
@@ -40,9 +38,7 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
 
     // Swap to always go left to right and maintain efficient use of HW cache.
     if (x2 < x1) {
-      std::int32_t temp = x2;
-      x2 = x1;
-      x1 = temp;
+      std::swap(x1, x2);
     }
 
     // NOTE: Since this is moving left to right it can be replaced by a memset which will be much faster.
@@ -65,13 +61,8 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
 
     // Always make sure to draw upwards by swapping points such that P1y is always less than P2y.
     if (y2 < y1) {
-      std::int32_t temp = y2;
-      y2 = y1;
-      y1 = temp;
-
-      temp = x2;
-      x2 = x1;
-      x1 = temp;
+      std::swap(y1, y2);
+      std::swap(x1, x2);
     }
 
     // Diagonal lines.
@@ -142,53 +133,35 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
   }
 }
 
-void ZDrawing::TracePrimitive(GlobalEdgeTable& edgeTable, std::array<std::int32_t, 2>& p1, std::array<std::int32_t, 2>& p2, std::array<std::int32_t, 2>& p3, ZColor color) {
-  TraceLine(edgeTable, p1[0], p1[1], p2[0], p2[1], color);
-  TraceLine(edgeTable, p2[0], p2[1], p3[0], p3[1], color);
-  TraceLine(edgeTable, p3[0], p3[1], p1[0], p1[1], color);
+void ZDrawing::TracePrimitive(GlobalEdgeTable& edgeTable, std::array<std::int32_t, 2>& p1, std::array<std::int32_t, 2>& p2, std::array<std::int32_t, 2>& p3, ZColor color, std::size_t primitiveIndex) {
+  TraceLine(edgeTable, p1[0], p1[1], p2[0], p2[1], color, primitiveIndex);
+  TraceLine(edgeTable, p2[0], p2[1], p3[0], p3[1], color, primitiveIndex);
+  TraceLine(edgeTable, p3[0], p3[1], p1[0], p1[1], color, primitiveIndex);
 }
 
-void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32_t y1, std::int32_t x2, std::int32_t y2, ZColor color) {
+void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32_t y1, std::int32_t x2, std::int32_t y2, ZColor color, std::size_t primitiveIndex) {
   if (x1 == x2) {
-    // Special case for vertical lines.
-    if (y1 == y2) {
-      // Zero length line, stop drawing.
-      return;
-    }
-
     // Swap values if needed.
     if (y2 < y1) {
-      std::int32_t temp = y2;
-      y2 = y1;
-      y1 = temp;
+      std::swap(y1, y2);
     }
 
     // Since Y access goes by column, cache efficiency can be ignored.
-    if (y1 + 1 < y2 && y2 - 1 > y1) {
-      while (y1 < y2) {
-        edgeTable.AddPoint(y1, x1, color);
-        y1++;
-      }
+    while (y1 < y2) {
+      edgeTable.AddPoint(y1, x1, color, primitiveIndex);
+      y1++;
     }
-  } else if (y1 == y2) {
-    // Special case for horizontal lines.
-    if (x1 == x2) {
-      // Zero length line, stop drawing.
-      return;
-    }
-
+  }
+  else if (y1 == y2) {
     // Swap to always go left to right and maintain efficient use of HW cache.
     if (x2 < x1) {
-      std::int32_t temp = x2;
-      x2 = x1;
-      x1 = temp;
+      std::swap(x1, x2);
     }
 
-    if (x1 + 1 < x2 && x2 - 1 > x1) {
-      edgeTable.AddPoint(y1, x1 + 1, color);
-      edgeTable.AddPoint(y1, x2 - 1, color);
-    }
-  } else {
+    edgeTable.AddPoint(y1, x1, color, primitiveIndex);
+    edgeTable.AddPoint(y1, x2, color, primitiveIndex);
+  }
+  else {
     // Note that slope is always positive in all calculations.
     // Slope is also flipped depending on the major axis.
     double slope;
@@ -196,18 +169,13 @@ void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32
     double error = 0.0;
     // Keeps track of how many pixels the current row will draw.
     std::int32_t slopeStep;
-    // Total number of iterations alone the minor axis.
+    // Total number of iterations along the minor axis.
     std::int32_t delta;
 
     // Always make sure to draw upwards by swapping points such that P1y is always less than P2y.
     if (y2 < y1) {
-      std::int32_t temp = y2;
-      y2 = y1;
-      y1 = temp;
-
-      temp = x2;
-      x2 = x1;
-      x1 = temp;
+      std::swap(y1, y2);
+      std::swap(x1, x2);
     }
 
     // Diagonal lines.
@@ -229,11 +197,11 @@ void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32
 
         if (x2 <= x1) {
           // Moving in the negative X direction but still drawing left to right.
-          edgeTable.AddPoint(y1, x2, color);
+          edgeTable.AddPoint(y1, x1, color, primitiveIndex);
           x1 -= slopeStep;
         } else {
           // Draw a horizontal run slice left to right.
-          edgeTable.AddPoint(y1, x1, color);
+          edgeTable.AddPoint(y1, x1, color, primitiveIndex);
           x1 += slopeStep;
         }
 
@@ -258,7 +226,7 @@ void ZDrawing::TraceLine(GlobalEdgeTable& edgeTable, std::int32_t x1, std::int32
 
         // Draw a vertical run slice.
         for (std::size_t j = y1; j < y1 + slopeStep; j++) {
-          edgeTable.AddPoint(j, x1, color);
+          edgeTable.AddPoint(j, x1, color, primitiveIndex);
         }
 
         // Must adjust the x by this even since it only moves one pixel at a time.
