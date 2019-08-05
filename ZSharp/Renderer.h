@@ -24,7 +24,7 @@ class Renderer final {
   Renderer(const Renderer&) = delete;
   void operator=(const Renderer&) = delete;
 
-  Framebuffer& RenderNextFrame();
+  std::uint8_t* RenderNextFrame();
 
   void MoveCamera(Direction direction, float amount);
 

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
@@ -12,21 +8,6 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Display">
-      <UniqueIdentifier>{159d8514-d1c7-4f9a-b894-6800304e3fef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Util">
-      <UniqueIdentifier>{314244b1-5055-441e-8bc4-ea3a38bebb5a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{7533e637-5fc1-43dc-8e74-6f8d58c800f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Geometry">
-      <UniqueIdentifier>{4d5754bc-c704-4ebb-a32a-9d3fff7bd05a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Asset">
-      <UniqueIdentifier>{b15450ca-a042-492e-b6a5-3348390a7839}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Asset">
       <UniqueIdentifier>{637c43a7-4afe-4dad-9f47-cedf9e6509d3}</UniqueIdentifier>
@@ -43,8 +24,33 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{32fa249f-243e-42af-abf4-ea5f234c9f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Intrinsics">
+      <UniqueIdentifier>{be72f7be-6624-473a-bfcc-8988e814868b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Display">
+      <UniqueIdentifier>{159d8514-d1c7-4f9a-b894-6800304e3fef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{314244b1-5055-441e-8bc4-ea3a38bebb5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{7533e637-5fc1-43dc-8e74-6f8d58c800f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{4d5754bc-c704-4ebb-a32a-9d3fff7bd05a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Asset">
+      <UniqueIdentifier>{b15450ca-a042-492e-b6a5-3348390a7839}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Asset\Models">
       <UniqueIdentifier>{44279bea-e550-47bb-bc6e-851b9d86ce85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Intrinsics">
+      <UniqueIdentifier>{0004baf2-e50c-489f-b961-96d48c69c0d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="GlobalEdgeTable.cpp">
       <Filter>Source Files\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="IntelIntrinsics.cpp">
+      <Filter>Source Files\Intrinsics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +152,9 @@
     <ClInclude Include="GlobalEdgeTable.h">
       <Filter>Header Files\Display</Filter>
     </ClInclude>
+    <ClInclude Include="IntelIntrinsics.h">
+      <Filter>Header Files\Intrinsics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="db_schema.json">
@@ -152,6 +164,9 @@
       <Filter>Source Files\Asset\Models</Filter>
     </None>
     <None Include="triangles.json">
+      <Filter>Source Files\Asset\Models</Filter>
+    </None>
+    <None Include="pyramids.json">
       <Filter>Source Files\Asset\Models</Filter>
     </None>
   </ItemGroup>

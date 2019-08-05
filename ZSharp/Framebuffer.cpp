@@ -1,6 +1,9 @@
 ﻿#include "Framebuffer.h"
 #include "ZConfig.h"
 
+#include "IntelIntrinsics.h"
+#include <malloc.h>
+
 namespace ZSharp {
 Framebuffer::Framebuffer() {
   const ZConfig& config = ZConfig::GetInstance();
@@ -8,12 +11,17 @@ Framebuffer::Framebuffer() {
   mHeight = config.GetViewportHeight();
   mStride = config.GetViewportStride();
   mTotalSize = config.GetViewportStride() * config.GetViewportHeight();
-  mPixelBuffer = new uint8_t[mTotalSize];
+  mPixelBuffer = static_cast<std::uint8_t*>(_aligned_malloc(mTotalSize, 64));
+  mScratchBuffer = static_cast<std::uint8_t*>(_aligned_malloc(64, 64));
 }
 
 Framebuffer::~Framebuffer(){
   if(mPixelBuffer != nullptr){
-    delete[] mPixelBuffer;
+    _aligned_free(mPixelBuffer);
+  }
+
+  if (mScratchBuffer != nullptr) {
+    _aligned_free(mScratchBuffer);
   }
 }
 
@@ -36,6 +44,7 @@ void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor c
 }
 
 void Framebuffer::Clear(ZColor color) {
+#if 0
   std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
   std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
   std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
@@ -49,6 +58,12 @@ void Framebuffer::Clear(ZColor color) {
   for (std::size_t i = 0; i < cachedSize; i++) {
     pBuf[i] = convColor;
   }
+#endif
+  for (std::size_t i = 0; i < 16; ++i) {
+    *(reinterpret_cast<std::uint32_t*>(mScratchBuffer) + i) = color.Color;
+  }
+
+  avx512memsetaligned(mPixelBuffer, mScratchBuffer, mTotalSize);
 }
 
 std::uint8_t* Framebuffer::GetBuffer() {

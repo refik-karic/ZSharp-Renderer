@@ -1,6 +1,4 @@
-﻿#include <cstddef>
-
-#include "GDIWrapper.h"
+﻿#include "GDIWrapper.h"
 
 #include <objbase.h>
 
@@ -11,6 +9,7 @@
 #pragma warning(pop)
 
 #include <gdiplusinit.h>
+#include <gdiplusenums.h>
 #include <gdiplusgraphics.h>
 #include <gdiplusheaders.h>
 #include <gdipluspixelformats.h>
@@ -27,36 +26,29 @@ GDIWrapper::~GDIWrapper() {
   Gdiplus::GdiplusShutdown(mGdiToken);
 }
 
-void GDIWrapper::UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData) {
+void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   // Get the current window dimensions.
   RECT activeWindowSize;
   GetClientRect(hWnd, &activeWindowSize);
-  Gdiplus::Rect drawRect{
-    static_cast<int>(activeWindowSize.left),
-    static_cast<int>(activeWindowSize.top),
-    static_cast<int>(activeWindowSize.right),
-    static_cast<int>(activeWindowSize.bottom)
-  };
-  
-  Gdiplus::Bitmap bitmap(
-    drawRect.Width,
-    drawRect.Height,
-    drawRect.Width * 4,
-    PixelFormat32bppARGB,
-    reinterpret_cast<BYTE*>(frameData.GetBuffer())
-  );
 
-  if(bitmap.RotateFlip(Gdiplus::RotateFlipType::Rotate180FlipNone) != Gdiplus::Status::Ok) {
-    return;
-  }
+  Gdiplus::Bitmap bitmap(
+    activeWindowSize.right,
+    activeWindowSize.bottom,
+    activeWindowSize.right * 4,
+    PixelFormat32bppPARGB,
+    reinterpret_cast<BYTE*>(frameData)
+  );
 
   // Use GDI+ to draw the bitmap onto our viewport.
   PAINTSTRUCT ps;
-  HDC hdc = BeginPaint(hWnd, &ps);
-
-  if(hdc != nullptr) {
-    Gdiplus::Graphics graphics(hdc);
-    graphics.DrawImage(&bitmap, drawRect);
-    EndPaint(hWnd, &ps);
-  }
+  Gdiplus::Graphics graphics(BeginPaint(hWnd, &ps));
+  graphics.DrawImage(&bitmap,
+                      0,
+                      0,
+                      activeWindowSize.left,
+                      activeWindowSize.top,
+                      activeWindowSize.right,
+                      activeWindowSize.bottom,
+                      Gdiplus::UnitPixel);
+  EndPaint(hWnd, &ps);
 }

@@ -156,6 +156,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <ManifestFile>$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -231,6 +232,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <ManifestFile>$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -277,6 +279,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <ManifestFile>$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

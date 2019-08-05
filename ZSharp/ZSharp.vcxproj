@@ -30,6 +30,7 @@
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="GlobalEdgeTable.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="IntelIntrinsics.cpp" />
     <ClCompile Include="ZColor.cpp" />
     <ClCompile Include="ZConfig.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GlobalEdgeTable.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="IntelIntrinsics.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ZAlgorithm.h" />
     <ClInclude Include="ZConfig.h" />
@@ -64,6 +66,7 @@
   <ItemGroup>
     <None Include="db_schema.json" />
     <None Include="pyramid.json" />
+    <None Include="pyramids.json" />
     <None Include="triangles.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -191,6 +194,7 @@
       <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
       <CallingConvention>VectorCall</CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -258,6 +262,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
       <CallingConvention>VectorCall</CallingConvention>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -291,6 +296,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
       <CallingConvention>VectorCall</CallingConvention>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

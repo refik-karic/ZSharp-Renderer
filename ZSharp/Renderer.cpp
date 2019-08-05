@@ -10,7 +10,7 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-char ASSET_FILE[] = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\pyramid.json";
+char ASSET_FILE[] = "C:\\Users\\kr\\Desktop\\SoftwareRendererV3\\ZSharp\\pyramids.json";
 
 namespace ZSharp {
 Renderer::Renderer() {
@@ -29,7 +29,7 @@ Renderer::Renderer() {
   mCameraPos[2] = 35.0f;
 }
 
-Framebuffer& Renderer::RenderNextFrame() {
+std::uint8_t* Renderer::RenderNextFrame() {
   // Update the camera position.
   mCamera.MoveCamera(mCameraPos);
 
@@ -76,7 +76,7 @@ Framebuffer& Renderer::RenderNextFrame() {
     ZDrawing::DrawTrianglesWireframe(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
   }
 
-  return mBuffer;
+  return mBuffer.GetBuffer();
 }
 
 void Renderer::MoveCamera(Direction direction, float amount) {

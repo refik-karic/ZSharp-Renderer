@@ -50,15 +50,16 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         DestroyWindow(hwnd);
       }
       break;
-    case WM_TIMER: {
+    case WM_TIMER:
       RECT activeWindowSize;
-      if(!(GetClientRect(hwnd, &activeWindowSize) && InvalidateRect(hwnd, &activeWindowSize, false))) {
-        DestroyWindow(hwnd);
-      }
-    }
+      GetClientRect(hwnd, &activeWindowSize);
+      InvalidateRect(hwnd, &activeWindowSize, false);
       break;
     case WM_PAINT:
       mGdiWrapper->UpdateWindow(hwnd, mRenderer->RenderNextFrame());
+      break;
+    case WM_ERASEBKGND:
+      return true;
       break;
     case WM_KEYDOWN:
       // Just treat wParam as an ASCII character press for simplicity at the moment.

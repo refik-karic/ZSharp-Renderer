@@ -37,8 +37,9 @@ class Camera final {
     // Default the look direction is along the negative Z axis.
     mLook[2] = static_cast<T>(-1);
 
-    // Default the up direction is along the positive Y axis.
-    mUp[1] = static_cast<T>(1);
+    // Default the up direction is along the negative Y axis.
+    // This is because screen coordinates start in the top left corner as opposed to world and screen space 3D coordinates which start and the origin and bottom left.
+    mUp[1] = static_cast<T>(-1);
 
     // Default the FOV to be 90 degrees.
     mFovHoriz = static_cast<T>(90);

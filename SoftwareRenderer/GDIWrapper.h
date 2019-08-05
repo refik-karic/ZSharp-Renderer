@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "WindowsHeadersWrapper.h"
+#include <cstdint>
 
-#include <Framebuffer.h>
+#include "WindowsHeadersWrapper.h"
 
 class GDIWrapper final {
   public:
@@ -12,7 +12,7 @@ class GDIWrapper final {
   GDIWrapper(const GDIWrapper&) = delete;
   void operator=(const GDIWrapper&) = delete;
 
-  void UpdateWindow(HWND hWnd, ZSharp::Framebuffer& frameData);
+  void UpdateWindow(HWND hWnd, std::uint8_t* frameData);
 
   private:
   ULONG_PTR mGdiToken;
