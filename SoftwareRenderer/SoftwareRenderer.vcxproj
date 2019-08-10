@@ -141,13 +141,14 @@
       <EnableModules>false</EnableModules>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
-      <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8 </AdditionalOptions>
+      <AdditionalOptions>/utf-8 /favor:INTEL64 /Zf /cgthreads8 </AdditionalOptions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <CallingConvention>VectorCall</CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Gdiplus.lib;kernel32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
       <ProfileGuidedDatabase />
@@ -213,16 +214,29 @@
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
-      <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /favor:INTEL64 /Zf /cgthreads8</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
       <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CallingConvention>VectorCall</CallingConvention>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Gdiplus.lib;kernel32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -263,13 +277,14 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <AdditionalOptions>/utf-8 /favor:INTEL64 /TP /Zf /cgthreads8</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /favor:INTEL64 /Zf /cgthreads8</AdditionalOptions>
       <CallingConvention>VectorCall</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Gdiplus.lib;kernel32.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>

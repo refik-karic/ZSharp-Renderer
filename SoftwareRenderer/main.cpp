@@ -133,7 +133,7 @@ void InitializeRenderer() {
   
   // Low res
   //config.SetViewportWidth(640);
-  //config.SetViewportHeight(360);
+  //config.SetViewportHeight(480);
   // High res (pretty slow atm)
   config.SetViewportWidth(1920);
   config.SetViewportHeight(1080);

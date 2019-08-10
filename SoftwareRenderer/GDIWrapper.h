@@ -15,5 +15,4 @@ class GDIWrapper final {
   void UpdateWindow(HWND hWnd, std::uint8_t* frameData);
 
   private:
-  ULONG_PTR mGdiToken;
 };
