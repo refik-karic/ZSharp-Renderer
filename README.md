@@ -1,5 +1,5 @@
 # ZSharp-Renderer
-An old school Win32 software renderer implemented as part of a learning experience in computer graphics
+An old school Win32 3D software renderer implemented as part of a learning experience in computer graphics
 
 ## In Action: Two Pyramids
 ![flat](https://user-images.githubusercontent.com/54491280/63645593-19ceef00-c6d0-11e9-97da-6d78acceb96a.png)
