@@ -2,11 +2,10 @@
 #include <ZConfig.h>
 #include <ZMatrix.h>
 
-#include "WindowsHeadersWrapper.h"
 #include "GDIWrapper.h"
+#include "WindowsHeadersWrapper.h"
 
 static ZSharp::Renderer* mRenderer = nullptr;
-static GDIWrapper* mGdiWrapper = nullptr;
 
 void InitializeRenderer();
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className);
@@ -21,13 +20,10 @@ int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ L
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
-  mGdiWrapper = new GDIWrapper();
-
   // Run the message loop.
   ShowWindow(hwnd, nCmdShow);
   UpdateWindow(hwnd);
-  MSG msg;
-  while (GetMessageW(&msg, hwnd, 0, 0) > 0) {
+  for (MSG msg; GetMessageW(&msg, hwnd, 0, 0) > 0;) {
     // Translate message is required for retrieving decoded user input.
     TranslateMessage(&msg);
     // Dispatch message is required to process the message from the OS.
@@ -56,7 +52,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       InvalidateRect(hwnd, &activeWindowSize, false);
       break;
     case WM_PAINT:
-      mGdiWrapper->UpdateWindow(hwnd, mRenderer->RenderNextFrame());
+      GDIWrapper::UpdateWindow(hwnd, mRenderer->RenderNextFrame());
       break;
     case WM_ERASEBKGND:
       return true;
@@ -134,7 +130,7 @@ void InitializeRenderer() {
   // Low res
   //config.SetViewportWidth(640);
   //config.SetViewportHeight(480);
-  // High res (pretty slow atm)
+  // High res
   config.SetViewportWidth(1920);
   config.SetViewportHeight(1080);
   config.SetBytesPerPixel(4);

@@ -1,7 +1,7 @@
 #include "Scanner.h"
 
 #include <fstream>
-#include <iostream> // TODO: Replace this with some kind of global logger singleton.
+#include <iostream>
 #include <string>
 
 namespace ZSharp {

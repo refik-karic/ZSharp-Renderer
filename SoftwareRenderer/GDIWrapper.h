@@ -6,13 +6,12 @@
 
 class GDIWrapper final {
   public:
-  GDIWrapper();
-  ~GDIWrapper();
-
+  GDIWrapper() = delete;
+  ~GDIWrapper() = delete;
   GDIWrapper(const GDIWrapper&) = delete;
   void operator=(const GDIWrapper&) = delete;
 
-  void UpdateWindow(HWND hWnd, std::uint8_t* frameData);
+  static void UpdateWindow(HWND hWnd, std::uint8_t* frameData);
 
   private:
 };

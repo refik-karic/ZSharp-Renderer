@@ -1,11 +1,5 @@
 #pragma once
 
-#define PROFILE
-
-#ifdef PROFILE
-#include <Windows.h>
-#elif !PROFILE
-
 // Even though this header only includes the minimum requirements at any given time.
 // It is still useful to ignore excess things in the event where another header, such as objidl.h from GDI+/COM, include windows.h themselves.
 
@@ -22,7 +16,7 @@
 #define NOICONS
 //#define NOKEYSTATES
 #define NOSYSCOMMANDS
-#define NORASTEROPS
+//#define NORASTEROPS
 #define NOSHOWWINDOW
 #define OEMRESOURCE
 #define NOATOM
@@ -68,4 +62,3 @@
 #include <winbase.h>
 #include <wingdi.h>
 #include <winuser.h>
-#endif

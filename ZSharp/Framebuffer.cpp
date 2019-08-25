@@ -4,6 +4,8 @@
 #include "IntelIntrinsics.h"
 #include <malloc.h>
 
+#define AVX512_SUPPORTED 1
+
 namespace ZSharp {
 Framebuffer::Framebuffer() {
   const ZConfig& config = ZConfig::GetInstance();
@@ -44,26 +46,24 @@ void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor c
 }
 
 void Framebuffer::Clear(ZColor color) {
-#if 0
-  std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
-  std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
-  std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
-
-  // TODO: Add a conditional #ifdef here to detect 64-bit.
-  convColor = convColor << 32;
-  convColor |= color.Color;
-
-  // TODO: Vectorize this call since it will be used extremely frequently to clear the frame.
-  // x86_64 supports SSE2 at a minimum so the XMM registers could prove really useful here!
-  for (std::size_t i = 0; i < cachedSize; i++) {
-    pBuf[i] = convColor;
-  }
-#endif
+#if AVX512_SUPPORTED
   for (std::size_t i = 0; i < 16; ++i) {
     *(reinterpret_cast<std::uint32_t*>(mScratchBuffer) + i) = color.Color;
   }
 
   avx512memsetaligned(mPixelBuffer, mScratchBuffer, mTotalSize);
+#else
+  std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
+  std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
+  std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
+
+  convColor = convColor << 32;
+  convColor |= color.Color;
+
+  for (std::size_t i = 0; i < cachedSize; i++) {
+    pBuf[i] = convColor;
+  }
+#endif
 }
 
 std::uint8_t* Framebuffer::GetBuffer() {

@@ -2,17 +2,6 @@
 
 #include <cstddef>
 
-#include <wingdi.h>
-#include <WinUser.h>
-
-GDIWrapper::GDIWrapper() {
-
-}
-
-GDIWrapper::~GDIWrapper() {
-
-}
-
 void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   RECT activeWindowSize;
   GetClientRect(hWnd, &activeWindowSize);
@@ -21,7 +10,7 @@ void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   HDC hdc = BeginPaint(hWnd, &ps);
   HDC hdcMem = CreateCompatibleDC(hdc);
 
-  BITMAP bitmap{
+  const BITMAP bitmap{
     0,
     activeWindowSize.right,
     activeWindowSize.bottom,
@@ -32,8 +21,6 @@ void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   };
 
   HBITMAP hBitmap = CreateBitmapIndirect(&bitmap);
-  //HBITMAP hBitmap = CreateBitmap(activeWindowSize.right, activeWindowSize.bottom, 1, 32, frameData);
-
   HGDIOBJ lastObject = SelectObject(hdcMem, hBitmap);
   BitBlt(hdc, 0, 0, activeWindowSize.right, activeWindowSize.bottom, hdcMem, 0, 0, SRCCOPY);
   SelectObject(hdcMem, lastObject);
