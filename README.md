@@ -4,7 +4,7 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 ## In Action: Two Pyramids
 ![flat](https://user-images.githubusercontent.com/54491280/63645593-19ceef00-c6d0-11e9-97da-6d78acceb96a.png)
 
-## Features
+## Supported Features
 - Wireframe triangles
 - Flat shaded triangles
 - Movable perspective camera
@@ -55,3 +55,12 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 - Onur Mutlu (CMU EE/CE Dept)
   - Publicly releasing full video lectures for the 2015 Spring semester on Computer Architecture
   - https://www.youtube.com/playlist?list=PL5PHm2jkkXmi5CxxI7b3JCL1TWybTDtKq
+
+## Materials Referenced
+- Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
+  - https://github.com/jagregory/abrash-black-book
+- Computer Graphics: Principles and Practice 2nd Edition (ISBN: 9780201848403, 1995)
+- Computer Graphics: Principles and Practice 3rd Edition (ISBN: 0321399528, 2013)
+- Expert C Programming: Deep C Secrets (ISBN: 0131774298, 1994)
+- Effective C++: 3rd Edition (ISBN: 0321334876, 2005)
+- Game Engine Black Book: Wolfenstein 3D 1st Edition (ASIN: B0768B3PWV, 2017)
