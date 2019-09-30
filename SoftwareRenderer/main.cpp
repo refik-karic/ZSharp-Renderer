@@ -128,11 +128,11 @@ void InitializeRenderer() {
   ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
   
   // Low res
-  //config.SetViewportWidth(640);
-  //config.SetViewportHeight(480);
+  config.SetViewportWidth(640);
+  config.SetViewportHeight(480);
   // High res
-  config.SetViewportWidth(1920);
-  config.SetViewportHeight(1080);
+  //config.SetViewportWidth(1920);
+  //config.SetViewportHeight(1080);
   config.SetBytesPerPixel(4);
 
   mRenderer = new ZSharp::Renderer();

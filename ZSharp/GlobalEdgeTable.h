@@ -27,13 +27,13 @@ class GlobalEdgeTable final {
   struct ScanLine {
     std::size_t x1;
     std::size_t x2;
+    std::size_t primitiveIndex;
     ZColor color;
   };
 
   typedef std::vector<ScanLine> ScanLineList;
 
   std::map<std::size_t, ScanLineList> mEdgeTable;
-  std::size_t mLastActivePrimitive = 0;
 };
 
 }

@@ -155,6 +155,9 @@
     <ClInclude Include="IntelIntrinsics.h">
       <Filter>Header Files\Intrinsics</Filter>
     </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="db_schema.json">

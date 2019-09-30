@@ -1,10 +1,11 @@
-﻿#include "Framebuffer.h"
+﻿#include "Common.h"
+#include "Framebuffer.h"
 #include "ZConfig.h"
 
 #include "IntelIntrinsics.h"
 #include <malloc.h>
 
-#define AVX512_SUPPORTED 1
+#define AVX512_SUPPORTED 0
 
 namespace ZSharp {
 Framebuffer::Framebuffer() {
@@ -38,10 +39,15 @@ void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
 void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor color) {
   if (y >= 0 && y < mHeight && x1 >= 0 && x1 < mWidth && x2 >= 0 && x2 < mWidth && x1 < x2) {
     std::size_t offset = (x1 * sizeof(std::uint32_t)) + (y * mStride);
-    for (std::size_t i = x1; i < x2; ++i) {
+    
+    ZSharp::MemsetAny(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset), 
+                      color.Color, 
+                      x2 - x1);
+
+    /*for (std::size_t i = x1; i < x2; ++i) {
       *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
       offset += 4;
-    }
+    }*/
   }
 }
 
@@ -55,9 +61,8 @@ void Framebuffer::Clear(ZColor color) {
 #else
   std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
   std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
-  std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color);
+  std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color) << 32;
 
-  convColor = convColor << 32;
   convColor |= color.Color;
 
   for (std::size_t i = 0; i < cachedSize; i++) {

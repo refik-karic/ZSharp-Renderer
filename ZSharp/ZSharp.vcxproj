@@ -43,6 +43,7 @@
   <ItemGroup>
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="GlobalEdgeTable.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="IntelIntrinsics.h" />
