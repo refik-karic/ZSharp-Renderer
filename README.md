@@ -24,9 +24,6 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 - Visual Studio 2019
 - x86_64 processor
 
-## Known bugs
-- Flat shaded scan lines will bleed into each other when two primitives are on the same scan line
-
 ## Features left to be desired
 - Asset Loader overhaul
   - JSON is parsed everytime as it's loaded, would be more efficient to strip unncessary data
