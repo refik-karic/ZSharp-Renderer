@@ -1,0 +1,54 @@
+add_library(ZSharp)
+
+target_sources(ZSharp
+    PRIVATE
+        AssetLoader.h
+        Camera.h
+        Common.h
+        Constants.h
+        Framebuffer.h
+        GlobalEdgeTable.h
+        IndexBuffer.h
+        IntelIntrinsics.h
+        JsonObject.h
+        Mesh.h
+        Model.h
+        Renderer.h
+        Scanner.h
+        Triangle.h
+        UtilMath.h
+        VertexBuffer.h
+        ZAlgorithm.h
+        ZColor.h
+        ZConfig.h
+        ZDrawing.h
+        ZMatrix.h
+        ZVector.h
+        AssetLoader.cpp
+        db_schema.json
+        Framebuffer.cpp
+        GlobalEdgeTable.cpp
+        IndexBuffer.cpp
+        IntelIntrinsics.cpp
+        JsonObject.cpp
+        pyramid.json
+        pyramids.json
+        Renderer.cpp
+        Scanner.cpp
+        triangles.json
+        UtilMath.cpp
+        ZColor.cpp
+        ZConfig.cpp
+        ZDrawing.cpp
+)
+
+set(ZSharp_Compile_Options 
+	/W4
+	/arch:AVX512
+	/std:c++17
+	/MP
+)
+
+target_compile_options(ZSharp PRIVATE 
+	${ZSharp_Compile_Options}
+)
