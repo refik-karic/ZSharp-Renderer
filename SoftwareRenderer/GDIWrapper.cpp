@@ -3,18 +3,15 @@
 #include <cstddef>
 
 void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
-  RECT activeWindowSize;
-  GetClientRect(hWnd, &activeWindowSize);
-
   PAINTSTRUCT ps;
   HDC hdc = BeginPaint(hWnd, &ps);
   HDC hdcMem = CreateCompatibleDC(hdc);
 
-  const BITMAP bitmap{
+  const BITMAP bitmap {
     0,
-    activeWindowSize.right,
-    activeWindowSize.bottom,
-    activeWindowSize.right * 4,
+    ps.rcPaint.right,
+    ps.rcPaint.bottom,
+    ps.rcPaint.right * 4,
     1,
     32,
     frameData
@@ -22,7 +19,7 @@ void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
 
   HBITMAP hBitmap = CreateBitmapIndirect(&bitmap);
   HGDIOBJ lastObject = SelectObject(hdcMem, hBitmap);
-  BitBlt(hdc, 0, 0, activeWindowSize.right, activeWindowSize.bottom, hdcMem, 0, 0, SRCCOPY);
+  BitBlt(hdc, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom, hdcMem, 0, 0, SRCCOPY);
   SelectObject(hdcMem, lastObject);
 
   DeleteDC(hdcMem);

@@ -44,6 +44,10 @@ target_sources(ZSharp
 
 set(ZSharp_Compile_Options 
 	/W4
+	/WX
+	/sdl-
+	/GR-
+	/GS-
 	/arch:AVX512
 	/std:c++17
 	/MP
