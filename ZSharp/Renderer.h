@@ -19,10 +19,10 @@ class Renderer final {
     DOWN
   };
 
-  Renderer();
-
   Renderer(const Renderer&) = delete;
   void operator=(const Renderer&) = delete;
+
+  static Renderer& GetInstance();
 
   std::uint8_t* RenderNextFrame();
 
@@ -37,6 +37,9 @@ class Renderer final {
   void PauseTransforms();
 
   private:
+
+  Renderer();
+
   Camera<float> mCamera;
   Vec3f_t mCameraPos;
 

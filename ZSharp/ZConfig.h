@@ -29,7 +29,7 @@ class ZConfig final {
 
   private:
 
-  ZConfig() {};
+  ZConfig();
 
   std::size_t mViewportWidth = 0;
   std::size_t mViewportHeight = 0;

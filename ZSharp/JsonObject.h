@@ -8,52 +8,10 @@
 
 namespace ZSharp {
 
+// See this for more information: https://www.json.org/
+
 class JsonObject final {
   public:
-
-  /// <summary>
-  /// Set of tokens supported by JSON file format.
-  /// See this for more information: https://www.json.org/
-  /// </summary>
-  enum class JsonTokenType {
-    // Unary tokens.
-    OPEN_CURLY_BRACE,
-    CLOSE_CURLY_BRACE,
-    OPEN_SQUARE_BRACE,
-    CLOSE_SQUARE_BRACE,
-    COMMA,
-    COLON,
-    // Literal values.
-    STRING,
-    NUMBER_FLOAT,
-    NUMBER_INT,
-    BOOL_VALUE,
-    NULL_VALUE
-  };
-
-  /// <summary>
-  /// Supported values for JSON obbjects.
-  /// </summary>
-  struct JsonTokenValue {
-    std::string dataString;
-    union {
-      bool dataBool;
-      double dataFloat;
-      std::int64_t dataInt;
-    };
-  };
-
-  /// <summary>
-  /// Pair of value type and its associated data.
-  /// </summary>
-  struct JsonToken {
-    JsonTokenType token;
-    JsonTokenValue value;
-  };
-
-  /// <summary>
-  /// Represents all the supported JSON value types per the JSON standard.
-  /// </summary>
   enum class JsonValueType {
     STRING_VALUE,
     NUMBER_INT_VALUE,
@@ -64,10 +22,6 @@ class JsonObject final {
     NULL_VALUE
   };
 
-  /// <summary>
-  /// Holds all information regarding JSON keys.
-  /// This includes the type of the key as well as its value(s).
-  /// </summary>
   struct JsonValue {
     JsonValueType valueType;
     std::string dataString;
@@ -89,14 +43,8 @@ class JsonObject final {
   JsonValue& GetValue();
 
   private:
-  /// <summary>
-  /// String key.
-  /// </summary>
   std::string mKey;
 
-  /// <summary>
-  /// Value associated with key.
-  /// </summary>
   JsonValue mValue;
 };
 

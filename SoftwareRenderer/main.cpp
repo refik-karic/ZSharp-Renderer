@@ -5,15 +5,10 @@
 #include "GDIWrapper.h"
 #include "WindowsHeadersWrapper.h"
 
-static ZSharp::Renderer* mRenderer = nullptr;
-
-void InitializeRenderer();
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className);
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int nCmdShow) {
-  InitializeRenderer();
-
   wchar_t className[] = L"Test Class Name";
   HWND hwnd = SetupWindow(hInstance, className);
   if (hwnd == nullptr) {
@@ -38,6 +33,8 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   static constexpr UINT FRAMERATE_60_HZ_MS = 1000 / 60;
   static UINT_PTR windowsFrameTimer;
 
+  ZSharp::Renderer& renderer = ZSharp::Renderer::GetInstance();
+
   switch (uMsg) {
     case WM_CREATE:
       windowsFrameTimer = SetTimer(hwnd, 1, FRAMERATE_60_HZ_MS, NULL);
@@ -52,7 +49,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       InvalidateRect(hwnd, &activeWindowSize, false);
       break;
     case WM_PAINT:
-      GDIWrapper::UpdateWindow(hwnd, mRenderer->RenderNextFrame());
+      GDIWrapper::UpdateWindow(hwnd, renderer.RenderNextFrame());
       break;
     case WM_ERASEBKGND:
       return true;
@@ -61,28 +58,28 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // Just treat wParam as an ASCII character press for simplicity at the moment.
       switch (wParam) {
         case 'P':
-          mRenderer->PauseTransforms();
+          renderer.PauseTransforms();
           break;
         case 'R':
-          mRenderer->FlipRenderMode();
+          renderer.FlipRenderMode();
           break;
         case 'W':
-          mRenderer->MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
+          renderer.MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
           break;
         case 'S':
-          mRenderer->MoveCamera(ZSharp::Renderer::Direction::DOWN, 1.0F);
+          renderer.MoveCamera(ZSharp::Renderer::Direction::DOWN, 1.0F);
           break;
         case 'A':
-          mRenderer->MoveCamera(ZSharp::Renderer::Direction::RIGHT, 1.0F);
+          renderer.MoveCamera(ZSharp::Renderer::Direction::RIGHT, 1.0F);
           break;
         case 'D':
-          mRenderer->MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
+          renderer.MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
           break;
         case 'Q':
-          mRenderer->RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
+          renderer.RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
           break;
         case 'E':
-          mRenderer->RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
+          renderer.RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
           break;
         case VK_SPACE:
           if(windowsFrameTimer == 0) {
@@ -98,10 +95,10 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           }
           break;
         case VK_UP:
-          mRenderer->ChangeSpeed(1);
+          renderer.ChangeSpeed(1);
           break;
         case VK_DOWN:
-          mRenderer->ChangeSpeed(-1);
+          renderer.ChangeSpeed(-1);
           break;
         case VK_ESCAPE:
           DestroyWindow(hwnd);
@@ -122,20 +119,6 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   }
 
   return 0;
-}
-
-void InitializeRenderer() {
-  ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
-  
-  // Low res
-  config.SetViewportWidth(640);
-  config.SetViewportHeight(480);
-  // High res
-  //config.SetViewportWidth(1920);
-  //config.SetViewportHeight(1080);
-  config.SetBytesPerPixel(4);
-
-  mRenderer = new ZSharp::Renderer();
 }
 
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {

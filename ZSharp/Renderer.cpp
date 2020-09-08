@@ -1,5 +1,7 @@
 ﻿#include <cstddef>
 
+#include <filesystem>
+
 #include "AssetLoader.h"
 #include "Constants.h"
 #include "Renderer.h"
@@ -10,11 +12,10 @@
 #include "ZMatrix.h"
 #include "ZVector.h"
 
-char ASSET_FILE[] = "C:\\Users\\kr\\Desktop\\ZSharp-Renderer\\ZSharp\\pyramids.json";
-
 namespace ZSharp {
 Renderer::Renderer() {
-  AssetLoader::LoadModel<float>(ASSET_FILE, mModel);
+  std::filesystem::path assetToLoad = std::filesystem::current_path().parent_path().append("pyramids.json");
+  AssetLoader::LoadModel<float>(assetToLoad.string().c_str(), mModel);
   
   std::size_t indexBufSize = 0;
   for (Mesh<float>& mesh : mModel.GetMeshData()) {
@@ -27,6 +28,11 @@ Renderer::Renderer() {
   mCameraPos[0] = 0.0f;
   mCameraPos[1] = 0.0f;
   mCameraPos[2] = 35.0f;
+}
+
+Renderer& Renderer::GetInstance() {
+  static Renderer singleton;
+  return singleton;
 }
 
 std::uint8_t* Renderer::RenderNextFrame() {
