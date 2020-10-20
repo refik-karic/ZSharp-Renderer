@@ -27,7 +27,6 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 ## Features left to be desired
 - Asset Loader overhaul
   - JSON is parsed everytime as it's loaded, would be more efficient to strip unncessary data
-  - Scene path is baked into the renderer (using the one from my machine)
 - Texture mapping support
 - Lighting support
 - Abstract more elements from the main application
