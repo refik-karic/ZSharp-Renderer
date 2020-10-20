@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-void GDIWrapper::UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
+void UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   PAINTSTRUCT ps;
   HDC hdc = BeginPaint(hWnd, &ps);
   HDC hdcMem = CreateCompatibleDC(hdc);

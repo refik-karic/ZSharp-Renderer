@@ -15,7 +15,6 @@ void Scanner::ScanTokens(const char* fileName, std::vector<Token>& tokens) {
     return;
   }
   
-  // Scan the tokens one by one until the entire file has been processed.
   while (!IsAtEnd(fileContents)) {
     mStart = mCurrent;
     ScanToken(tokens, fileContents);

@@ -17,17 +17,14 @@ class Triangle final {
   { }
 
   Triangle(const Triangle<T>& copy) {
-    // Self copy guard.
     if (this == &copy) {
       return;
     }
 
-    // Perform a deep copy.
     *this = copy;
   }
 
   void operator=(const Triangle<T>& rhs) {
-    // Self assignment guard.
     if (this == &rhs) {
       return;
     }

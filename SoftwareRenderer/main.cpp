@@ -15,13 +15,10 @@ int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ L
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
-  // Run the message loop.
   ShowWindow(hwnd, nCmdShow);
   UpdateWindow(hwnd);
   for (MSG msg; GetMessageW(&msg, hwnd, 0, 0) > 0;) {
-    // Translate message is required for retrieving decoded user input.
     TranslateMessage(&msg);
-    // Dispatch message is required to process the message from the OS.
     DispatchMessageW(&msg);
   }
 
@@ -49,13 +46,12 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       InvalidateRect(hwnd, &activeWindowSize, false);
       break;
     case WM_PAINT:
-      GDIWrapper::UpdateWindow(hwnd, renderer.RenderNextFrame());
+      UpdateWindow(hwnd, renderer.RenderNextFrame());
       break;
     case WM_ERASEBKGND:
       return true;
       break;
     case WM_KEYDOWN:
-      // Just treat wParam as an ASCII character press for simplicity at the moment.
       switch (wParam) {
         case 'P':
           renderer.PauseTransforms();

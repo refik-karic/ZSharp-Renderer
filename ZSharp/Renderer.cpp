@@ -36,17 +36,13 @@ Renderer& Renderer::GetInstance() {
 }
 
 std::uint8_t* Renderer::RenderNextFrame() {
-  // Update the camera position.
   mCamera.MoveCamera(mCameraPos);
 
-  // Clear the VBO/EBO to ease debugging for now.
   mIndexBuffer->Clear();
   mVertexBuffer->Clear();
 
-  // Copy active geometry into the respective buffers.
   mModel.FillBuffers(*mVertexBuffer, *mIndexBuffer);
 
-  // Apply a rotation matrix to the verticies in the model before transforming them to screen space.
   Mat4x4f_t rotationMatrix;
   Mat4x4f_t::Identity(rotationMatrix);
   Mat4x4f_t::SetRotation(rotationMatrix,
@@ -61,20 +57,15 @@ std::uint8_t* Renderer::RenderNextFrame() {
     mFrameCount = 0;
   }
 
-  // Apply rotation transform to all verticies.
   mVertexBuffer->ApplyTransform(rotationMatrix);
   
-  // Color is stored in ARGB format.
   ZColor colorRed{ZColors::RED};
   ZColor colorBlue{ZColors::BLUE};
 
-  // Clear the last frame before drawing the next set of primitives.
   mBuffer.Clear(colorBlue);
 
-  // Transform all primitives in the current FOV and get them ready to draw.
   mCamera.PerspectiveProjection(*mVertexBuffer, *mIndexBuffer);
 
-  // Draw the primitives onto the framebuffer.
   if (mRenderMode) {
     ZDrawing::DrawTrianglesFlat(mBuffer, *mVertexBuffer, *mIndexBuffer, colorRed);
   }

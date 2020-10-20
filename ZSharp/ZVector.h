@@ -6,27 +6,15 @@
 
 namespace ZSharp {
 
-// Thank you to Joey De Vries for his C++ example on GitHub of how to create fixed size stack allocated generic vectors/matricies.
-// https://github.com/JoeyDeVries/Cell
-// https://github.com/JoeyDeVries/Cell/blob/master/math/linear_algebra/vector.h#L24
-// I was scratching my head and doing it wrong the whole time trying to manage my memory very efficiently and supporting stack allocated data by providing an overloaded constructor that takes a pointer to a block of memory.
-// The solution seems so obvious now.
-// One drawback is that things like multiplying matricies no longer supports different sizes unless you add another parameter (template or function).
-// Another major benefit is the ability for the compiler to decide at compile time the amount of loop iterations for common operations like addition and unroll them for you without you having to do it yourself.
-
 template<std::size_t elements, typename T>
 class ZVector final {
   public:
-
-  // Create a new vector with the given dimensions and clears its contents.
   ZVector() {
     ZVector<elements, T>::Clear(*this);
   }
 
   ZVector(const ZVector<elements, T>& copy) {
-    // Self copy guard.
     if (this != &copy) {
-      // Perform a deep copy.
       *this = copy;
     }
   }
@@ -37,18 +25,9 @@ class ZVector final {
   }
 
   void operator=(const ZVector<elements, T>& vector) {
-    // Self assignment guard.
-    // TODO: Look into whether branching here, at least for vectors in R3 or R4, is faster than actually performing the operations.
-    // Most of the time this will be false so maybe the branch predictor will pick up on it.
-    // However, the data will be immediately available in L(x) cache so it should be investigated further.
     if (this == &vector) {
       return;
     }
-
-    // TODO: Look into using type traits to implement type-specific `memcpy` using SSE(x) or AVX(x).
-    // For more information about how to implement (type traits) that, see:
-    // Scott Meyers Effective C++ Third Edition, Item 47: p.226.
-    // std::memcpy(this->mData, vector.mData, vector.mSize);
 
     for (std::size_t i = 0; i < elements; i++) {
       mData[i] = vector[i];
@@ -182,7 +161,6 @@ class ZVector final {
   T mData[elements];
 };
 
-// Convenience typedefs for frequently used instances of this class.
 typedef ZVector<3, float> Vec3f_t;
 typedef ZVector<4, float> Vec4f_t;
 

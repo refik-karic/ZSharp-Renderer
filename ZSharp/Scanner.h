@@ -7,11 +7,6 @@
 
 #include "Token.h"
 
-// Thank you to Bob Nystrom
-// http://www.craftinginterpreters.com/
-// This implementation borrows heavily from his work. Its been a long time since I had to implement a Recursive Descent Parser so thank you for publishing this online.
-// Unlike his implementation, I don't actually execute the tokens afterwards. I mainly just rely on the scanner to tokenize the data and then use that to populate my internal data structures.
-
 namespace ZSharp {
 
 class Scanner {

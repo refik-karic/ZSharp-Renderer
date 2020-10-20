@@ -68,7 +68,6 @@ class VertexBuffer final {
   }
 
   void CopyInputData(const T* data, std::size_t index, std::size_t length) {
-    // NOTE: It may not necessarily be required to explicitly set the 4th dimension like this but for the purposes of debugging right now, just going to leave this in.
     static constexpr T wDefault{1};
     T* currentIndex = mData.data() + index;
     for (std::size_t i = 0; i < length; i += mInputStride) {
@@ -105,8 +104,6 @@ class VertexBuffer final {
   }
 
   void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
-    // TODO: Come back to this later and figure out if the transforms will need to apply to things like texture coordinates as well.
-    // Apply the transform to each vertex in the VBO.
     for (std::size_t i = 0; i < mWorkingSize; i += mHomogenizedStride) {
       ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(mData.data() + i));
       vertexVector[3] = static_cast<T>(1);

@@ -1,12 +1,7 @@
 #pragma once
 
-// Even though this header only includes the minimum requirements at any given time.
-// It is still useful to ignore excess things in the event where another header, such as objidl.h from GDI+/COM, include windows.h themselves.
-
-// Exclude rarely-used stuff from Windows headers.
 #define WIN32_LEAN_AND_MEAN
 
-// Ignore parts of Windows headers that are not being used.
 #define NOGDICAPMASKS
 //#define NOVIRTUALKEYCODES
 //#define NOWINMESSAGES
@@ -55,8 +50,6 @@
 // rpc.h defines.
 #define RPC_NO_WINDOWS_H
 
-// Thanks to Aras for the tip on reducing Windows includes.
-// https://aras-p.info/blog/2018/01/12/Minimizing-windows.h/
 #define _AMD64_
 #include <windef.h>
 #include <winbase.h>

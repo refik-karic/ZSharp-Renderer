@@ -7,11 +7,8 @@
 
 namespace ZSharp {
 void JsonScanner::PopulateJsonObject(JsonObject& jsonObject, std::vector<Token>& tokens) {
-  // Chop off the first open curly brace before beginning to process the rest.
-  // Otherwise the first object would assume it is a value for a key that does not actually exist.
   for (auto iter = tokens.begin(); iter != tokens.end(); ++iter) {
     if (iter->GetType() == TokenType::OPEN_CURLY_BRACE) {
-      // Skip over that first curly brace.
       ++iter;
 
       auto tmpEndIter = tokens.end();
@@ -24,7 +21,6 @@ void JsonScanner::PopulateJsonObject(JsonObject& jsonObject, std::vector<Token>&
 void JsonScanner::ProcessJsonData(JsonObject& jsonObject, std::vector<Token>::iterator& begin, std::vector<Token>::iterator& end, bool isArray) {
   bool keyDetected = false;
 
-  // Search the remaining items in the list for data.
   for (; begin != end; begin++) {
     JsonObject::JsonValue tmpValue;
 
@@ -35,7 +31,6 @@ void JsonScanner::ProcessJsonData(JsonObject& jsonObject, std::vector<Token>::it
 
         begin++;
 
-        // Nested object, fill it in and copy the pointer to the active object.
         auto tmpObject(std::make_shared<JsonObject>());
         ProcessJsonData(*tmpObject, begin, end, false);
         tmpValue.dataObject = tmpObject;
@@ -52,15 +47,10 @@ void JsonScanner::ProcessJsonData(JsonObject& jsonObject, std::vector<Token>::it
         tmpValue.valueType = JsonObject::JsonValueType::ARRAY_VALUE;
         begin++;
 
-        // Special case for multi-dimensional arrays.        
         if (isArray) {
-          // Create a temporary JSON object to hold additional dimensions.
           JsonObject tmpObject;
-
-          // Grab the following data and stuff it into the temporary's array.
           ProcessJsonData(tmpObject, begin, end, true);
 
-          // Append the contents of the temporary array to the existing one.
           tmpValue.dataArray = tmpObject.GetValue().dataArray;
           jsonObject.GetValue().dataArray.push_back(tmpValue);
         }
@@ -71,7 +61,6 @@ void JsonScanner::ProcessJsonData(JsonObject& jsonObject, std::vector<Token>::it
         break;
       case TokenType::CLOSE_SQUARE_BRACE:
       case TokenType::CLOSE_CURLY_BRACE:
-        // Go back up a level in the call chain.
         return;
       case TokenType::STRING:
         if (!isArray && !keyDetected) {
@@ -131,10 +120,7 @@ void JsonScanner::ProcessJsonData(JsonObject& jsonObject, std::vector<Token>::it
 }
 
 void JsonScanner::ScanToken(std::vector<Token>& tokens, std::vector<char>& fileBuffer) {
-  // Fetch the next character in the buffer.
   char c = Advance(fileBuffer);
-
-  // Check which token category it falls into.
   switch (c) {
     case '{':
     {
@@ -179,8 +165,6 @@ void JsonScanner::ScanToken(std::vector<Token>& tokens, std::vector<char>& fileB
       mLine++;
       break;
     default:
-      // Check if the next token is a number.
-      // Numbers can have a preceeding minus sign indicating negative values.
       if ((c == '-' && IsDigit(Peek(fileBuffer))) || IsDigit(c)) {
         ScanNumber(tokens, fileBuffer);
       }
@@ -191,8 +175,6 @@ void JsonScanner::ScanToken(std::vector<Token>& tokens, std::vector<char>& fileB
 }
 
 void JsonScanner::ScanString(std::vector<Token>& tokens, std::vector<char>& fileBuffer) {
-  // Keep scanning the buffer until the end of the current string has been reached.
-  // Strings can span over multiple lines.
   while (Peek(fileBuffer) != '"' && !IsAtEnd(fileBuffer)) {
     if (Peek(fileBuffer) == '\n') {
       mLine++;
@@ -201,39 +183,29 @@ void JsonScanner::ScanString(std::vector<Token>& tokens, std::vector<char>& file
     Advance(fileBuffer);
   }
 
-  // Make sure the string has terminated before the end of the file was reached.
   if (IsAtEnd(fileBuffer)) {
     std::cout << "Non-terminated String detected at position: " << mCurrent << ", Line: " << mLine << std::endl;
     return;
   }
 
-  // Absorb the ending quote.
   Advance(fileBuffer);
 
-  // Scan a string from the substring of the buffered data.
-  // Make sure to ignore the quotes surrounding the string by adjusting the start and end by 1.
   std::string scannedString(fileBuffer.data() + mStart + 1, fileBuffer.data() + mCurrent - 1);
-
-  // Add the string to the list of tokens.
   Token token(TokenType::STRING, scannedString);
   AddToken(token, tokens);
 }
 
 void JsonScanner::ScanNumber(std::vector<Token>& tokens, std::vector<char>& fileBuffer) {
-  // Used to indicate whether or not the current number is a real number with fractional digits.
   bool realNumber = false;
 
-  // Keep scanning until no more digits are left in the current lexeme.
   while (IsDigit(Peek(fileBuffer))) {
     Advance(fileBuffer);
   }
 
-  // Check for real numbers.
   if (Peek(fileBuffer) == '.' && IsDigit(PeekNext(fileBuffer))) {
     realNumber = true;
     Advance(fileBuffer);
 
-    // Read the rest of the fractional digits.
     while (IsDigit(Peek(fileBuffer))) {
       Advance(fileBuffer);
     }

@@ -8,8 +8,6 @@
 
 namespace ZSharp {
 
-// See this for more information: https://www.json.org/
-
 class JsonObject final {
   public:
   enum class JsonValueType {

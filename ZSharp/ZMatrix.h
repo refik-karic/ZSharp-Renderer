@@ -18,11 +18,9 @@ class ZMatrix final {
   };
 
   ZMatrix() {
-
   }
 
   ZMatrix(const ZMatrix<rows, cols, T>& copy) {
-    // Self copy guard.
     if (this == &copy) {
       return;
     }
@@ -31,7 +29,6 @@ class ZMatrix final {
   }
 
   void operator=(const ZMatrix<rows, cols, T>& matrix) {
-    // Self assignment guard.
     if (this == &matrix) {
       return;
     }
@@ -62,7 +59,6 @@ class ZMatrix final {
   ZMatrix<rows, cols, T> operator*(const ZMatrix<rows, cols, T>& matrix) {
     ZMatrix<rows, cols, T> result;
 
-    // Transpose the right hand side to allow a simple dot product on each row.
     ZMatrix<rows, cols, T> rhsTranspose(ZMatrix<rows, cols, T>::Transpose(matrix));
 
     for (std::size_t row = 0; row < rows; row++) {
@@ -124,10 +120,8 @@ class ZMatrix final {
   }
 
   static void SetRotation(ZMatrix<rows, cols, T>& matrix, T angle, Axis axis) {
-    // Warning C4244 possible conversion loss of data.
     #pragma warning(disable: 4244)
     
-    // TODO: Find a way to reduce type conversion here and call the appropriate type-specific trig functions, perhaps using type-traits.
     switch (axis) {
       case Axis::Z:
       case Axis::TWO_DIMENSIONS:
@@ -159,7 +153,6 @@ class ZMatrix final {
         break;
     }
 
-    // Warning C4244 possible conversion loss of data.
     #pragma warning(default: 4244)
   }
 
@@ -178,7 +171,6 @@ class ZMatrix final {
   ZVector<cols, T> mData[rows];
 };
 
-// Frequently used typedefs.
 typedef ZMatrix<4, 4, float> Mat4x4f_t;
 
 }

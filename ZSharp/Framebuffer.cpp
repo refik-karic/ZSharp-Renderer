@@ -29,7 +29,6 @@ Framebuffer::~Framebuffer(){
 }
 
 void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
-  // Scissor test.
   if (x >= 0 && y >= 0 && x < mWidth && y < mHeight) {
     std::size_t offset = (x * sizeof(std::uint32_t)) + (y * mStride);
     *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;

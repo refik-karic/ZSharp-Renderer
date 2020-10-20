@@ -41,7 +41,6 @@ std::size_t IndexBuffer::GetWorkingSize() const {
 }
 
 void IndexBuffer::CopyInputData(const std::size_t* data, std::size_t index, std::size_t length) {
-  // memcpy inside here to avoid having to expose raw pointers to the underlying buffer.
   std::memcpy(mData.data() + index, data, length * sizeof(std::size_t));
   mWorkingSize += length;
 }
