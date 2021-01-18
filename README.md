@@ -1,8 +1,12 @@
 # ZSharp-Renderer
 An old school Win32 3D software renderer implemented as part of a learning experience in computer graphics
 
-## In Action: Two Pyramids
+## In Action
+### Flat Shaded Pyramids
 ![flat](https://user-images.githubusercontent.com/54491280/63645593-19ceef00-c6d0-11e9-97da-6d78acceb96a.png)
+
+### Wireframe Pyramids
+![wire](https://user-images.githubusercontent.com/54491280/63645597-1fc4d000-c6d0-11e9-82af-1c1d465523b5.png)
 
 ## Supported Features
 - Wireframe triangles
@@ -27,7 +31,6 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 ## Features left to be desired
 - Asset Loader overhaul
   - JSON is parsed everytime as it's loaded, would be more efficient to strip unncessary data
-  - Scene path is baked into the renderer (using the one from my machine)
 - Texture mapping support
 - Lighting support
 - Abstract more elements from the main application
