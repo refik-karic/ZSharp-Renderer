@@ -1,19 +1,20 @@
 ﻿#include "Common.h"
 #include "Framebuffer.h"
-#include "ZConfig.h"
 
 #include "IntelIntrinsics.h"
-#include <malloc.h>
+#include <cstdlib>
 
 #define AVX512_SUPPORTED 0
 
 namespace ZSharp {
-Framebuffer::Framebuffer() {
-  const ZConfig& config = ZConfig::GetInstance();
-  mWidth = config.GetViewportWidth();
-  mHeight = config.GetViewportHeight();
-  mStride = config.GetViewportStride();
-  mTotalSize = config.GetViewportStride() * config.GetViewportHeight();
+Framebuffer::Framebuffer(std::size_t width, 
+  std::size_t height,
+  std::size_t stride) :
+  mWidth(width),
+  mHeight(height),
+  mStride(stride)
+{
+  mTotalSize = stride * height;
   mPixelBuffer = static_cast<std::uint8_t*>(_aligned_malloc(mTotalSize, 64));
   mScratchBuffer = static_cast<std::uint8_t*>(_aligned_malloc(64, 64));
 }
@@ -29,24 +30,21 @@ Framebuffer::~Framebuffer(){
 }
 
 void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
-  if (x >= 0 && y >= 0 && x < mWidth && y < mHeight) {
+  if ((x >= 0 && x < mWidth) && (y >= 0 && y < mHeight)) {
     std::size_t offset = (x * sizeof(std::uint32_t)) + (y * mStride);
     *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
   }
 }
 
 void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor color) {
-  if (y >= 0 && y < mHeight && x1 >= 0 && x1 < mWidth && x2 >= 0 && x2 < mWidth && x1 < x2) {
+  if ((y >= 0 && y < mHeight) &&
+    (x1 >= 0 && x1 < mWidth) &&
+    (x2 >= 0 && x2 < mWidth) &&
+    (x1 < x2)) {
     std::size_t offset = (x1 * sizeof(std::uint32_t)) + (y * mStride);
-    
-    ZSharp::MemsetAny(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset), 
-                      color.Color, 
-                      x2 - x1);
-
-    /*for (std::size_t i = x1; i < x2; ++i) {
-      *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
-      offset += 4;
-    }*/
+    ZSharp::MemsetAny(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset),
+      color.Color,
+      x2 - x1);
   }
 }
 

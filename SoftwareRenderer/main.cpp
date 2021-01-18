@@ -1,4 +1,5 @@
-﻿#include <Renderer.h>
+﻿#include <InputManager.h>
+#include <Renderer.h>
 #include <ZConfig.h>
 #include <ZMatrix.h>
 
@@ -30,7 +31,8 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   static constexpr UINT FRAMERATE_60_HZ_MS = 1000 / 60;
   static UINT_PTR windowsFrameTimer;
 
-  ZSharp::Renderer& renderer = ZSharp::Renderer::GetInstance();
+  const ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
+  static ZSharp::Renderer renderer(config.GetViewportWidth(), config.GetViewportHeight(), config.GetViewportStride());
 
   switch (uMsg) {
     case WM_CREATE:
@@ -53,30 +55,6 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       break;
     case WM_KEYDOWN:
       switch (wParam) {
-        case 'P':
-          renderer.PauseTransforms();
-          break;
-        case 'R':
-          renderer.FlipRenderMode();
-          break;
-        case 'W':
-          renderer.MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
-          break;
-        case 'S':
-          renderer.MoveCamera(ZSharp::Renderer::Direction::DOWN, 1.0F);
-          break;
-        case 'A':
-          renderer.MoveCamera(ZSharp::Renderer::Direction::RIGHT, 1.0F);
-          break;
-        case 'D':
-          renderer.MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
-          break;
-        case 'Q':
-          renderer.RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
-          break;
-        case 'E':
-          renderer.RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
-          break;
         case VK_SPACE:
           if(windowsFrameTimer == 0) {
             windowsFrameTimer = SetTimer(hwnd, 1, FRAMERATE_60_HZ_MS, NULL);
@@ -90,16 +68,22 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             windowsFrameTimer = 0;
           }
           break;
-        case VK_UP:
-          renderer.ChangeSpeed(1);
-          break;
-        case VK_DOWN:
-          renderer.ChangeSpeed(-1);
-          break;
         case VK_ESCAPE:
           DestroyWindow(hwnd);
           break;
+        default:
+        {
+          ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
+          inputManager->Update(static_cast<std::uint8_t>(wParam), ZSharp::InputManager::KeyState::Down);
+        }
+          break;
       }
+      break;
+    case WM_KEYUP:
+    {
+      ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
+      inputManager->Update(static_cast<std::uint8_t>(wParam), ZSharp::InputManager::KeyState::Up);
+    }
       break;
     case WM_CLOSE:
       DestroyWindow(hwnd);

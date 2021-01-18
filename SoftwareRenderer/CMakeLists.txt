@@ -4,7 +4,7 @@ target_sources(SoftwareRenderer
     PRIVATE
         GDIWrapper.cpp
         GDIWrapper.h
-        main.cpp
+	main.cpp
         WindowsHeadersWrapper.h
 )
 

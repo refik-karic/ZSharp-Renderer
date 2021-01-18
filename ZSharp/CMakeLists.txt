@@ -28,17 +28,19 @@ target_sources(ZSharp
         Common.h
         Constants.h
         FileUtilities.h
-		Framebuffer.h
+        Framebuffer.h
         GlobalEdgeTable.h
+        IInputListener.h
         IndexBuffer.h
+        InputManager.h
         IntelIntrinsics.h
         JsonObject.h
-		JsonScanner.h
+        JsonScanner.h
         Mesh.h
         Model.h
         Renderer.h
         Scanner.h
-		Token.h
+        Token.h
         Triangle.h
         UtilMath.h
         VertexBuffer.h
@@ -48,24 +50,25 @@ target_sources(ZSharp
         ZDrawing.h
         ZMatrix.h
         ZVector.h
-		
+	
         AssetLoader.cpp
         FileUtilities.cpp
-		Framebuffer.cpp
+        Framebuffer.cpp
         GlobalEdgeTable.cpp
         IndexBuffer.cpp
+        InputManager.cpp
         IntelIntrinsics.cpp
         JsonObject.cpp
-		JsonScanner.cpp
+	JsonScanner.cpp
         Renderer.cpp
         Scanner.cpp
-		Token.cpp
+	Token.cpp
         UtilMath.cpp
         ZColor.cpp
         ZConfig.cpp
         ZDrawing.cpp
 		
-		${JSON_ASSETS}
+	${JSON_ASSETS}
 )
 
 set(ZSharp_Compile_Options 

@@ -8,7 +8,7 @@
 namespace ZSharp {
 class Framebuffer final {
   public:
-  Framebuffer();
+  Framebuffer(std::size_t width, std::size_t height, std::size_t stride);
   ~Framebuffer();
 
   Framebuffer(const Framebuffer&) = delete;

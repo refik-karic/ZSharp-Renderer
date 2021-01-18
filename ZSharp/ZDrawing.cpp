@@ -12,31 +12,21 @@ void ZDrawing::DrawRunSlice(Framebuffer& framebuffer,
                   std::int32_t y2, 
                   ZColor color) {
   if (x1 == x2) {
-    if (y1 == y2) {
-      return;
-    }
-
     if (y2 < y1) {
       std::swap(y1, y2);
     }
 
-    while (y1 < y2) {
+    for (; y1 < y2; y1++) {
       framebuffer.SetPixel(x1, y1, color);
-      y1++;
     }
   }
   else if (y1 == y2) {
-    if (x1 == x2) {
-      return;
-    }
-
     if (x2 < x1) {
       std::swap(x1, x2);
     }
 
-    while (x1 < x2) {
+    for (; x1 < x2; x1++) {
       framebuffer.SetPixel(x1, y1, color);
-      x1++;
     }
   }
   else {

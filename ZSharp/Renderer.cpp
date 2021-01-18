@@ -4,6 +4,7 @@
 
 #include "AssetLoader.h"
 #include "Constants.h"
+#include "InputManager.h"
 #include "Renderer.h"
 #include "Triangle.h"
 #include "UtilMath.h"
@@ -13,7 +14,9 @@
 #include "ZVector.h"
 
 namespace ZSharp {
-Renderer::Renderer() {
+Renderer::Renderer(std::size_t width, std::size_t height, std::size_t stride)
+  : mBuffer(width, height, stride)
+{
   std::filesystem::path assetToLoad = std::filesystem::current_path().parent_path().append("pyramids.json");
   AssetLoader::LoadModel<float>(assetToLoad.string().c_str(), mModel);
   
@@ -28,14 +31,15 @@ Renderer::Renderer() {
   mCameraPos[0] = 0.0f;
   mCameraPos[1] = 0.0f;
   mCameraPos[2] = 35.0f;
-}
 
-Renderer& Renderer::GetInstance() {
-  static Renderer singleton;
-  return singleton;
+  InputManager* inputManager = InputManager::GetInstance();
+  inputManager->Register(this);
 }
 
 std::uint8_t* Renderer::RenderNextFrame() {
+  InputManager* inputManager = InputManager::GetInstance();
+  inputManager->Process();
+
   mCamera.MoveCamera(mCameraPos);
 
   mIndexBuffer->Clear();
@@ -121,6 +125,48 @@ void Renderer::FlipRenderMode() {
 
 void Renderer::PauseTransforms() {
   mPauseTransforms = !mPauseTransforms;
+}
+
+void Renderer::OnKeyDown(std::uint8_t key) {
+  switch (key) {
+    case 'P':
+      PauseTransforms();
+      break;
+    case 'R':
+      FlipRenderMode();
+      break;
+    case 'W':
+      MoveCamera(ZSharp::Renderer::Direction::UP, 1.0F);
+      break;
+    case 'S':
+      MoveCamera(ZSharp::Renderer::Direction::DOWN, 1.0F);
+      break;
+    case 'A':
+      MoveCamera(ZSharp::Renderer::Direction::RIGHT, 1.0F);
+      break;
+    case 'D':
+      MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
+      break;
+    case 'Q':
+      RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
+      break;
+    case 'E':
+      RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
+      break;
+      // TODO: Come up with a better system for mapping non trivial keys.
+    case 0x26: // VK_UP Windows
+      ChangeSpeed(1);
+      break;
+    case 0x28:
+      ChangeSpeed(-1);
+      break;
+    default:
+      break;
+  }
+}
+
+void Renderer::OnKeyUp(std::uint8_t key) {
+  (void)key;
 }
 
 }
