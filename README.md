@@ -22,6 +22,8 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 - Lightweight
   - Compiles to about 6MB in release and uses about 9MB of memory for a 1920x1080 viewport
 ![resources](https://user-images.githubusercontent.com/54491280/63645734-cc07b600-c6d2-11e9-9c2a-bd26242b9fad.png)
+- Flexible input system
+  - Can register and respond to user input in a platform independent manner. Still requires OS/Device specific layer to feed the input system.
 
 ## Requirements to run
 - Windows
@@ -31,10 +33,8 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 ## Features left to be desired
 - Asset Loader overhaul
   - JSON is parsed everytime as it's loaded, would be more efficient to strip unncessary data
-- Texture mapping support
-- Lighting support
-- Abstract more elements from the main application
-  - User inputs
+- Texture mapping
+- Lighting
 
 ## Credits
 - Michael Abrash
