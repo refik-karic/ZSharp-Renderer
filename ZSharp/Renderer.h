@@ -5,9 +5,10 @@
 #include "Camera.h"
 #include "Framebuffer.h"
 #include "IInputListener.h"
+#include "Mat4x4.h"
 #include "Model.h"
+#include "Vec3.h"
 #include "ZColor.h"
-#include "ZMatrix.h"
 
 namespace ZSharp {
 class Renderer final : public IInputListener {
@@ -34,7 +35,7 @@ class Renderer final : public IInputListener {
   private:
 
   Camera<float> mCamera;
-  Vec3f_t mCameraPos;
+  Vec3<float> mCameraPos;
 
   Framebuffer mBuffer;
   Model<float> mModel;
@@ -49,7 +50,7 @@ class Renderer final : public IInputListener {
 
   void MoveCamera(Direction direction, float amount);
 
-  void RotateCamera(Mat4x4f_t::Axis direction, float angleDegrees);
+  void RotateCamera(Mat4x4<float>::Axis direction, float angleDegrees);
 
   void ChangeSpeed(std::int64_t amount);
 

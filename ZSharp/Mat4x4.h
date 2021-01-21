@@ -3,12 +3,13 @@
 #include <cstddef>
 #include <cmath>
 
-#include "ZVector.h"
+#include "Vec3.h"
+#include "Vec4.h"
 
 namespace ZSharp {
 
-template <std::size_t rows, std::size_t cols, typename T>
-class ZMatrix final {
+template <typename T>
+class Mat4x4 final {
   public:
   enum class Axis {
     TWO_DIMENSIONS,
@@ -17,10 +18,10 @@ class ZMatrix final {
     Z
   };
 
-  ZMatrix() {
+  Mat4x4() {
   }
 
-  ZMatrix(const ZMatrix<rows, cols, T>& copy) {
+  Mat4x4(const Mat4x4<T>& copy) {
     if (this == &copy) {
       return;
     }
@@ -28,41 +29,41 @@ class ZMatrix final {
     *this = copy;
   }
 
-  void operator=(const ZMatrix<rows, cols, T>& matrix) {
+  void operator=(const Mat4x4<T>& matrix) {
     if (this == &matrix) {
       return;
     }
 
-    for (std::size_t row = 0; row < rows; row++) {
+    for (std::size_t row = 0; row < Rows; row++) {
       mData[row] = matrix[row];
     }
   }
 
-  ZVector<cols, T>& operator[](std::size_t index) {
+  Vec4<T>& operator[](std::size_t index) {
     return mData[index];
   }
 
-  const ZVector<cols, T>& operator[](std::size_t index) const {
+  const Vec4<T>& operator[](std::size_t index) const {
     return mData[index];
   }
 
-  ZMatrix<rows, cols, T> operator*(T scalar) {
-    ZMatrix<rows, cols, T> result;
+  Mat4x4<T> operator*(T scalar) {
+    Mat4x4<T> result;
 
-    for (std::size_t row = 0; row < rows; row++) {
+    for (std::size_t row = 0; row < Rows; row++) {
       result[row] = mData[row] * scalar;
     }
 
     return result;
   }
 
-  ZMatrix<rows, cols, T> operator*(const ZMatrix<rows, cols, T>& matrix) {
-    ZMatrix<rows, cols, T> result;
+  Mat4x4<T> operator*(const Mat4x4<T>& matrix) {
+    Mat4x4<T> result;
 
-    ZMatrix<rows, cols, T> rhsTranspose(ZMatrix<rows, cols, T>::Transpose(matrix));
+    Mat4x4<T> rhsTranspose(Mat4x4<T>::Transpose(matrix));
 
-    for (std::size_t row = 0; row < rows; row++) {
-      for (std::size_t col = 0; col < cols; col++) {
+    for (std::size_t row = 0; row < Rows; row++) {
+      for (std::size_t col = 0; col < Columns; col++) {
         result[row][col] = mData[row] * rhsTranspose[col];
       }
     }
@@ -70,12 +71,12 @@ class ZMatrix final {
     return result;
   }
 
-  static void Identity(ZMatrix<rows, cols, T>& matrix) {
+  static void Identity(Mat4x4<T>& matrix) {
     T zero{};
     T one{1};
 
-    for (std::size_t row = 0; row < rows; row++) {
-      for (std::size_t col = 0; col < cols; col++) {
+    for (std::size_t row = 0; row < Rows; row++) {
+      for (std::size_t col = 0; col < Columns; col++) {
         if (row == col) {
           matrix[row][col] = one;
         }
@@ -86,17 +87,17 @@ class ZMatrix final {
     }
   }
   
-  static void Clear(ZMatrix<rows, cols, T>& matrix) {
-    for (std::size_t row = 0; row < rows; row++) {
-      ZVector<cols, T>::Clear(matrix[row]);
+  static void Clear(Mat4x4<T>& matrix) {
+    for (std::size_t row = 0; row < Rows; row++) {
+      Vec4<T>::Clear(matrix[row]);
     }
   }
 
-  static ZMatrix<rows, cols, T> Transpose(const ZMatrix<rows, cols, T>& matrix) {
-    ZMatrix<rows, cols, T> result;
+  static Mat4x4<T> Transpose(const Mat4x4<T>& matrix) {
+    Mat4x4<T> result;
 
-    for (std::size_t row = 0; row < rows; row++) {
-      for (std::size_t col = 0; col < cols; col++) {
+    for (std::size_t row = 0; row < Rows; row++) {
+      for (std::size_t col = 0; col < Columns; col++) {
         result[row][col] = matrix[col][row];
       }
     }
@@ -104,22 +105,27 @@ class ZMatrix final {
     return result;
   }
 
-  template<std::size_t argCols>
-  static void SetTranslation(ZMatrix<rows, cols, T>& matrix, const ZVector<argCols, T>& translation) {
-    std::size_t lastColumn = cols - 1;
-    for (std::size_t row = 0; row < argCols; row++) {
+  static void SetTranslation(Mat4x4<T>& matrix, const Vec3<T>& translation) {
+    std::size_t lastColumn = Columns - 1;
+    for (std::size_t row = 0; row < 3; row++) {
       matrix[row][lastColumn] = translation[row];
     }
   }
 
-  template<std::size_t argCols>
-  static void SetScale(ZMatrix<rows, cols, T>& matrix, const ZVector<argCols, T>& scale) {
-    for (std::size_t row = 0; row < argCols; row++) {
+  static void SetTranslation(Mat4x4<T>& matrix, const Vec4<T>& translation) {
+    std::size_t lastColumn = Columns - 1;
+    for (std::size_t row = 0; row < Columns; row++) {
+      matrix[row][lastColumn] = translation[row];
+    }
+  }
+
+  static void SetScale(Mat4x4<T>& matrix, const Vec4<T>& scale) {
+    for (std::size_t row = 0; row < Columns; row++) {
       matrix[row][row] = scale[row];
     }
   }
 
-  static void SetRotation(ZMatrix<rows, cols, T>& matrix, T angle, Axis axis) {
+  static void SetRotation(Mat4x4<T>& matrix, T angle, Axis axis) {
     #pragma warning(disable: 4244)
     
     switch (axis) {
@@ -156,11 +162,10 @@ class ZMatrix final {
     #pragma warning(default: 4244)
   }
 
-  template<std::size_t vecCols>
-  static ZVector<vecCols, T> ApplyTransform(const ZMatrix<rows, cols, T>& matrix, const ZVector<vecCols, T>& domain) {
-    ZVector<vecCols, T> codomainResult;
+  static Vec4<T> ApplyTransform(const Mat4x4<T>& matrix, const Vec4<T>& domain) {
+    Vec4<T> codomainResult;
 
-    for (std::size_t row = 0; row < rows; row++) {
+    for (std::size_t row = 0; row < Rows; row++) {
       codomainResult[row] = domain * matrix[row];
     }
 
@@ -168,9 +173,9 @@ class ZMatrix final {
   }
 
   private:
-  ZVector<cols, T> mData[rows];
+  static const std::size_t Rows = 4;
+  static const std::size_t Columns = 4;
+  Vec4<T> mData[Rows];
 };
-
-typedef ZMatrix<4, 4, float> Mat4x4f_t;
 
 }

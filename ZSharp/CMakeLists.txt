@@ -36,6 +36,8 @@ target_sources(ZSharp
         IntelIntrinsics.h
         JsonObject.h
         JsonScanner.h
+        Mat2x3.h
+        Mat4x4.h
         Mesh.h
         Model.h
         Renderer.h
@@ -43,13 +45,13 @@ target_sources(ZSharp
         Token.h
         Triangle.h
         UtilMath.h
+        Vec3.h
+        Vec4.h
         VertexBuffer.h
         ZAlgorithm.h
         ZColor.h
         ZConfig.h
         ZDrawing.h
-        ZMatrix.h
-        ZVector.h
 	
         AssetLoader.cpp
         FileUtilities.cpp

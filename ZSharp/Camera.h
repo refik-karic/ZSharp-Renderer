@@ -7,12 +7,13 @@
 
 #include "Constants.h"
 #include "IndexBuffer.h"
+#include "Mat2x3.h"
+#include "Mat4x4.h"
 #include "Triangle.h"
+#include "Vec3.h"
 #include "VertexBuffer.h"
 #include "ZAlgorithm.h"
 #include "ZConfig.h"
-#include "ZMatrix.h"
-#include "ZVector.h"
 
 namespace ZSharp {
 
@@ -34,61 +35,61 @@ class Camera final {
     mFarPlane = static_cast<T>(100);
   }
 
-  ZVector<3, T> GetPosition() const {
+  Vec3<T> GetPosition() const {
     return mPosition;
   }
 
-  void MoveCamera(const ZVector<3, T>& position) {
+  void MoveCamera(const Vec3<T>& position) {
     mPosition = position;
   }
 
-  void RotateCamera(const ZMatrix<4, 4, T>& rotationMatrix) {
-    ZVector<4, T> rotatedVec(mLook);
-    rotatedVec = ZMatrix<4, 4, T>::ApplyTransform(rotationMatrix, rotatedVec);
+  void RotateCamera(const Mat4x4<T>& rotationMatrix) {
+    Vec4<T> rotatedVec(mLook);
+    rotatedVec = Mat4x4<T>::ApplyTransform(rotationMatrix, rotatedVec);
 
-    Vec4f_t::Homogenize(rotatedVec, 3);
+    Vec4<T>::Homogenize(rotatedVec, 3);
     mLook[0] = rotatedVec[0];
     mLook[1] = rotatedVec[1];
     mLook[2] = rotatedVec[2];
 
     rotatedVec = mUp;
-    rotatedVec = ZMatrix<4, 4, T>::ApplyTransform(rotationMatrix, rotatedVec);
+    rotatedVec = Mat4x4<T>::ApplyTransform(rotationMatrix, rotatedVec);
 
-    Vec4f_t::Homogenize(rotatedVec, 3);
+    Vec4<T>::Homogenize(rotatedVec, 3);
     mUp[0] = rotatedVec[0];
     mUp[1] = rotatedVec[1];
     mUp[2] = rotatedVec[2];
   }
 
   void PerspectiveProjection(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
-    ZVector<3, T> w;
+    Vec3<T> w;
     w = mLook * static_cast<T>(-1);
-    ZVector<3, T>::Normalize(w);
+    Vec3<T>::Normalize(w);
 
-    ZVector<3, T> v;
+    Vec3<T> v;
     v = mUp - (w * (mUp * w));
-    ZVector<3, T>::Normalize(v);
+    Vec3<T>::Normalize(v);
 
-    ZVector<3, T> u;
-    u = ZVector<3, T>::Cross(v, w);
+    Vec3<T> u;
+    u = Vec3<T>::Cross(v, w);
 
-    ZMatrix<4, 4, T> translation;
-    ZMatrix<4, 4, T>::Identity(translation);
-    ZMatrix<4, 4, T>::SetTranslation(translation, (mPosition * static_cast<T>(-1)));
+    Mat4x4<T> translation;
+    Mat4x4<T>::Identity(translation);
+    Mat4x4<T>::SetTranslation(translation, (mPosition * static_cast<T>(-1)));
 
-    ZMatrix<4, 4, T> uToE;
+    Mat4x4<T> uToE;
     uToE[0] = u;
     uToE[1] = v;
     uToE[2] = w;
     uToE[3][3] = static_cast<T>(1);
 
-    ZMatrix<4, 4, T> scale;
+    Mat4x4<T> scale;
     scale[0][0] = static_cast<T>(1) / (mFarPlane * (std::tan((mFovHoriz * static_cast<T>(Constants::PI_OVER_180) / static_cast<T>(2)))));
     scale[1][1] = static_cast<T>(1) / (mFarPlane * (std::tan((mFovVert * static_cast<T>(Constants::PI_OVER_180) / static_cast<T>(2)))));
     scale[2][2] = static_cast<T>(1) / mFarPlane;
     scale[3][3] = static_cast<T>(1);
 
-    ZMatrix<4, 4, T> unhing;
+    Mat4x4<T> unhing;
     unhing[0][0] = mFarPlane - mNearPlane;
     unhing[1][1] = mFarPlane - mNearPlane;
     unhing[2][2] = mFarPlane;
@@ -97,7 +98,7 @@ class Camera final {
 
     unhing = unhing * (scale * (uToE * translation));
 
-    ZMatrix<2, 3, T> windowTransform;
+    Mat2x3<T> windowTransform;
     windowTransform[0][0] = static_cast<T>(mWidth);
     windowTransform[0][2] = static_cast<T>(mWidth);
     windowTransform[1][1] = static_cast<T>((mHeight * static_cast<T>(-1)));
@@ -109,15 +110,15 @@ class Camera final {
     std::size_t homogenizedStride = vertexBuffer.GetHomogenizedStride();
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += homogenizedStride) {
       T* vertexData = vertexBuffer.GetInputData(i);
-      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
+      Vec4<T>& vertexVector = *(reinterpret_cast<Vec4<T>*>(vertexData));
       vertexVector[3] = static_cast<T>(1);
-      vertexVector = ZMatrix<4, 4, T>::ApplyTransform(unhing, vertexVector);
+      vertexVector = Mat4x4<T>::ApplyTransform(unhing, vertexVector);
     }
 
     for (std::size_t i = 0; i < vertexBuffer.GetWorkingSize(); i += homogenizedStride) {
       T* vertexData = vertexBuffer.GetInputData(i);
-      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(vertexData));
-      ZVector<4, T>::Homogenize(vertexVector, 3);
+      Vec4<T>& vertexVector = *(reinterpret_cast<Vec4<T>*>(vertexData));
+      Vec4<T>::Homogenize(vertexVector, 3);
     }
 
     ClipTriangles(vertexBuffer, indexBuffer);
@@ -125,16 +126,16 @@ class Camera final {
     std::size_t inputStride = vertexBuffer.GetInputStride();
     for (std::size_t i = 0; i < vertexBuffer.GetClipLength(); i += inputStride) {
       T* vertexData = vertexBuffer.GetClipData(i);
-      ZVector<3, T>& vertexVector = *(reinterpret_cast<ZVector<3, T>*>(vertexData));
-      ZVector<3, T>::Homogenize(vertexVector, 2);
-      vertexVector = ZMatrix<2, 3, T>::ApplyTransform(windowTransform, vertexVector);
+      Vec3<T>& vertexVector = *(reinterpret_cast<Vec3<T>*>(vertexData));
+      Vec3<T>::Homogenize(vertexVector, 2);
+      vertexVector = Mat2x3<T>::ApplyTransform(windowTransform, vertexVector);
     }
   }
 
   private:
-  ZVector<3, T> mPosition;
-  ZVector<3, T> mLook;
-  ZVector<3, T> mUp;
+  Vec3<T> mPosition;
+  Vec3<T> mLook;
+  Vec3<T> mUp;
 
   T mNearPlane;
   T mFarPlane;
@@ -145,7 +146,7 @@ class Camera final {
   std::intptr_t mHeight;
 
   void ClipTriangles(VertexBuffer<T>& vertexBuffer, IndexBuffer& indexBuffer) {
-    ZVector<3, T> currentEdge;
+    Vec3<T> currentEdge;
 
     std::size_t inputStride = vertexBuffer.GetHomogenizedStride();
     std::size_t endEBO = indexBuffer.GetWorkingSize();
@@ -154,10 +155,10 @@ class Camera final {
       T* v2 = vertexBuffer.GetInputData(indexBuffer[i + 1], inputStride);
       T* v3 = vertexBuffer.GetInputData(indexBuffer[i + 2], inputStride);
       std::size_t numClippedVerts = 3;
-      std::array<ZVector<3, T>, 6> clippedVerts{
-        *(reinterpret_cast<ZVector<3, T>*>(v1)),
-        *(reinterpret_cast<ZVector<3, T>*>(v2)),
-        *(reinterpret_cast<ZVector<3, T>*>(v3))
+      std::array<Vec3<T>, 6> clippedVerts{
+        *(reinterpret_cast<Vec3<T>*>(v1)),
+        *(reinterpret_cast<Vec3<T>*>(v2)),
+        *(reinterpret_cast<Vec3<T>*>(v3))
       };
 
       currentEdge[0] = static_cast<T>(1);
@@ -178,7 +179,7 @@ class Camera final {
       currentEdge[1] = static_cast<T>(0);
       currentEdge[2] = static_cast<T>(-1);
       numClippedVerts = ZAlgorithm<T>::SutherlandHodgmanClip(clippedVerts, numClippedVerts, currentEdge);
-      ZVector<3, T>::Clear(currentEdge);
+      Vec3<T>::Clear(currentEdge);
 
       if(numClippedVerts > 0) {
         std::size_t currentClipIndex = vertexBuffer.GetClipLength() / Constants::TRI_VERTS;

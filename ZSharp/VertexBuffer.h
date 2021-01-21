@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "Constants.h"
-#include "ZMatrix.h"
-#include "ZVector.h"
+#include "Mat4x4.h"
+#include "Vec4.h"
 
 namespace ZSharp {
 
@@ -103,11 +103,11 @@ class VertexBuffer final {
     mClipData = mData.data() + mInputSize;
   }
 
-  void ApplyTransform(const ZMatrix<4, 4, T>& transform) {
+  void ApplyTransform(const Mat4x4<T>& transform) {
     for (std::size_t i = 0; i < mWorkingSize; i += mHomogenizedStride) {
-      ZVector<4, T>& vertexVector = *(reinterpret_cast<ZVector<4, T>*>(mData.data() + i));
+      Vec4<T>& vertexVector = *(reinterpret_cast<Vec4<T>*>(mData.data() + i));
       vertexVector[3] = static_cast<T>(1);
-      vertexVector = ZMatrix<4, 4, T>::ApplyTransform(transform, vertexVector);
+      vertexVector = Mat4x4<T>::ApplyTransform(transform, vertexVector);
     }
   }
 

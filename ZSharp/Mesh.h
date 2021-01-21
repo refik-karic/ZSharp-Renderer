@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Triangle.h"
-#include "ZVector.h"
+#include "Vec4.h"
 
 namespace ZSharp {
 
@@ -49,8 +49,7 @@ class Mesh final {
     mTriangleFaceTable.resize(numTriangleFaces);
   }
 
-  template<std::size_t size>
-  void SetVertex(const ZVector<size, T>& vertex, std::size_t index, std::size_t numElements) {
+  void SetVertex(const Vec4<T>& vertex, std::size_t index, std::size_t numElements) {
     std::size_t vertIndex = 0;
     for (std::size_t i = index; i < index + numElements; ++i) {
       mVertTable[i] = vertex[vertIndex];

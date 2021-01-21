@@ -5,13 +5,12 @@
 #include "AssetLoader.h"
 #include "Constants.h"
 #include "InputManager.h"
+#include "Mat4x4.h"
 #include "Renderer.h"
 #include "Triangle.h"
 #include "UtilMath.h"
 #include "ZColor.h"
 #include "ZDrawing.h"
-#include "ZMatrix.h"
-#include "ZVector.h"
 
 namespace ZSharp {
 Renderer::Renderer(std::size_t width, std::size_t height, std::size_t stride)
@@ -47,11 +46,11 @@ std::uint8_t* Renderer::RenderNextFrame() {
 
   mModel.FillBuffers(*mVertexBuffer, *mIndexBuffer);
 
-  Mat4x4f_t rotationMatrix;
-  Mat4x4f_t::Identity(rotationMatrix);
-  Mat4x4f_t::SetRotation(rotationMatrix,
+  Mat4x4<float> rotationMatrix;
+  Mat4x4<float>::Identity(rotationMatrix);
+  Mat4x4<float>::SetRotation(rotationMatrix,
                           static_cast<float>(DegreesToRadians(static_cast<double>(mFrameCount))),
-                          Mat4x4f_t::Axis::Y);
+                          Mat4x4<float>::Axis::Y);
 
   if (!mPauseTransforms) {
     mFrameCount += mRotationSpeed;
@@ -97,10 +96,10 @@ void Renderer::MoveCamera(Direction direction, float amount) {
   }
 }
 
-void Renderer::RotateCamera(Mat4x4f_t::Axis direction, float angleDegrees) {
-  Mat4x4f_t rotationMatrix;
-  Mat4x4f_t::Identity(rotationMatrix);
-  Mat4x4f_t::SetRotation(rotationMatrix,
+void Renderer::RotateCamera(Mat4x4<float>::Axis direction, float angleDegrees) {
+  Mat4x4<float> rotationMatrix;
+  Mat4x4<float>::Identity(rotationMatrix);
+  Mat4x4<float>::SetRotation(rotationMatrix,
     static_cast<float>(DegreesToRadians(static_cast<double>(angleDegrees))),
     direction);
 
@@ -148,10 +147,10 @@ void Renderer::OnKeyDown(std::uint8_t key) {
       MoveCamera(ZSharp::Renderer::Direction::LEFT, 1.0F);
       break;
     case 'Q':
-      RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, 1.0F);
+      RotateCamera(Mat4x4<float>::Axis::Y, 1.0F);
       break;
     case 'E':
-      RotateCamera(ZSharp::ZMatrix<4, 4, float>::Axis::Y, -1.0F);
+      RotateCamera(Mat4x4<float>::Axis::Y, -1.0F);
       break;
       // TODO: Come up with a better system for mapping non trivial keys.
     case 0x26: // VK_UP Windows
