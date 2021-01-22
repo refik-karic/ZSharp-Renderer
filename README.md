@@ -55,6 +55,10 @@ An old school Win32 3D software renderer implemented as part of a learning exper
 - Onur Mutlu (CMU EE/CE Dept)
   - Publicly releasing full video lectures for the 2015 Spring semester on Computer Architecture
   - https://www.youtube.com/playlist?list=PL5PHm2jkkXmi5CxxI7b3JCL1TWybTDtKq
+- DigiPen Game Engine Architecture series
+  - https://www.youtube.com/user/GameEngineArchitects/videos
+  - Sean Middleditch's lecture on custom math libraries was very helpful
+    - https://www.youtube.com/watch?v=v4Ubu7BMXXk
 
 ## Materials Referenced
 - Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
