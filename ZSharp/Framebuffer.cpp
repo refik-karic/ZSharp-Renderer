@@ -1,10 +1,11 @@
 ﻿#include "Common.h"
 #include "Framebuffer.h"
 
-#include "IntelIntrinsics.h"
 #include <cstdlib>
 
-#define AVX512_SUPPORTED 0
+#ifdef __AVX512F__
+#include "IntelIntrinsics.h"
+#endif
 
 namespace ZSharp {
 Framebuffer::Framebuffer(std::size_t width, 
@@ -29,14 +30,14 @@ Framebuffer::~Framebuffer(){
   }
 }
 
-void Framebuffer::SetPixel(std::size_t x, std::size_t y, ZColor color) {
+void Framebuffer::SetPixel(const std::size_t x, const std::size_t y, const ZColor color) {
   if ((x >= 0 && x < mWidth) && (y >= 0 && y < mHeight)) {
     std::size_t offset = (x * sizeof(std::uint32_t)) + (y * mStride);
     *(reinterpret_cast<std::uint32_t*>(mPixelBuffer + offset)) = color.Color;
   }
 }
 
-void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor color) {
+void Framebuffer::SetRow(const std::size_t y, const std::size_t x1, const std::size_t x2, const ZColor color) {
   if ((y >= 0 && y < mHeight) &&
     (x1 >= 0 && x1 < mWidth) &&
     (x2 >= 0 && x2 < mWidth) &&
@@ -48,19 +49,17 @@ void Framebuffer::SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor c
   }
 }
 
-void Framebuffer::Clear(ZColor color) {
-#if AVX512_SUPPORTED
+void Framebuffer::Clear(const ZColor color) {
+#if __AVX512F__
   for (std::size_t i = 0; i < 16; ++i) {
     *(reinterpret_cast<std::uint32_t*>(mScratchBuffer) + i) = color.Color;
   }
 
   avx512memsetaligned(mPixelBuffer, mScratchBuffer, mTotalSize);
 #else
-  std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
+  const std::size_t cachedSize = mTotalSize / sizeof(std::uintptr_t);
   std::uintptr_t* pBuf = reinterpret_cast<std::uintptr_t*>(mPixelBuffer);
-  std::uintptr_t convColor = static_cast<std::uintptr_t>(color.Color) << 32;
-
-  convColor |= color.Color;
+  const std::uintptr_t convColor = (static_cast<std::uintptr_t>(color.Color) << 32) | color.Color;
 
   for (std::size_t i = 0; i < cachedSize; i++) {
     pBuf[i] = convColor;

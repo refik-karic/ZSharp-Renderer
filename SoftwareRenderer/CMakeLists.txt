@@ -4,7 +4,7 @@ target_sources(SoftwareRenderer
     PRIVATE
         GDIWrapper.cpp
         GDIWrapper.h
-	main.cpp
+	      main.cpp
         WindowsHeadersWrapper.h
 )
 
@@ -12,19 +12,37 @@ target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZS
 target_link_libraries(SoftwareRenderer PUBLIC ZSharp)
 
 set(SoftwareRenderer_Compile_Options 
-	/W4
-	/WX
+	/arch:AVX512
+	/favor:INTEL64
+	/fp:fast
+	/guard:cf-
+	/permissive-
 	/sdl-
+	/source-charset:utf-8
+	/std:c++latest
+	/D_UNICODE
+	/Gw
+	/Gy
+	/GL
 	/GR-
 	/GS-
-	/arch:AVX512
-	/std:c++17
 	/MP
+	/U_MBCS
+	/W4
+	/WX
+)
+
+set(SoftwareRenderer_Link_Options 
+  /INCREMENTAL:NO
+	/LTCG:NOSTATUS
+	/WX
 )
 
 target_compile_options(SoftwareRenderer PRIVATE 
 	${SoftwareRenderer_Compile_Options}
 )
+
+target_link_options(SoftwareRenderer PUBLIC ${SoftwareRenderer_Link_Options})
 
 set(RUNTIME_ASSETS)
 get_property(RUNTIME_ASSETS

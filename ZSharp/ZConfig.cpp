@@ -47,8 +47,8 @@ ZConfig::ZConfig() {
   SetViewportWidth(640);
   SetViewportHeight(480);
   // High res
-  //config.SetViewportWidth(1920);
-  //config.SetViewportHeight(1080);
+  //SetViewportWidth(1920);
+  //SetViewportHeight(1080);
   SetBytesPerPixel(4);
 }
 

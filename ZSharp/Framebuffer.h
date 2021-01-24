@@ -14,9 +14,9 @@ class Framebuffer final {
   Framebuffer(const Framebuffer&) = delete;
   void operator=(const Framebuffer&) = delete;
 
-  void SetPixel(std::size_t x, std::size_t y, ZColor color);
-  void SetRow(std::size_t y, std::size_t x1, std::size_t x2, ZColor color);
-  void Clear(ZColor color);
+  void SetPixel(const std::size_t x, const std::size_t y, const ZColor color);
+  void SetRow(const std::size_t y, const std::size_t x1, const std::size_t x2, const ZColor color);
+  void Clear(const ZColor color);
   std::uint8_t* GetBuffer();
   std::size_t GetSize() const;
 

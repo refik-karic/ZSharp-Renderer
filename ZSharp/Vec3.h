@@ -13,6 +13,13 @@ class Vec3 final {
     Vec3<T>::Clear(*this);
   }
 
+  Vec3(T x, T y, T z)
+  {
+    mData[0] = x;
+    mData[1] = y;
+    mData[2] = z;
+  }
+
   Vec3(const Vec3<T>& copy) {
     if (this != &copy) {
       *this = copy;
@@ -24,91 +31,76 @@ class Vec3 final {
       return;
     }
 
-    for (std::size_t i = 0; i < Elements; ++i) {
-      mData[i] = vector[i];
-    }
+    std::memcpy(mData, *vector, sizeof(mData));
   }
 
   bool operator==(const Vec3<T>& vector) const {
-    // TODO: memcmp might be faster?
-    bool result = true;
-
-    for (std::size_t i = 0; (i < Elements) && result; i++) {
-      result = result && (mData[i] == vector[i]);
+    if (this == &vector) {
+      return;
     }
 
-    return result;
+    return std::memcmp(mData, *vector, sizeof(mData)) == 0;
   }
 
-  T* operator*() const {
-    return mData;
+  T* operator*() {
+    return &mData[0];
   }
 
-  T operator[](std::size_t index) const {
+  const T* operator*() const {
+    return &mData[0];
+  }
+
+  T operator[](const std::size_t index) const {
     return mData[index];
   }
 
-  T& operator[](std::size_t index) {
+  T& operator[](const std::size_t index) {
     return mData[index];
   }
 
   Vec3<T> operator+(const Vec3<T>& vector) const {
-    Vec3<T> result;
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] + vector[i];
-    }
-
+    Vec3<T> result(
+      mData[0] + vector[0], 
+      mData[1] + vector[1], 
+      mData[2] + vector[2]
+    );
     return result;
   }
 
   Vec3<T> operator-(const Vec3<T>& vector) const {
-    Vec3<T> result;
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] - vector[i];
-    }
-
+    Vec3<T> result(
+      mData[0] - vector[0], 
+      mData[1] - vector[1], 
+      mData[2] - vector[2]
+    );
     return result;
   }
 
   Vec3<T> operator*(T scalar) const {
-    Vec3<T> result;
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] * scalar;
-    }
-
+    Vec3<T> result(mData[0] * scalar, mData[1] * scalar, mData[2] * scalar);
     return result;
   }
 
   T operator*(const Vec3<T>& vector) {
-    T result{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result += (mData[i] * vector[i]);
-    }
-
+    T result = (mData[0] * vector[0]);
+    result += (mData[1] * vector[1]);
+    result += (mData[2] * vector[2]);
     return result;
   }
 
   T operator*(const Vec3<T>& vector) const {
-    T result{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result += (mData[i] * vector[i]);
-    }
-
+    T result = (mData[0] * vector[0]);
+    result += (mData[1] * vector[1]);
+    result += (mData[2] * vector[2]);
     return result;
   }
 
   static Vec3<T> Cross(const Vec3<T>& v1, const Vec3<T>& v2) {
-    Vec3<T> result;
-
-    result[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
-    result[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
-    result[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
-
+    Vec3<T> result(
+      (v1[1] * v2[2]) - (v1[2] * v2[1]),
+      (v1[2] * v2[0]) - (v1[0] * v2[2]),
+      (v1[0] * v2[1]) - (v1[1] * v2[0])
+    );
     return result;
   }
 
@@ -118,10 +110,9 @@ class Vec3 final {
 
   static void Normalize(Vec3<T>& vector) {
     T invSqrt(1 / Length(vector));
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      vector[i] *= invSqrt;
-    }
+    vector[0] *= invSqrt;
+    vector[1] *= invSqrt;
+    vector[2] *= invSqrt;
   }
 
   static void Homogenize(Vec3<T>& vector, std::size_t element) {
@@ -133,11 +124,7 @@ class Vec3 final {
   }
 
   static void Clear(Vec3<T>& vector) {
-    T zero{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      vector[i] = zero;
-    }
+    std::memset(*vector, 0, sizeof(T) * Elements);
   }
 
   private:

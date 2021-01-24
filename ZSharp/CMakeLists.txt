@@ -61,10 +61,10 @@ target_sources(ZSharp
         InputManager.cpp
         IntelIntrinsics.cpp
         JsonObject.cpp
-	JsonScanner.cpp
+	      JsonScanner.cpp
         Renderer.cpp
         Scanner.cpp
-	Token.cpp
+	      Token.cpp
         UtilMath.cpp
         ZColor.cpp
         ZConfig.cpp
@@ -74,14 +74,24 @@ target_sources(ZSharp
 )
 
 set(ZSharp_Compile_Options 
-	/W4
-	/WX
+	/arch:AVX512
+  /favor:INTEL64
+  /fp:fast
+	/guard:cf-
+  /permissive-
 	/sdl-
+  /source-charset:utf-8
+	/std:c++latest
+	/D_UNICODE
+  /Gw
+  /Gy
+  /GL
 	/GR-
 	/GS-
-	/arch:AVX512
-	/std:c++17
 	/MP
+	/U_MBCS
+  /W4
+	/WX
 )
 
 target_compile_options(ZSharp PRIVATE 

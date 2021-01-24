@@ -14,6 +14,13 @@ class Vec4 final {
     Vec4<T>::Clear(*this);
   }
 
+  Vec4(T x, T y, T z, T w) {
+    mData[0] = x;
+    mData[1] = y;
+    mData[2] = z;
+    mData[3] = w;
+  }
+
   Vec4(const Vec4<T>& copy) {
     if (this != &copy) {
       *this = copy;
@@ -25,9 +32,7 @@ class Vec4 final {
   }
 
   void operator=(const Vec3<T>& vector) {
-    for (std::size_t i = 0; i < 3; ++i) {
-      mData[i] = vector[i];
-    }
+    std::memcpy(mData, *vector, sizeof(T) * 3);
   }
 
   void operator=(const Vec4<T>& vector) {
@@ -35,81 +40,76 @@ class Vec4 final {
       return;
     }
     
-    for (std::size_t i = 0; i < Elements; ++i) {
-      mData[i] = vector[i];
-    }
+    std::memcpy(mData, *vector, sizeof(mData));
   }
 
   bool operator==(const Vec4<T>& vector) const {
-    // TODO: memcmp might be faster?
-    bool result = true;
-
-    for (std::size_t i = 0; (i < Elements) && result; i++) {
-      result = result && (mData[i] == vector[i]);
+    if (this == &vector) {
+      return;
     }
 
-    return result;
+    return std::memcmp(mData, *vector, sizeof(mData)) == 0;
   }
 
-  T* operator*() const {
-    return mData;
+  T* operator*() {
+    return &mData[0];
   }
 
-  T operator[](std::size_t index) const {
+  const T* operator*() const {
+    return &mData[0];
+  }
+
+  T operator[](const std::size_t index) const {
     return mData[index];
   }
 
-  T& operator[](std::size_t index) {
+  T& operator[](const std::size_t index) {
     return mData[index];
   }
 
   Vec4<T> operator+(const Vec4<T>& vector) const {
-    Vec4<T> result;
-    
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] + vector[i];
-    }
-
+    Vec4<T> result(
+      mData[0] + vector[0],
+      mData[1] + vector[1],
+      mData[2] + vector[2],
+      mData[3] + vector[3]
+    );
     return result;
   }
 
   Vec4<T> operator-(const Vec4<T>& vector) const {
-    Vec4<T> result;
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] - vector[i];
-    }
-
+    Vec4<T> result(
+      mData[0] - vector[0],
+      mData[1] - vector[1],
+      mData[2] - vector[2],
+      mData[3] - vector[3]
+    );
     return result;
   }
 
   Vec4<T> operator*(T scalar) const {
-    Vec4<T> result;
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result[i] = mData[i] * scalar;
-    }
-
+    Vec4<T> result(
+      mData[0] * scalar,
+      mData[1] * scalar,
+      mData[2] * scalar,
+      mData[3] * scalar
+    );
     return result;
   }
 
   T operator*(const Vec4<T>& vector) {
-    T result{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result += (mData[i] * vector[i]);
-    }
-
+    T result = (mData[0] * vector[0]);
+    result += (mData[1] * vector[1]);
+    result += (mData[2] * vector[2]);
+    result += (mData[3] * vector[3]);
     return result;
   }
 
   T operator*(const Vec4<T>& vector) const {
-    T result{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      result += (mData[i] * vector[i]);
-    }
-
+    T result = (mData[0] * vector[0]);
+    result += (mData[1] * vector[1]);
+    result += (mData[2] * vector[2]);
+    result += (mData[3] * vector[3]);
     return result;
   }
 
@@ -119,10 +119,10 @@ class Vec4 final {
 
   static void Normalize(Vec4<T>& vector) {
     T invSqrt(1 / Length(vector));
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      vector[i] *= invSqrt;
-    }
+    vector[0] *= invSqrt;
+    vector[1] *= invSqrt;
+    vector[2] *= invSqrt;
+    vector[3] *= invSqrt;
   }
 
   static void Homogenize(Vec4<T>& vector, std::size_t element) {
@@ -134,11 +134,7 @@ class Vec4 final {
   }
 
   static void Clear(Vec4<T>& vector) {
-    T zero{};
-
-    for (std::size_t i = 0; i < Elements; i++) {
-      vector[i] = zero;
-    }
+    std::memset(*vector, 0, sizeof(T) * Elements);
   }
 
   private:
