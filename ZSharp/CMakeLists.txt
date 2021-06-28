@@ -74,7 +74,6 @@ target_sources(ZSharp
 )
 
 set(ZSharp_Compile_Options 
-	/arch:AVX512
   /favor:INTEL64
   /fp:fast
 	/guard:cf-

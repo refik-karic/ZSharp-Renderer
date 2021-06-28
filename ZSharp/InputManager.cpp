@@ -22,12 +22,16 @@ void InputManager::Process() {
         break;
       case KeyState::Down:
         for (IInputListener* listener : mListenerList) {
-          listener->OnKeyDown(i);
+          if (listener != nullptr) {
+            listener->OnKeyDown(i);
+          }
         }
         break;
       case KeyState::Up:
         for (IInputListener* listener : mListenerList) {
-          listener->OnKeyUp(i);
+          if (listener != nullptr) {
+            listener->OnKeyUp(i);
+          }
         }
         break;
     }
@@ -37,10 +41,17 @@ void InputManager::Process() {
 }
 
 void InputManager::Register(IInputListener* inputListener) {
-  mListenerList.insert(inputListener);
+  mListenerList.push_back(inputListener);
 }
 
 void InputManager::Unregister(IInputListener* inputListener) {
-  mListenerList.erase(inputListener);
+  for (std::size_t i = 0; i < mListenerList.size(); ++i) {
+    IInputListener* listener = mListenerList[i];
+    
+    if (listener == inputListener) {
+      mListenerList[i] = nullptr;
+      break;
+    }
+  }
 }
 }

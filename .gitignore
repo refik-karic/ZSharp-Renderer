@@ -263,3 +263,9 @@ __pycache__/
 
 # VS CMake Files
 CMakeSettings.json
+CMakeCache.txt
+CMakeFiles/
+*.vcxproj
+*.vcxproj.filters
+cmake_install.cmake
+*.sln

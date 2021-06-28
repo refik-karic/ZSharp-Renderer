@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include <unordered_set>
+#include <vector>
 
 #include <cstdint>
 
@@ -30,7 +30,7 @@ class InputManager final {
   private:
   InputManager();
 
-  std::unordered_set<IInputListener*> mListenerList;
+  std::vector<IInputListener*> mListenerList;
 
   std::array<KeyState, UINT8_MAX> mKeyboard;
 };

@@ -20,10 +20,6 @@ class Mat2x3 final {
   Mat2x3() {}
 
   Mat2x3(const Mat2x3<T>& copy) {
-    if (this == &copy) {
-      return;
-    }
-
     *this = copy;
   }
 

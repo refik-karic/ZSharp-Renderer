@@ -12,7 +12,6 @@ target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZS
 target_link_libraries(SoftwareRenderer PUBLIC ZSharp)
 
 set(SoftwareRenderer_Compile_Options 
-	/arch:AVX512
 	/favor:INTEL64
 	/fp:fast
 	/guard:cf-

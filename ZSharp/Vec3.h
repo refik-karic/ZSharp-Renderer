@@ -21,9 +21,7 @@ class Vec3 final {
   }
 
   Vec3(const Vec3<T>& copy) {
-    if (this != &copy) {
-      *this = copy;
-    }
+    *this = copy;
   }
 
   void operator=(const Vec3<T>& vector) {

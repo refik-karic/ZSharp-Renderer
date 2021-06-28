@@ -22,9 +22,7 @@ class Vec4 final {
   }
 
   Vec4(const Vec4<T>& copy) {
-    if (this != &copy) {
-      *this = copy;
-    }
+    *this = copy;
   }
 
   Vec4(const Vec3<T>& copy) {
