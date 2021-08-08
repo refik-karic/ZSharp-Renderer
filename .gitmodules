@@ -1,0 +1,3 @@
+[submodule "ZSharp"]
+	path = ZSharp
+	url = https://github.com/refik-karic/ZSharp.git
