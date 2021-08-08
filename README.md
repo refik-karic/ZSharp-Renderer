@@ -1,5 +1,8 @@
 # ZSharp-Renderer
-An old school Win32 3D software renderer implemented as part of a learning experience in computer graphics
+An old school Win32 3D software renderer implemented as part of a learning experience in computer graphics.
+
+This contains the Windows implementation. Most of the interesting code is in the ZSharp submodule.
+https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 ### Flat Shaded Pyramids
