@@ -6,7 +6,7 @@ https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 ### 34K Vert Low Poly Backpack
-![backpack]()
+![backpack](https://user-images.githubusercontent.com/54491280/131208500-f586aabc-f045-4adb-be9b-4c79d6b2e331.png)
 Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-poly-799f8c4511f84fab8c3f12887f7e6b36
 
 ### Flat Shaded Pyramids
