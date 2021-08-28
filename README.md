@@ -5,6 +5,10 @@ This contains the Windows implementation. Most of the interesting code is in the
 https://github.com/refik-karic/ZSharp.git
 
 ## In Action
+### 34K Vert Low Poly Backpack
+![backpack]()
+Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-poly-799f8c4511f84fab8c3f12887f7e6b36
+
 ### Flat Shaded Pyramids
 ![flat](https://user-images.githubusercontent.com/54491280/63645593-19ceef00-c6d0-11e9-97da-6d78acceb96a.png)
 
@@ -34,8 +38,6 @@ https://github.com/refik-karic/ZSharp.git
 - x86_64 processor
 
 ## Features left to be desired
-- Asset Loader overhaul
-  - JSON is parsed everytime as it's loaded, would be more efficient to strip unncessary data
 - Texture mapping
 - Lighting
 
