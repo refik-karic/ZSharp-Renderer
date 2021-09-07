@@ -4,7 +4,7 @@ target_sources(SoftwareRenderer
     PRIVATE
         GDIWrapper.cpp
         GDIWrapper.h
-	      main.cpp
+	    main.cpp
         WindowsHeadersWrapper.h
 )
 
@@ -33,8 +33,13 @@ set(SoftwareRenderer_Compile_Options
 
 set(SoftwareRenderer_Link_Options 
   /INCREMENTAL:NO
-	/LTCG:NOSTATUS
-	/WX
+  /LTCG:NOSTATUS
+  /WX
+)
+
+target_compile_definitions(SoftwareRenderer PRIVATE 
+  FORCE_AVX512
+  FORCE_SSE
 )
 
 target_compile_options(SoftwareRenderer PRIVATE 
