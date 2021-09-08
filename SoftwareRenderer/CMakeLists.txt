@@ -12,19 +12,10 @@ target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZS
 target_link_libraries(SoftwareRenderer PUBLIC ZSharp)
 
 set(SoftwareRenderer_Compile_Options 
-	/favor:INTEL64
-	/fp:fast
-	/guard:cf-
-	/permissive-
-	/sdl-
 	/source-charset:utf-8
 	/std:c++latest
 	/D_UNICODE
-	/Gw
-	/Gy
-	/GL
 	/GR-
-	/GS-
 	/MP
 	/U_MBCS
 	/W4
