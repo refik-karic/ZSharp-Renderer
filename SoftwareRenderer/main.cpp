@@ -30,7 +30,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   static constexpr UINT FRAMERATE_60_HZ_MS = 1000 / 60;
   static UINT_PTR windowsFrameTimer;
 
-  const ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
+  ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
   static ZSharp::Renderer renderer(config.GetViewportWidth(), config.GetViewportHeight(), config.GetViewportStride());
 
   switch (uMsg) {
@@ -42,13 +42,28 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       break;
     case WM_TIMER:
+    {
       RECT activeWindowSize;
       GetClientRect(hwnd, &activeWindowSize);
       InvalidateRect(hwnd, &activeWindowSize, false);
+    }
       break;
     case WM_PAINT:
+    {
+      RECT activeWindowSize;
+      if (GetClientRect(hwnd, &activeWindowSize)) {
+        if (activeWindowSize.right != config.GetViewportWidth()) {
+          config.SetViewportWidth(activeWindowSize.right);
+        }
+
+        if (activeWindowSize.bottom != config.GetViewportHeight()) {
+          config.SetViewportHeight(activeWindowSize.bottom);
+        }
+      }
+
       UpdateWindow(hwnd, renderer.RenderNextFrame());
-      break;
+    }
+      return 0;
     case WM_ERASEBKGND:
       return true;
       break;
@@ -103,7 +118,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
   WNDCLASSEXW wc{
     sizeof(WNDCLASSEXW),
-    0,
+    CS_HREDRAW | CS_VREDRAW,
     &MessageLoop,
     0,
     0,
@@ -122,7 +137,7 @@ HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
   
   const ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
 
-  DWORD windowStyle = WS_BORDER | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+  DWORD windowStyle = WS_BORDER | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME;
   RECT clientRect{0L, 0L, static_cast<long>(config.GetViewportWidth()), static_cast<long>(config.GetViewportHeight())};
   AdjustWindowRectEx(&clientRect, windowStyle, false, WS_EX_OVERLAPPEDWINDOW);
 

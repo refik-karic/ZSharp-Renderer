@@ -7,14 +7,14 @@ void UpdateWindow(HWND hWnd, std::uint8_t* frameData) {
   HDC hdc = BeginPaint(hWnd, &ps);
   HDC hdcMem = CreateCompatibleDC(hdc);
 
-  const BITMAP bitmap {
-    0,
-    ps.rcPaint.right,
-    ps.rcPaint.bottom,
-    ps.rcPaint.right * 4,
-    1,
-    32,
-    frameData
+  const BITMAP bitmap{
+  0,
+  ps.rcPaint.right,
+  ps.rcPaint.bottom,
+  ps.rcPaint.right * 4,
+  1,
+  32,
+  frameData
   };
 
   HBITMAP hBitmap = CreateBitmapIndirect(&bitmap);
