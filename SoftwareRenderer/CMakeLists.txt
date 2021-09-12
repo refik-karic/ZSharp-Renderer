@@ -38,15 +38,3 @@ target_compile_options(SoftwareRenderer PRIVATE
 )
 
 target_link_options(SoftwareRenderer PUBLIC ${SoftwareRenderer_Link_Options})
-
-set(RUNTIME_ASSETS)
-get_property(RUNTIME_ASSETS
-	TARGET ZSharp
-	PROPERTY ZSHARP_ASSETS
-)
-
-add_custom_command(TARGET SoftwareRenderer
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy ${RUNTIME_ASSETS} ${SoftwareRendererV3_BINARY_DIR}
-	COMMENT "Copying assets to build directory."
-)
