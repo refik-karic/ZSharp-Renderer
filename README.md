@@ -21,8 +21,7 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 - Movable perspective camera
 - "Front end" backface culling (before vertex shader)
 - NDC clipping
-- Templated math library
-  - Able to switch between single and double precision floating point "relatively" easily
+- Fast single precision floating point math library with SIMD intrinsics
 - ZSharp (static library) is portable
 - Standalone
   - No third party libraries are required or included
