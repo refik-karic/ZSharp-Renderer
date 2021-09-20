@@ -67,6 +67,29 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND:
       return true;
       break;
+    case WM_LBUTTONDOWN:
+    {
+      std::int32_t x = LOWORD(lParam);
+      std::int32_t y = HIWORD(lParam);
+      ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
+      inputManager->UpdateMousePosition(x, y);
+      inputManager->UpdateMouseState(true);
+    }
+      return 0;
+    case WM_LBUTTONUP:
+    {
+      ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
+      inputManager->ResetMouse();
+    }
+      return 0;
+    case WM_MOUSEMOVE:
+    {
+      std::int32_t x = LOWORD(lParam);
+      std::int32_t y = HIWORD(lParam);
+      ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
+      inputManager->UpdateMousePosition(x, y);
+    }
+      return 0;
     case WM_KEYDOWN:
       switch (wParam) {
         case VK_SPACE:
