@@ -18,7 +18,7 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 ## Supported Features
 - Wireframe triangles
 - Flat shaded triangles
-- Movable perspective camera
+- Movable perspective camera with WASD controls and virtual trackball mouse
 - "Front end" backface culling (before vertex shader)
 - NDC clipping
 - Fast single precision floating point math library with SIMD intrinsics
