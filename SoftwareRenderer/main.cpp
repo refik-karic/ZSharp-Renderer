@@ -69,8 +69,8 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       break;
     case WM_LBUTTONDOWN:
     {
-      std::int32_t x = LOWORD(lParam);
-      std::int32_t y = HIWORD(lParam);
+      int32_t x = LOWORD(lParam);
+      int32_t y = HIWORD(lParam);
       ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
       inputManager->UpdateMousePosition(x, y);
       inputManager->UpdateMouseState(true);
@@ -84,8 +84,8 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return 0;
     case WM_MOUSEMOVE:
     {
-      std::int32_t x = LOWORD(lParam);
-      std::int32_t y = HIWORD(lParam);
+      int32_t x = LOWORD(lParam);
+      int32_t y = HIWORD(lParam);
       ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
       inputManager->UpdateMousePosition(x, y);
     }
@@ -111,7 +111,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         default:
         {
           ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-          inputManager->Update(static_cast<std::uint8_t>(wParam), ZSharp::InputManager::KeyState::Down);
+          inputManager->Update(static_cast<uint8_t>(wParam), ZSharp::InputManager::KeyState::Down);
         }
           break;
       }
@@ -119,7 +119,7 @@ LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
     {
       ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-      inputManager->Update(static_cast<std::uint8_t>(wParam), ZSharp::InputManager::KeyState::Up);
+      inputManager->Update(static_cast<uint8_t>(wParam), ZSharp::InputManager::KeyState::Up);
     }
       break;
     case WM_CLOSE:
