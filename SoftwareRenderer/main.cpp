@@ -5,24 +5,25 @@
 #include "GDIWrapper.h"
 #include "WindowsHeadersWrapper.h"
 
+static wchar_t WINDOW_CLASS_NAME[] = L"SoftwareRendererWindowClass";
+static wchar_t WINDOW_TITLE[] = L"Software Renderer";
+
 HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className);
 LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int nCmdShow) {
-  wchar_t className[] = L"Test Class Name";
-  HWND hwnd = SetupWindow(hInstance, className);
+  HWND hwnd = SetupWindow(hInstance, WINDOW_CLASS_NAME);
   if (hwnd == nullptr) {
     return HRESULT_FROM_WIN32(GetLastError());
   }
 
   ShowWindow(hwnd, nCmdShow);
-  UpdateWindow(hwnd);
   for (MSG msg; GetMessageW(&msg, hwnd, 0, 0) > 0;) {
     TranslateMessage(&msg);
     DispatchMessageW(&msg);
   }
 
-  UnregisterClassW(className, hInstance);
+  UnregisterClassW(WINDOW_CLASS_NAME, hInstance);
   return 0;
 }
 
@@ -167,7 +168,7 @@ HWND SetupWindow(HINSTANCE hInstance, const wchar_t* className) {
   return CreateWindowExW(
     WS_EX_OVERLAPPEDWINDOW,
     className,
-    L"Test Window",
+    WINDOW_TITLE,
     WS_OVERLAPPEDWINDOW | WS_VISIBLE,
     CW_USEDEFAULT,
     CW_USEDEFAULT,
