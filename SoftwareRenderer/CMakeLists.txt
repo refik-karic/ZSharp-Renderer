@@ -2,10 +2,11 @@ add_executable(SoftwareRenderer WIN32)
 
 target_sources(SoftwareRenderer
     PRIVATE
-        GDIWrapper.cpp
-        GDIWrapper.h
-	    main.cpp
         WindowsHeadersWrapper.h
+	    ZSharpApplication.h
+
+	    main.cpp
+	    ZSharpApplication.cpp
 )
 
 target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZSharp/)
