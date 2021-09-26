@@ -4,6 +4,8 @@
 #include <Renderer.h>
 #include <ZConfig.h>
 
+static wchar_t WINDOW_CLASS_NAME[] = L"SoftwareRendererWindowClass";
+static wchar_t WINDOW_TITLE[] = L"Software Renderer";
 static constexpr UINT FRAMERATE_60_HZ_MS = 1000 / 60;
 
 ZSharpApplication& ZSharpApplication::GetInstance() {
@@ -57,7 +59,68 @@ LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
   return 0;
 }
 
+void ZSharpApplication::Run(HINSTANCE instance) {
+  if (mWindowHandle == nullptr) {
+    mInstance = instance;
+
+    mWindowHandle = SetupWindow();
+    if (mWindowHandle == nullptr) {
+      exit(HRESULT_FROM_WIN32(GetLastError()));
+    }
+
+    ShowWindow(mWindowHandle, SW_NORMAL);
+    for (MSG msg; GetMessageW(&msg, mWindowHandle, 0, 0) > 0;) {
+      TranslateMessage(&msg);
+      DispatchMessageW(&msg);
+    }
+
+    UnregisterClassW(WINDOW_CLASS_NAME, mInstance);
+  }
+}
+
 ZSharpApplication::ZSharpApplication() {
+}
+
+HWND ZSharpApplication::SetupWindow() {
+  WNDCLASSEXW wc{
+    sizeof(WNDCLASSEXW),
+    CS_HREDRAW | CS_VREDRAW,
+    &ZSharpApplication::MessageLoop,
+    0,
+    0,
+    mInstance,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    WINDOW_CLASS_NAME,
+    nullptr
+  };
+
+  if (!RegisterClassExW(&wc)) {
+    return nullptr;
+  }
+
+  const ZSharp::ZConfig& config = ZSharp::ZConfig::GetInstance();
+
+  DWORD windowStyle = WS_BORDER | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME;
+  RECT clientRect{ 0L, 0L, static_cast<long>(config.GetViewportWidth()), static_cast<long>(config.GetViewportHeight()) };
+  AdjustWindowRectEx(&clientRect, windowStyle, false, WS_EX_OVERLAPPEDWINDOW);
+
+  return CreateWindowExW(
+    WS_EX_OVERLAPPEDWINDOW,
+    WINDOW_CLASS_NAME,
+    WINDOW_TITLE,
+    WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+    CW_USEDEFAULT,
+    CW_USEDEFAULT,
+    clientRect.right - clientRect.left,
+    clientRect.bottom - clientRect.top,
+    nullptr,
+    nullptr,
+    mInstance,
+    nullptr
+  );
 }
 
 void ZSharpApplication::SetWindowHandle(HWND handle) {

@@ -11,11 +11,16 @@ class ZSharpApplication {
 
   static LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+  void Run(HINSTANCE instance);
+
   private:
+  HINSTANCE mInstance = nullptr;
   HWND mWindowHandle = nullptr;
   UINT_PTR mWindowsFrameTimer = 0;
 
   ZSharpApplication();
+
+  HWND SetupWindow();
 
   void SetWindowHandle(HWND handle);
 
