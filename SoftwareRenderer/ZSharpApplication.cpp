@@ -15,11 +15,10 @@ ZSharpApplication& ZSharpApplication::GetInstance() {
 
 LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   ZSharpApplication& app = GetInstance();
-  app.SetWindowHandle(hwnd);
 
   switch (uMsg) {
   case WM_CREATE:
-    app.OnCreate();
+    app.OnCreate(hwnd);
     break;
   case WM_TIMER:
     app.OnTimer();
@@ -65,10 +64,12 @@ void ZSharpApplication::Run(HINSTANCE instance) {
 
     mWindowHandle = SetupWindow();
     if (mWindowHandle == nullptr) {
-      exit(HRESULT_FROM_WIN32(GetLastError()));
+      DWORD error = GetLastError();
+      HRESULT result = HRESULT_FROM_WIN32(error);
+      exit(result);
     }
 
-    ShowWindow(mWindowHandle, SW_NORMAL);
+    ShowWindow(mWindowHandle, SW_SHOW);
     for (MSG msg; GetMessageW(&msg, mWindowHandle, 0, 0) > 0;) {
       TranslateMessage(&msg);
       DispatchMessageW(&msg);
@@ -123,15 +124,11 @@ HWND ZSharpApplication::SetupWindow() {
   );
 }
 
-void ZSharpApplication::SetWindowHandle(HWND handle) {
-  mWindowHandle = handle;
-}
-
-void ZSharpApplication::OnCreate() {
-  mWindowsFrameTimer = SetTimer(mWindowHandle, 1, FRAMERATE_60_HZ_MS, NULL);
+void ZSharpApplication::OnCreate(HWND initialHandle) {
+  mWindowsFrameTimer = SetTimer(initialHandle, 1, FRAMERATE_60_HZ_MS, NULL);
 
   if (mWindowsFrameTimer == 0) {
-    DestroyWindow(mWindowHandle);
+    DestroyWindow(initialHandle);
   }
 }
 

@@ -22,11 +22,9 @@ class ZSharpApplication {
 
   HWND SetupWindow();
 
-  void SetWindowHandle(HWND handle);
-
   // Win32 message loop handlers.
 
-  void OnCreate();
+  void OnCreate(HWND initialHandle);
 
   void OnTimer();
 
