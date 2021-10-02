@@ -157,19 +157,19 @@ void ZSharpApplication::OnPaint() {
 }
 
 void ZSharpApplication::OnLButtonDown(int32_t x, int32_t y) {
-  ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-  inputManager->UpdateMousePosition(x, y);
-  inputManager->UpdateMouseState(true);
+  ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
+  inputManager.UpdateMousePosition(x, y);
+  inputManager.UpdateMouseState(true);
 }
 
 void ZSharpApplication::OnLButtonUp() {
-  ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-  inputManager->ResetMouse();
+  ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
+  inputManager.ResetMouse();
 }
 
 void ZSharpApplication::OnMouseMove(int32_t x, int32_t y) {
-  ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-  inputManager->UpdateMousePosition(x, y);
+  ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
+  inputManager.UpdateMousePosition(x, y);
 }
 
 void ZSharpApplication::OnKeyDown(uint8_t key) {
@@ -192,16 +192,16 @@ void ZSharpApplication::OnKeyDown(uint8_t key) {
     break;
   default:
   {
-    ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-    inputManager->Update(key, ZSharp::InputManager::KeyState::Down);
+    ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
+    inputManager.Update(key, ZSharp::InputManager::KeyState::Down);
   }
   break;
   }
 }
 
 void ZSharpApplication::OnKeyUp(uint8_t key) {
-  ZSharp::InputManager* inputManager = ZSharp::InputManager::GetInstance();
-  inputManager->Update(key, ZSharp::InputManager::KeyState::Up);
+  ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
+  inputManager.Update(key, ZSharp::InputManager::KeyState::Up);
 }
 
 void ZSharpApplication::OnClose() {
