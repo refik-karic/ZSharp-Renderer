@@ -26,8 +26,10 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 - Standalone
   - No third party libraries are required or included
 - Lightweight
-  - Compiles to about 6MB in release and uses about 9MB of memory for a 1920x1080 viewport
-![resources](https://user-images.githubusercontent.com/54491280/63645734-cc07b600-c6d2-11e9-9c2a-bd26242b9fad.png)
+  - Compiles to about 417KB (small enough to fit on a floppy disk) in release mode and uses about 9MB of memory for a 1920x1080 viewport
+
+![renderer](https://user-images.githubusercontent.com/54491280/144987286-9ffd78e6-f413-488a-b1b2-f98fded9ec2b.png)
+![library](https://user-images.githubusercontent.com/54491280/144987288-a9153e38-7192-4ef9-9b3e-3402ff311d0f.png)
 - Flexible input system
   - Can register and respond to user input in a platform independent manner. Still requires OS/Device specific layer to feed the input system.
 
