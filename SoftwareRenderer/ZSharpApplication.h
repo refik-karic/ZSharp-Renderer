@@ -18,7 +18,12 @@ class ZSharpApplication {
   HWND mWindowHandle = nullptr;
   UINT_PTR mWindowsFrameTimer = 0;
 
+  BITMAP mBitmap;
+  HBITMAP mBitmapHandle;
+
   ZSharpApplication();
+
+  ~ZSharpApplication();
 
   HWND SetupWindow();
 

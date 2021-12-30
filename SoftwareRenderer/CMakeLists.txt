@@ -14,6 +14,7 @@ target_link_libraries(SoftwareRenderer PUBLIC ZSharp)
 
 set(SoftwareRenderer_Compile_Options 
 	/source-charset:utf-8
+	/std:c17
 	/std:c++latest
 	/D_UNICODE
 	/GR-

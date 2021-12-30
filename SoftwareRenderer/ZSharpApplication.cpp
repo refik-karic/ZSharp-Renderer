@@ -79,7 +79,15 @@ void ZSharpApplication::Run(HINSTANCE instance) {
   }
 }
 
-ZSharpApplication::ZSharpApplication() {
+ZSharpApplication::ZSharpApplication()
+  : mBitmap{0, 0, 0, 0, 1, 32, nullptr},
+    mBitmapHandle(nullptr) {
+}
+
+ZSharpApplication::~ZSharpApplication() {
+  if (mBitmapHandle != nullptr) {
+    DeleteObject(mBitmapHandle);
+  }
 }
 
 HWND ZSharpApplication::SetupWindow() {
@@ -218,22 +226,24 @@ void ZSharpApplication::UpdateFrame(uint8_t* frameData) {
   HDC hdc = BeginPaint(mWindowHandle, &ps);
   HDC hdcMem = CreateCompatibleDC(hdc);
 
-  const BITMAP bitmap{
-  0,
-  ps.rcPaint.right,
-  ps.rcPaint.bottom,
-  ps.rcPaint.right * 4,
-  1,
-  32,
-  frameData
-  };
+  if ((ps.rcPaint.right != mBitmap.bmWidth) || (ps.rcPaint.bottom != mBitmap.bmHeight)) {
+    mBitmap.bmWidth = ps.rcPaint.right;
+    mBitmap.bmHeight = ps.rcPaint.bottom;
+    mBitmap.bmWidthBytes = ps.rcPaint.right * 4;
 
-  HBITMAP hBitmap = CreateBitmapIndirect(&bitmap);
-  HGDIOBJ lastObject = SelectObject(hdcMem, hBitmap);
+    if (mBitmapHandle != nullptr) {
+      DeleteObject(mBitmapHandle);
+    }
+
+    mBitmapHandle = CreateCompatibleBitmap(hdc, ps.rcPaint.right, ps.rcPaint.bottom);
+  }
+
+  SetBitmapBits(mBitmapHandle, ps.rcPaint.right * 4 * ps.rcPaint.bottom, frameData);
+
+  HGDIOBJ lastObject = SelectObject(hdcMem, mBitmapHandle);
   BitBlt(hdc, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom, hdcMem, 0, 0, SRCCOPY);
   SelectObject(hdcMem, lastObject);
 
   DeleteDC(hdcMem);
   EndPaint(mWindowHandle, &ps);
-  DeleteObject(hBitmap);
 }
