@@ -79,15 +79,22 @@ void ZSharpApplication::Run(HINSTANCE instance) {
   }
 }
 
-ZSharpApplication::ZSharpApplication()
-  : mBitmap{0, 0, 0, 0, 1, 32, nullptr},
-    mBitmapHandle(nullptr) {
+ZSharpApplication::ZSharpApplication() {
+  ZeroMemory(&mBitmapInfo, sizeof(BITMAPINFO));
+  mBitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+  mBitmapInfo.bmiHeader.biWidth = 0;
+  mBitmapInfo.bmiHeader.biHeight = 0;
+  mBitmapInfo.bmiHeader.biPlanes = 1;
+  mBitmapInfo.bmiHeader.biBitCount = 32;
+  mBitmapInfo.bmiHeader.biCompression = BI_RGB;
+  mBitmapInfo.bmiHeader.biSizeImage = 0;
+  mBitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+  mBitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+  mBitmapInfo.bmiHeader.biClrUsed = 0;
+  mBitmapInfo.bmiHeader.biClrImportant = 0;
 }
 
 ZSharpApplication::~ZSharpApplication() {
-  if (mBitmapHandle != nullptr) {
-    DeleteObject(mBitmapHandle);
-  }
 }
 
 HWND ZSharpApplication::SetupWindow() {
@@ -159,6 +166,9 @@ void ZSharpApplication::OnPaint() {
     if (activeWindowSize.bottom != config.GetViewportHeight()) {
       config.SetViewportHeight(activeWindowSize.bottom);
     }
+
+    mBitmapInfo.bmiHeader.biWidth = activeWindowSize.right;
+    mBitmapInfo.bmiHeader.biHeight = -activeWindowSize.bottom;
   }
 
   UpdateFrame(renderer.RenderNextFrame());
@@ -221,29 +231,22 @@ void ZSharpApplication::OnDestroy() {
   PostQuitMessage(0);
 }
 
-void ZSharpApplication::UpdateFrame(uint8_t* frameData) {
+void ZSharpApplication::UpdateFrame(uint8_t* data) {
   PAINTSTRUCT ps;
   HDC hdc = BeginPaint(mWindowHandle, &ps);
-  HDC hdcMem = CreateCompatibleDC(hdc);
 
-  if ((ps.rcPaint.right != mBitmap.bmWidth) || (ps.rcPaint.bottom != mBitmap.bmHeight)) {
-    mBitmap.bmWidth = ps.rcPaint.right;
-    mBitmap.bmHeight = ps.rcPaint.bottom;
-    mBitmap.bmWidthBytes = ps.rcPaint.right * 4;
+  SetDIBitsToDevice(hdc, 
+    0, 
+    0, 
+    mBitmapInfo.bmiHeader.biWidth, 
+    -mBitmapInfo.bmiHeader.biHeight, 
+    0, 
+    0,
+    0, 
+    -mBitmapInfo.bmiHeader.biHeight,
+    data, 
+    &mBitmapInfo, 
+    DIB_RGB_COLORS);
 
-    if (mBitmapHandle != nullptr) {
-      DeleteObject(mBitmapHandle);
-    }
-
-    mBitmapHandle = CreateCompatibleBitmap(hdc, ps.rcPaint.right, ps.rcPaint.bottom);
-  }
-
-  SetBitmapBits(mBitmapHandle, ps.rcPaint.right * 4 * ps.rcPaint.bottom, frameData);
-
-  HGDIOBJ lastObject = SelectObject(hdcMem, mBitmapHandle);
-  BitBlt(hdc, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom, hdcMem, 0, 0, SRCCOPY);
-  SelectObject(hdcMem, lastObject);
-
-  DeleteDC(hdcMem);
   EndPaint(mWindowHandle, &ps);
 }

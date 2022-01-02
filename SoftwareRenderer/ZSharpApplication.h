@@ -18,8 +18,7 @@ class ZSharpApplication {
   HWND mWindowHandle = nullptr;
   UINT_PTR mWindowsFrameTimer = 0;
 
-  BITMAP mBitmap;
-  HBITMAP mBitmapHandle;
+  BITMAPINFO mBitmapInfo;
 
   ZSharpApplication();
 
@@ -51,5 +50,5 @@ class ZSharpApplication {
 
   // Everything else not related to message loop.
 
-  void UpdateFrame(uint8_t* frameData);
+  void UpdateFrame(uint8_t* data);
 };
