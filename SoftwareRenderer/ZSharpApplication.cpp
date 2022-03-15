@@ -168,7 +168,7 @@ void ZSharpApplication::OnPaint() {
     }
 
     mBitmapInfo.bmiHeader.biWidth = activeWindowSize.right;
-    mBitmapInfo.bmiHeader.biHeight = -activeWindowSize.bottom;
+    mBitmapInfo.bmiHeader.biHeight = activeWindowSize.bottom;
   }
 
   UpdateFrame(renderer.RenderNextFrame());
@@ -239,11 +239,11 @@ void ZSharpApplication::UpdateFrame(uint8_t* data) {
     0, 
     0, 
     mBitmapInfo.bmiHeader.biWidth, 
-    -mBitmapInfo.bmiHeader.biHeight, 
+    mBitmapInfo.bmiHeader.biHeight, 
     0, 
     0,
     0, 
-    -mBitmapInfo.bmiHeader.biHeight,
+    mBitmapInfo.bmiHeader.biHeight,
     data, 
     &mBitmapInfo, 
     DIB_RGB_COLORS);
