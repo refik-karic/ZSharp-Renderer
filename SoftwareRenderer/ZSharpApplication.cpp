@@ -231,7 +231,7 @@ void ZSharpApplication::OnDestroy() {
   PostQuitMessage(0);
 }
 
-void ZSharpApplication::UpdateFrame(uint8_t* data) {
+void ZSharpApplication::UpdateFrame(const uint8_t* data) {
   PAINTSTRUCT ps;
   HDC hdc = BeginPaint(mWindowHandle, &ps);
 

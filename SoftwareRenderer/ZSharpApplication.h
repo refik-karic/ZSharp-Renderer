@@ -50,5 +50,5 @@ class ZSharpApplication {
 
   // Everything else not related to message loop.
 
-  void UpdateFrame(uint8_t* data);
+  void UpdateFrame(const uint8_t* data);
 };
