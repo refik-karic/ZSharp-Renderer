@@ -2,7 +2,7 @@
 
 #include "WindowsHeadersWrapper.h"
 
-#include <cstdint>
+#include <ZBaseTypes.h>
 
 class ZSharpApplication {
   public:
@@ -34,15 +34,15 @@ class ZSharpApplication {
 
   void OnPaint();
 
-  void OnLButtonDown(int32_t x, int32_t y);
+  void OnLButtonDown(ZSharp::int32 x, ZSharp::int32 y);
 
   void OnLButtonUp();
 
-  void OnMouseMove(int32_t x, int32_t y);
+  void OnMouseMove(ZSharp::int32 x, ZSharp::int32 y);
 
-  void OnKeyDown(uint8_t key);
+  void OnKeyDown(ZSharp::uint8 key);
 
-  void OnKeyUp(uint8_t key);
+  void OnKeyUp(ZSharp::uint8 key);
 
   void OnClose();
 
@@ -50,5 +50,5 @@ class ZSharpApplication {
 
   // Everything else not related to message loop.
 
-  void UpdateFrame(const uint8_t* data);
+  void UpdateFrame(const ZSharp::uint8* data);
 };

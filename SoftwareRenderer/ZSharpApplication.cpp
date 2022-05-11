@@ -38,10 +38,10 @@ LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     app.OnMouseMove(LOWORD(lParam), HIWORD(lParam));
     return 0;
   case WM_KEYDOWN:
-    app.OnKeyDown(static_cast<uint8_t>(wParam));
+    app.OnKeyDown(static_cast<ZSharp::uint8>(wParam));
     break;
   case WM_KEYUP:
-    app.OnKeyUp(static_cast<uint8_t>(wParam));
+    app.OnKeyUp(static_cast<ZSharp::uint8>(wParam));
     break;
   case WM_CLOSE:
     app.OnClose();
@@ -174,7 +174,7 @@ void ZSharpApplication::OnPaint() {
   UpdateFrame(renderer.RenderNextFrame());
 }
 
-void ZSharpApplication::OnLButtonDown(int32_t x, int32_t y) {
+void ZSharpApplication::OnLButtonDown(ZSharp::int32 x, ZSharp::int32 y) {
   ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
   inputManager.UpdateMousePosition(x, y);
   inputManager.UpdateMouseState(true);
@@ -185,12 +185,12 @@ void ZSharpApplication::OnLButtonUp() {
   inputManager.ResetMouse();
 }
 
-void ZSharpApplication::OnMouseMove(int32_t x, int32_t y) {
+void ZSharpApplication::OnMouseMove(ZSharp::int32 x, ZSharp::int32 y) {
   ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
   inputManager.UpdateMousePosition(x, y);
 }
 
-void ZSharpApplication::OnKeyDown(uint8_t key) {
+void ZSharpApplication::OnKeyDown(ZSharp::uint8 key) {
   switch (key) {
   case VK_SPACE:
     if (mWindowsFrameTimer == 0) {
@@ -217,7 +217,7 @@ void ZSharpApplication::OnKeyDown(uint8_t key) {
   }
 }
 
-void ZSharpApplication::OnKeyUp(uint8_t key) {
+void ZSharpApplication::OnKeyUp(ZSharp::uint8 key) {
   ZSharp::InputManager& inputManager = ZSharp::InputManager::GetInstance();
   inputManager.Update(key, ZSharp::InputManager::KeyState::Up);
 }
@@ -231,7 +231,7 @@ void ZSharpApplication::OnDestroy() {
   PostQuitMessage(0);
 }
 
-void ZSharpApplication::UpdateFrame(const uint8_t* data) {
+void ZSharpApplication::UpdateFrame(const ZSharp::uint8* data) {
   PAINTSTRUCT ps;
   HDC hdc = BeginPaint(mWindowHandle, &ps);
 
