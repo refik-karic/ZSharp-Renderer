@@ -11,7 +11,7 @@ class ZSharpApplication {
 
   static LRESULT CALLBACK MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-  void Run(HINSTANCE instance);
+  int Run(HINSTANCE instance);
 
   private:
   HINSTANCE mInstance = nullptr;

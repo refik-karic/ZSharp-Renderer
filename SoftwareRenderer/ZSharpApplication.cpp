@@ -19,10 +19,10 @@ LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
   switch (uMsg) {
   case WM_CREATE:
     app.OnCreate(hwnd);
-    break;
+    return 0;
   case WM_TIMER:
     app.OnTimer();
-    break;
+    return 0;
   case WM_PAINT:
     app.OnPaint();
     return 0;
@@ -39,10 +39,10 @@ LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
     return 0;
   case WM_KEYDOWN:
     app.OnKeyDown(static_cast<ZSharp::uint8>(wParam));
-    break;
+    return 0;
   case WM_KEYUP:
     app.OnKeyUp(static_cast<ZSharp::uint8>(wParam));
-    break;
+    return 0;
   case WM_CLOSE:
     app.OnClose();
     break;
@@ -58,7 +58,7 @@ LRESULT ZSharpApplication::MessageLoop(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
   return 0;
 }
 
-void ZSharpApplication::Run(HINSTANCE instance) {
+int ZSharpApplication::Run(HINSTANCE instance) {
   if (mWindowHandle == nullptr) {
     mInstance = instance;
 
@@ -66,7 +66,7 @@ void ZSharpApplication::Run(HINSTANCE instance) {
     if (mWindowHandle == nullptr) {
       DWORD error = GetLastError();
       HRESULT result = HRESULT_FROM_WIN32(error);
-      exit(result);
+      return result;
     }
 
     ShowWindow(mWindowHandle, SW_SHOW);
@@ -76,6 +76,10 @@ void ZSharpApplication::Run(HINSTANCE instance) {
     }
 
     UnregisterClassW(WINDOW_CLASS_NAME, mInstance);
+    return 0;
+  }
+  else {
+    return -1;
   }
 }
 
