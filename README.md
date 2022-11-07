@@ -43,6 +43,9 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 - Lighting
 
 ## Credits
+- HandmadeHero/Casey Muratori
+  - General game architecture. Platform agnostic API.
+  - https://www.youtube.com/watch?v=_4vnV2Eng7M
 - Michael Abrash
   - Publicly releasing the Graphics Programming Black Book for free
   - Recommending Computer Graphics Principles and Practice
