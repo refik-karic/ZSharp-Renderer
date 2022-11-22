@@ -48,9 +48,20 @@ set(SoftwareRenderer_Link_Options_Release
   /LTCG
 )
 
-target_compile_definitions(SoftwareRenderer PRIVATE 
+set(SoftwareRenderer_Preprocessor_Defines
   FORCE_AVX512
   FORCE_SSE
+)
+
+if(WIN32)
+  list(APPEND SoftwareRenderer_Preprocessor_Defines 
+    PLATFORM_WINDOWS
+	_CRT_SECURE_NO_WARNINGS
+  )
+endif(WIN32)
+
+target_compile_definitions(SoftwareRenderer PRIVATE 
+  ${SoftwareRenderer_Preprocessor_Defines}
 )
 
 target_compile_options(SoftwareRenderer PRIVATE 
