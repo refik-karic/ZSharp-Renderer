@@ -37,7 +37,6 @@ set(SoftwareRenderer_Compile_Options_Release
 
 set(SoftwareRenderer_Link_Options_Debug 
   /INCREMENTAL:NO
-  /LTCG:NOSTATUS
   /WX
 )
 
