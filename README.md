@@ -5,17 +5,19 @@ This contains the Windows implementation. Most of the interesting code is in the
 https://github.com/refik-karic/ZSharp.git
 
 ## In Action
-### 34K Vert Low Poly Backpack
-![backpack](https://user-images.githubusercontent.com/54491280/131208500-f586aabc-f045-4adb-be9b-4c79d6b2e331.png)
-Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-poly-799f8c4511f84fab8c3f12887f7e6b36
 
-### Flat Shaded Pyramids
-![flat](https://user-images.githubusercontent.com/54491280/63645593-19ceef00-c6d0-11e9-97da-6d78acceb96a.png)
+### Flat Shaded Perspective Correct Triangle
+![flat](https://user-images.githubusercontent.com/54491280/207509581-63e4f4a4-85fe-4d37-be0c-b78de3a8abb1.png)
 
-### Wireframe Pyramids
-![wire](https://user-images.githubusercontent.com/54491280/63645597-1fc4d000-c6d0-11e9-82af-1c1d465523b5.png)
+### Perspective Correct Cube
+![cube](https://user-images.githubusercontent.com/54491280/207509866-aa91991b-8817-4261-ba7d-a198188ddf7f.png)
+
+### Wireframe Perspective Correct Triangle
+![wireframe](https://user-images.githubusercontent.com/54491280/207510415-bb6975f5-9010-44ba-b5b0-503438dd1ff8.png)
 
 ## Supported Features
+- Perspective correct attribute interpolation
+  - Only supports RGB colors now, can be extended to textures with UV coordinates
 - Wireframe triangles
 - Flat shaded triangles
 - Movable perspective camera with WASD controls and virtual trackball mouse
@@ -39,7 +41,6 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 - x86_64 processor
 
 ## Features left to be desired
-- Texture mapping
 - Lighting
 
 ## Credits
@@ -49,7 +50,7 @@ Model Credit to: https://sketchfab.com/3d-models/survival-guitar-backpack-low-po
 - Michael Abrash
   - Publicly releasing the Graphics Programming Black Book for free
   - Recommending Computer Graphics Principles and Practice
-- David Cherney, Tom Denton, Rohit Thomas and Andrew Waldron (UC Davis Math Dept)
+- UC Davis Math Dept
   - Publicly releasing a free linear albegra textbook
   - https://www.math.ucdavis.edu/~linear/
 - Joey De Vries
