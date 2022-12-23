@@ -69,6 +69,9 @@ https://github.com/refik-karic/ZSharp.git
   - https://www.youtube.com/user/GameEngineArchitects/videos
   - Sean Middleditch's lecture on custom math libraries was very helpful
     - https://www.youtube.com/watch?v=v4Ubu7BMXXk
+- Squirrel Eiserloh
+  - Providing a great example of how to create your own fast and lightweight RNG using noise.
+  - https://www.youtube.com/watch?v=LWFzPP8ZbdU
 
 ## Materials Referenced
 - Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
