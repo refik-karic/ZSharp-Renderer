@@ -56,6 +56,7 @@ if(WIN32)
   list(APPEND SoftwareRenderer_Preprocessor_Defines 
     PLATFORM_WINDOWS
 	_CRT_SECURE_NO_WARNINGS
+	_HAS_EXCEPTIONS=0
   )
 endif(WIN32)
 
