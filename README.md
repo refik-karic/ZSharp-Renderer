@@ -37,8 +37,10 @@ https://github.com/refik-karic/ZSharp.git
 
 ## Requirements to run
 - Windows
-- Visual Studio 2019
+- Visual Studio 2019+
 - x86_64 processor
+  - Many assumptions are made to be running on a 64bit processor. May port to 32bit in the future.
+- CMake 3.23+
 
 ## Features left to be desired
 - Lighting
