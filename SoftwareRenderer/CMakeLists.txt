@@ -47,10 +47,7 @@ set(SoftwareRenderer_Link_Options_Release
   /LTCG
 )
 
-set(SoftwareRenderer_Preprocessor_Defines
-  FORCE_AVX512
-  FORCE_SSE
-)
+set(SoftwareRenderer_Preprocessor_Defines )
 
 if(WIN32)
   list(APPEND SoftwareRenderer_Preprocessor_Defines 
