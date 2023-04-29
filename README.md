@@ -6,6 +6,12 @@ https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 
+### Flat Shaded Perspective Correct OBJ model from Blender
+![OBJFlat](https://user-images.githubusercontent.com/54491280/235322450-ada2d7d7-f96b-4529-8d4b-76654e1bf0de.png)
+
+### Wireframe Version
+![OBJWireframe](https://user-images.githubusercontent.com/54491280/235322451-29d769ee-a24d-46fe-bd74-ff6a19909721.png)
+
 ### Flat Shaded Perspective Correct Triangle
 ![flat](https://user-images.githubusercontent.com/54491280/207509581-63e4f4a4-85fe-4d37-be0c-b78de3a8abb1.png)
 
@@ -33,7 +39,7 @@ https://github.com/refik-karic/ZSharp.git
 ![renderer](https://user-images.githubusercontent.com/54491280/144987286-9ffd78e6-f413-488a-b1b2-f98fded9ec2b.png)
 ![library](https://user-images.githubusercontent.com/54491280/144987288-a9153e38-7192-4ef9-9b3e-3402ff311d0f.png)
 - Flexible input system
-  - Can register and respond to user input in a platform independent manner. Still requires OS/Device specific layer to feed the input system.
+  - Can register and respond to user input in a platform independent manner.
 
 ## Requirements to run
 - Windows
