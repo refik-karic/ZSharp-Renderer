@@ -6,6 +6,9 @@ https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 
+### Texture Mapped Triangle
+![TextureTriangle](https://user-images.githubusercontent.com/54491280/244978866-eaa63e67-3706-40c8-84e8-2149523c0ce3.png)
+
 ### Flat Shaded Perspective Correct OBJ model from Blender
 ![OBJFlat](https://user-images.githubusercontent.com/54491280/235322450-ada2d7d7-f96b-4529-8d4b-76654e1bf0de.png)
 
