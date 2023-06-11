@@ -26,7 +26,7 @@ https://github.com/refik-karic/ZSharp.git
 
 ## Supported Features
 - Perspective correct attribute interpolation
-  - Only supports RGB colors now, can be extended to textures with UV coordinates
+  - RGB color, UV texture
 - Wireframe triangles
 - Flat shaded triangles
 - Movable perspective camera with WASD controls and virtual trackball mouse
@@ -42,7 +42,6 @@ https://github.com/refik-karic/ZSharp.git
 ![renderer](https://user-images.githubusercontent.com/54491280/144987286-9ffd78e6-f413-488a-b1b2-f98fded9ec2b.png)
 ![library](https://user-images.githubusercontent.com/54491280/144987288-a9153e38-7192-4ef9-9b3e-3402ff311d0f.png)
 - Flexible input system
-  - Can register and respond to user input in a platform independent manner.
 
 ## Requirements to run
 - Windows
@@ -53,6 +52,7 @@ https://github.com/refik-karic/ZSharp.git
 
 ## Features left to be desired
 - Lighting
+- Physically Based Materials
 
 ## Credits
 - HandmadeHero/Casey Muratori
