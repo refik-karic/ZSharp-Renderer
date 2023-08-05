@@ -57,6 +57,9 @@ if(WIN32)
 	WIN32_LEAN_AND_MEAN
     PLATFORM_MAX_PATH=260
   )
+
+  # For high precision timing in main loop.
+  target_link_libraries(SoftwareRenderer PRIVATE Winmm)
 endif(WIN32)
 
 target_compile_definitions(SoftwareRenderer PRIVATE 
