@@ -7,22 +7,19 @@ https://github.com/refik-karic/ZSharp.git
 ## In Action
 
 ### Texture Mapped Triangle
-![TextureTriangle](https://user-images.githubusercontent.com/54491280/244978866-eaa63e67-3706-40c8-84e8-2149523c0ce3.png)
+![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
 
 ### Flat Shaded Perspective Correct OBJ model from Blender
-![OBJFlat](https://user-images.githubusercontent.com/54491280/235322450-ada2d7d7-f96b-4529-8d4b-76654e1bf0de.png)
+![OBJFlat](https://user-images.githubusercontent.com/54491280/263252967-f9552bd1-3b26-4c39-868c-07b5f48d56c9.png)
 
 ### Wireframe Version
-![OBJWireframe](https://user-images.githubusercontent.com/54491280/235322451-29d769ee-a24d-46fe-bd74-ff6a19909721.png)
+![OBJWireframe](https://user-images.githubusercontent.com/54491280/263252969-cce0f523-1649-4454-81ac-d92a82181969.png)
 
 ### Flat Shaded Perspective Correct Triangle
-![flat](https://user-images.githubusercontent.com/54491280/207509581-63e4f4a4-85fe-4d37-be0c-b78de3a8abb1.png)
-
-### Perspective Correct Cube
-![cube](https://user-images.githubusercontent.com/54491280/207509866-aa91991b-8817-4261-ba7d-a198188ddf7f.png)
+![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
 
 ### Wireframe Perspective Correct Triangle
-![wireframe](https://user-images.githubusercontent.com/54491280/207510415-bb6975f5-9010-44ba-b5b0-503438dd1ff8.png)
+![wireframe](https://user-images.githubusercontent.com/54491280/263252970-a0f96d3f-15b7-4050-9dbd-e82d70792bb8.png)
 
 ## Supported Features
 - Perspective correct attribute interpolation
