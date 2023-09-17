@@ -1,7 +1,7 @@
 # ZSharp-Renderer
-An old school Win32 3D software renderer implemented as part of a learning experience in computer graphics.
+An old school Win32 3D software rendered game engine.
 
-This contains the Windows implementation. Most of the interesting code is in the ZSharp submodule.
+This contains the Windows implementation. The majority of the code is in the ZSharp submodule.
 https://github.com/refik-karic/ZSharp.git
 
 ## In Action
@@ -15,7 +15,7 @@ https://github.com/refik-karic/ZSharp.git
 ### Wireframe Version
 ![OBJWireframe](https://user-images.githubusercontent.com/54491280/266781994-77c6b550-82c7-4166-a56d-ea5a1b207c87.png)
 
-Can render the above 50K vert models (including texture mapping) consistently at <16ms (on an 11900K).
+Can render the above 50K vert models (including texture mapping) consistently at <8ms (on an 11900K).
 
 ### Flat Shaded Perspective Correct Triangle
 ![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
@@ -23,24 +23,25 @@ Can render the above 50K vert models (including texture mapping) consistently at
 ### Wireframe Perspective Correct Triangle
 ![wireframe](https://user-images.githubusercontent.com/54491280/263252970-a0f96d3f-15b7-4050-9dbd-e82d70792bb8.png)
 
-## Supported Features
+## Features
 - Perspective correct attribute interpolation
-  - RGB color, UV texture
 - Wireframe triangles
 - Flat shaded triangles
 - Movable perspective camera with WASD controls and virtual trackball mouse
 - "Front end" backface culling (before vertex shader)
 - NDC clipping
+  - With fast path AABB in/out pre-pass that saves a significant amount of time (>10ms)
 - Fast single precision floating point math library with SIMD intrinsics
-- ZSharp (static library) is portable
+- ZSharp static library is platform agnostic
 - Standalone
   - No third party libraries are required or included
 - Lightweight
-  - Compiles to about 417KB (small enough to fit on a floppy disk) in release mode and uses about 9MB of memory for a 1920x1080 viewport
-
-![renderer](https://user-images.githubusercontent.com/54491280/144987286-9ffd78e6-f413-488a-b1b2-f98fded9ec2b.png)
-![library](https://user-images.githubusercontent.com/54491280/144987288-a9153e38-7192-4ef9-9b3e-3402ff311d0f.png)
 - Flexible input system
+- Flexible asset system
+  - Assets are bundled together into a single binary blob
+  - Currently supports OBJ, PNG, and MP3 with more in the future
+- MP3 audio
+- Platform agnostic programmatic UI text
 
 ## Requirements to run
 - Windows
@@ -49,11 +50,16 @@ Can render the above 50K vert models (including texture mapping) consistently at
   - Many assumptions are made to be running on a 64bit processor. May port to 32bit in the future.
 - CMake 3.23+
 
-## Features left to be desired
+## Future Work
 - Lighting
 - Physically Based Materials
+- Physics
+  - Most likely AABB impulse based
 
 ## Credits
+- Scratchapixel.com
+  - For barycentric perspective correct interpolation
+  - https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
 - HandmadeHero/Casey Muratori
   - General game architecture. Platform agnostic API.
   - https://www.youtube.com/watch?v=_4vnV2Eng7M
