@@ -10,12 +10,15 @@ https://github.com/refik-karic/ZSharp.git
 ![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
 
 ### Flat Shaded Perspective Correct OBJ model from Blender
-![OBJFlat](https://user-images.githubusercontent.com/54491280/266781843-f40d9648-4b71-49d6-a47a-292fe75f336b.png)
+![OBJFlat](https://user-images.githubusercontent.com/54491280/271285283-93276374-9408-4585-9b18-be590e777655.png)
 
 ### Wireframe Version
 ![OBJWireframe](https://user-images.githubusercontent.com/54491280/266781994-77c6b550-82c7-4166-a56d-ea5a1b207c87.png)
 
-Can render the above 50K vert models (including texture mapping) consistently at <8ms (on an 11900K).
+### Depth Vizualization
+![OBJDepth](https://user-images.githubusercontent.com/54491280/271284082-cac5b1bb-918b-4d88-8119-983f441a995c.png)
+
+Can render the above 50K vert models (including texture mapping) consistently at <4ms (on an 11900K).
 
 ### Flat Shaded Perspective Correct Triangle
 ![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
@@ -31,6 +34,7 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - "Front end" backface culling (before vertex shader)
 - NDC clipping
   - With fast path AABB in/out pre-pass that saves a significant amount of time (>10ms)
+- Depth buffering
 - Fast single precision floating point math library with SIMD intrinsics
 - ZSharp static library is platform agnostic
 - Standalone
