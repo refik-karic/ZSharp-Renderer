@@ -9,14 +9,17 @@ https://github.com/refik-karic/ZSharp.git
 ### Texture Mapped Triangle
 ![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
 
-### Flat Shaded Perspective Correct OBJ model from Blender
-![OBJFlat](https://user-images.githubusercontent.com/54491280/271285283-93276374-9408-4585-9b18-be590e777655.png)
+### UV Flat Shaded Perspective Correct OBJ model from Blender
+![OBJFlatUV](https://user-images.githubusercontent.com/54491280/271782724-29378fd3-5d3b-4564-a0ec-c1ed34067fe5.png)
+
+### RGB Flat Shaded Perspective Correct OBJ model from Blender
+![OBJFlatRGB](https://user-images.githubusercontent.com/54491280/271782726-cbed0fd5-fe08-4f70-aec5-2d0c9a64291d.png)
 
 ### Wireframe Version
 ![OBJWireframe](https://user-images.githubusercontent.com/54491280/266781994-77c6b550-82c7-4166-a56d-ea5a1b207c87.png)
 
 ### Depth Vizualization
-![OBJDepth](https://user-images.githubusercontent.com/54491280/271284082-cac5b1bb-918b-4d88-8119-983f441a995c.png)
+![OBJDepth](https://user-images.githubusercontent.com/54491280/271782696-ef22de74-1a90-4e65-94b2-ebb5220ba323.png)
 
 Can render the above 50K vert models (including texture mapping) consistently at <4ms (on an 11900K).
 
