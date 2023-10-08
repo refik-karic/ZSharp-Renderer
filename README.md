@@ -92,6 +92,8 @@ Can render the above 50K vert models (including texture mapping) consistently at
   - https://www.youtube.com/user/GameEngineArchitects/videos
   - Sean Middleditch's lecture on custom math libraries was very helpful
     - https://www.youtube.com/watch?v=v4Ubu7BMXXk
+  - Intro to Game Physics was very helpful
+    - https://www.youtube.com/watch?v=wPKzwSxyhTI
 - Squirrel Eiserloh
   - Providing a great example of how to create your own fast and lightweight RNG using noise.
   - https://www.youtube.com/watch?v=LWFzPP8ZbdU
@@ -104,3 +106,4 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Expert C Programming: Deep C Secrets (ISBN: 0131774298, 1994)
 - Effective C++: 3rd Edition (ISBN: 0321334876, 2005)
 - Game Engine Black Book: Wolfenstein 3D 1st Edition (ASIN: B0768B3PWV, 2017)
+- Real-Time Collision Detection (ISBN: 1558607323, 2004)
