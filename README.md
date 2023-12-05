@@ -6,6 +6,9 @@ https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 
+### Physics
+![Physics](https://user-images.githubusercontent.com/54491280/282179157-1da80882-14f8-4893-8a60-565dae40de2f.gif)
+
 ### Texture Mapped Triangle
 ![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
 
