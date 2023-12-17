@@ -22,9 +22,9 @@ https://github.com/refik-karic/ZSharp.git
 ![OBJWireframe](https://user-images.githubusercontent.com/54491280/266781994-77c6b550-82c7-4166-a56d-ea5a1b207c87.png)
 
 ### Depth Vizualization
-![OBJDepth](https://user-images.githubusercontent.com/54491280/271782696-ef22de74-1a90-4e65-94b2-ebb5220ba323.png)
+![OBJDepth](https://private-user-images.githubusercontent.com/54491280/291082941-cbfe9584-1615-4428-8ed0-117bc0e2996c.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTEiLCJleHAiOjE3MDI4MzA4OTcsIm5iZiI6MTcwMjgzMDU5NywicGF0aCI6Ii81NDQ5MTI4MC8yOTEwODI5NDEtY2JmZTk1ODQtMTYxNS00NDI4LThlZDAtMTE3YmMwZTI5OTZjLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFJV05KWUFYNENTVkVINTNBJTJGMjAyMzEyMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjMxMjE3VDE2Mjk1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWMxYjcxMjJkMTU0Njk1MGQ4ZjMyMmNiOTJmOTZjNWRhYTMyZjNhMDc2OGE3ZGQwN2Y4MGM5ZThhY2M0OGRhZmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0._8OGU94TmCgauH9WDkB7zWejuq5vGx-Pa2conip_ueE)
 
-Can render the above 50K vert models (including texture mapping) consistently at <4ms (on an 11900K).
+Can render the above 50K vert models (including texture mapping) consistently at <3ms (on an 11900K).
 
 ### Flat Shaded Perspective Correct Triangle
 ![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
@@ -51,6 +51,9 @@ Can render the above 50K vert models (including texture mapping) consistently at
   - Assets are bundled together into a single binary blob
   - Currently supports OBJ, PNG, and MP3 with more in the future
 - MP3 audio
+- Continuous collision detection physics sytem
+  - Currently only supports Static vs Dynamic collisions
+  - Does not have a BSP/AABB tree partition yet, it currently just loops over all objects regardless of distance
 - Platform agnostic programmatic UI text
 
 ## Requirements to run
@@ -63,8 +66,6 @@ Can render the above 50K vert models (including texture mapping) consistently at
 ## Future Work
 - Lighting
 - Physically Based Materials
-- Physics
-  - Most likely AABB impulse based
 
 ## Credits
 - Scratchapixel.com
@@ -100,6 +101,11 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Squirrel Eiserloh
   - Providing a great example of how to create your own fast and lightweight RNG using noise.
   - https://www.youtube.com/watch?v=LWFzPP8ZbdU
+- Christer Ericson
+  - Real Time Collision Detection was immensely useful in understanding and applying physics
+- Erin Catto
+  - GDC talks were very helpful in understanding what goes into a real time physics system
+  - https://youtu.be/7_nKOET6zwI?feature=shared
 
 ## Materials Referenced
 - Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
