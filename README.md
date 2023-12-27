@@ -24,6 +24,9 @@ https://github.com/refik-karic/ZSharp.git
 ### Depth Vizualization
 ![OBJDepth](https://i.imgur.com/CFmnvcH.png)
 
+### Developer Console
+![DevConsole](https://i.imgur.com/LJaHGZH.png)
+
 Can render the above 50K vert models (including texture mapping) consistently at <3ms (on an 11900K).
 
 ### Flat Shaded Perspective Correct Triangle
@@ -55,6 +58,7 @@ Can render the above 50K vert models (including texture mapping) consistently at
   - Currently only supports Static vs Dynamic collisions
   - Does not have a BSP/AABB tree partition yet, it currently just loops over all objects regardless of distance
 - Platform agnostic programmatic UI text
+- Developer console for toggling various things in the engine
 
 ## Requirements to run
 - Windows
