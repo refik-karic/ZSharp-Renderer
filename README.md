@@ -71,7 +71,18 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Lighting
 - Physically Based Materials
 
-## Credits
+## Materials Referenced
+### Books
+- Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
+  - https://github.com/jagregory/abrash-black-book
+- Computer Graphics: Principles and Practice 2nd Edition (ISBN: 9780201848403, 1995)
+- Computer Graphics: Principles and Practice 3rd Edition (ISBN: 0321399528, 2013)
+- Expert C Programming: Deep C Secrets (ISBN: 0131774298, 1994)
+- Effective C++: 3rd Edition (ISBN: 0321334876, 2005)
+- Game Engine Black Book: Wolfenstein 3D 1st Edition (ASIN: B0768B3PWV, 2017)
+- Real-Time Collision Detection (ISBN: 1558607323, 2004)
+
+### Web
 - Scratchapixel.com
   - For barycentric perspective correct interpolation
   - https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes.html
@@ -110,13 +121,6 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Erin Catto
   - GDC talks were very helpful in understanding what goes into a real time physics system
   - https://youtu.be/7_nKOET6zwI?feature=shared
-
-## Materials Referenced
-- Michael Abrash's Graphics Programming Black Book (ISBN: 1576101746, 1997)
-  - https://github.com/jagregory/abrash-black-book
-- Computer Graphics: Principles and Practice 2nd Edition (ISBN: 9780201848403, 1995)
-- Computer Graphics: Principles and Practice 3rd Edition (ISBN: 0321399528, 2013)
-- Expert C Programming: Deep C Secrets (ISBN: 0131774298, 1994)
-- Effective C++: 3rd Edition (ISBN: 0321334876, 2005)
-- Game Engine Black Book: Wolfenstein 3D 1st Edition (ASIN: B0768B3PWV, 2017)
-- Real-Time Collision Detection (ISBN: 1558607323, 2004)
+- Fabian Giesen
+  - Demonstrating an efficent way to step the inner raster loop just by adding some offsets
+  - https://fgiesen.wordpress.com/2013/02/10/optimizing-the-basic-rasterizer/

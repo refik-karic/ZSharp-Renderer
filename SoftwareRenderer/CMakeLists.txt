@@ -45,6 +45,7 @@ set(SoftwareRenderer_Link_Options_Release
   /LTCG:NOSTATUS
   /WX
   /LTCG
+  /DEBUG # Generate a PDB even in Release
 )
 
 set(SoftwareRenderer_Preprocessor_Defines )
