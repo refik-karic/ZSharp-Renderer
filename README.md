@@ -12,14 +12,14 @@ https://github.com/refik-karic/ZSharp.git
 ### Texture Mapped Triangle
 ![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
 
-### UV Flat Shaded Perspective Correct OBJ model from Blender
-![OBJFlatUV](https://user-images.githubusercontent.com/54491280/271782724-29378fd3-5d3b-4564-a0ec-c1ed34067fe5.png)
+### Texture Mapped Perspective Correct OBJ model from Blender
+![OBJFlatUV](https://i.imgur.com/ZrFNIug.png)
 
 ### RGB Flat Shaded Perspective Correct OBJ model from Blender
 ![OBJFlatRGB](https://user-images.githubusercontent.com/54491280/271782726-cbed0fd5-fe08-4f70-aec5-2d0c9a64291d.png)
 
 ### Wireframe Version
-![OBJWireframe](https://user-images.githubusercontent.com/54491280/266781994-77c6b550-82c7-4166-a56d-ea5a1b207c87.png)
+![OBJWireframe](https://i.imgur.com/u9HKEoR.png)
 
 ### Depth Vizualization
 ![OBJDepth](https://i.imgur.com/CFmnvcH.png)
