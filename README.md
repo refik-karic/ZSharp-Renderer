@@ -48,6 +48,8 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - ZSharp static library is platform agnostic
 - Standalone
   - No third party libraries are required or included
+    - In some cases this isn't possible due to standards not being publicly available (i.e. ISO spec that costs hundreds of dollars in order to obtain a copy). To workaround this, I've made a best effort to implement the spec with as much freely available information there is on the web. In some cases, such as with MP3 or JPEG, I've decided to rely on Public Domain or Creative Commons code to supplement my work or to provide the entire feature. 
+     Again, this is only in extreme cases where I've had to workaround the paywall. I am in no way claiming those works are entirely my creation. I have made a best effort to credit the Authors below.
 - Lightweight
 - Flexible input system
 - Flexible asset system
@@ -124,3 +126,11 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Fabian Giesen
   - Demonstrating an efficent way to step the inner raster loop just by adding some offsets
   - https://fgiesen.wordpress.com/2013/02/10/optimizing-the-basic-rasterizer/
+
+### Public Domain/Creative Commons Code
+- Rich Geldreich
+  - JPEG Decoder: https://github.com/richgel999/jpeg-compressor
+- lieff: https://github.com/lieff
+  - MP3 Decoder: https://github.com/lieff/minimp3
+- Marcel Sondaar
+  - IBM public domain VGA fonts: https://github.com/dhepper/font8x8
