@@ -18,6 +18,8 @@ set(SoftwareRenderer_Compile_Options_Debug
 	/U_MBCS
 	/W4
 	/WX
+    /Zi
+	/diagnostics:caret
 )
 
 set(SoftwareRenderer_Compile_Options_Release 
@@ -33,6 +35,8 @@ set(SoftwareRenderer_Compile_Options_Release
 	/sdl-
 	/GL
 	/GS-
+    /Zi
+	/diagnostics:caret
 )
 
 set(SoftwareRenderer_Link_Options_Debug 
