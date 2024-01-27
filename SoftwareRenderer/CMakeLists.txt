@@ -14,6 +14,10 @@ set(SoftwareRenderer_Compile_Options_Release )
 
 set(SoftwareRenderer_Link_Options_Debug )
 
+set(SoftwareRenderer_Link_Options_MinSizeRel )
+
+set(SoftwareRenderer_Link_Options_RelWithDebInfo )
+
 set(SoftwareRenderer_Link_Options_Release )
 
 set(SoftwareRenderer_Preprocessor_Defines )
@@ -30,6 +34,36 @@ if(WIN32)
   list(APPEND SoftwareRenderer_Compile_Options_Debug
   	/Od
 	/Ob0
+	/source-charset:utf-8
+	/std:c++latest
+	/D_UNICODE
+	/GR-
+	/MP
+	/U_MBCS
+	/W4
+	/WX
+    /Zi
+	/diagnostics:caret
+  )
+
+  list(APPEND SoftwareRenderer_Compile_Options_MinSizeRel
+  	/O1
+	/Ob1
+	/source-charset:utf-8
+	/std:c++latest
+	/D_UNICODE
+	/GR-
+	/MP
+	/U_MBCS
+	/W4
+	/WX
+    /Zi
+	/diagnostics:caret
+  )
+
+  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
+  	/O2
+	/Ob1
 	/source-charset:utf-8
 	/std:c++latest
 	/D_UNICODE
@@ -65,6 +99,16 @@ if(WIN32)
     /WX
   )
 
+  list(APPEND SoftwareRenderer_Link_Options_MinSizeRel
+    /INCREMENTAL:NO
+    /WX
+  )
+
+  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
+    /INCREMENTAL:NO
+    /WX
+  )
+
   list(APPEND SoftwareRenderer_Link_Options_Release
     /INCREMENTAL:NO
     /LTCG:NOSTATUS
@@ -89,6 +133,20 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 		target_link_options(SoftwareRenderer PUBLIC 
 			${SoftwareRenderer_Link_Options_Debug})
 
+	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_MinSizeRel})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_MinSizeRel})
+
+	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_RelWithDebInfo})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_RelWithDebInfo})
+
 	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		target_compile_options(SoftwareRenderer PRIVATE 
 			${SoftwareRenderer_Compile_Options_Release})
@@ -97,7 +155,7 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 			${SoftwareRenderer_Link_Options_Release})
 
 	else()
-		message(FATAL_ERROR "Must specify -DCMAKE_BUILD_TYPE=Debug/Release when using Ninja.")
+		message(FATAL_ERROR "Must specify -DCMAKE_BUILD_TYPE=Debug|MinSizeRel|RelWithDebInfo|Release when using Ninja.")
 	endif()
 
 else()
