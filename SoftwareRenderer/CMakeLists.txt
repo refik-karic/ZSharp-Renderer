@@ -1,8 +1,14 @@
 add_executable(SoftwareRenderer WIN32)
 
+set(SoftwareRenderer_Header_Files )
+set(SoftwareRenderer_Source_Files 
+  Win32Main.cpp
+)
+
 target_sources(SoftwareRenderer
     PRIVATE
-	    Win32Main.cpp
+	    ${SoftwareRenderer_Header_Files}
+	    ${SoftwareRenderer_Source_Files}
 )
 
 target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZSharp/)
@@ -157,6 +163,9 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	else()
 		message(FATAL_ERROR "Must specify -DCMAKE_BUILD_TYPE=Debug|MinSizeRel|RelWithDebInfo|Release when using Ninja.")
 	endif()
+
+	source_group("Headers" FILES ${SoftwareRenderer_Header_Files})
+	source_group("Source" FILES ${SoftwareRenderer_Source_Files})
 
 else()
 	target_compile_options(SoftwareRenderer PRIVATE 
