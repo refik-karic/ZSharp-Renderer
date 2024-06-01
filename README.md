@@ -7,7 +7,7 @@ https://github.com/refik-karic/ZSharp.git
 ## In Action
 
 ### Physics
-_Color banding is a resilt of gif compression_
+_Color banding is a result of gif compression_
 ![Physics](https://i.imgur.com/ZtY31vJ.gif)
 
 ### Texture Mapped Triangle
