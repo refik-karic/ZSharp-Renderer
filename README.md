@@ -7,7 +7,8 @@ https://github.com/refik-karic/ZSharp.git
 ## In Action
 
 ### Physics
-![Physics](https://user-images.githubusercontent.com/54491280/282179157-1da80882-14f8-4893-8a60-565dae40de2f.gif)
+_Color banding is a resilt of gif compression_
+![Physics](https://i.imgur.com/ZtY31vJ.gif)
 
 ### Texture Mapped Triangle
 ![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
@@ -27,7 +28,7 @@ https://github.com/refik-karic/ZSharp.git
 ### Developer Console
 ![DevConsole](https://i.imgur.com/LJaHGZH.png)
 
-Can render the above 50K vert models (including texture mapping) consistently at <3ms (on an 11900K).
+Can render the above 50K vert models (including texture mapping) consistently at <2ms (on an 11900K).
 
 ### Flat Shaded Perspective Correct Triangle
 ![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
