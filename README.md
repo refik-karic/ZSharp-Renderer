@@ -37,7 +37,7 @@ Can render the above 50K vert models (including texture mapping) consistently at
 ![wireframe](https://user-images.githubusercontent.com/54491280/263252970-a0f96d3f-15b7-4050-9dbd-e82d70792bb8.png)
 
 ## UI Front End
-![UIFrontEnd](https://i.imgur.com/JP1Mrnc.png)
+![UIFrontEnd](https://i.imgur.com/srxh57p.jpeg)
 
 ## Features
 - Perspective correct attribute interpolation
