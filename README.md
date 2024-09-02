@@ -44,7 +44,7 @@ Can render the above 50K vert models (including texture mapping) consistently at
 - Wireframe drawing
 - RGB/Texture mapped drawing
 - Movable perspective camera with WASD controls and virtual trackball mouse
-- "Front end" backface culling (before vertex shader)
+- Backface culling
 - NDC clipping
   - With fast path AABB in/out pre-pass that saves a significant amount of time (>10ms)
 - Depth buffering
