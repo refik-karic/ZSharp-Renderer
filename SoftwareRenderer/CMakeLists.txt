@@ -103,7 +103,7 @@ if(WIN32)
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_Release
-  		/O2
+  		/Os
 		/Ob2
 		/source-charset:utf-8
 		/std:c++latest
@@ -151,6 +151,7 @@ if(WIN32)
 		/LTCG:NOSTATUS
 		/WX
 		/LTCG
+		/OPT:REF
 		/DEBUG # Generate a PDB even in Release
 	  )
   else()
@@ -200,7 +201,7 @@ if(WIN32)
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_Release
-  		/O2
+  		/Os
 		/Ob2
 		/source-charset:utf-8
 		/std:c++latest
@@ -214,6 +215,7 @@ if(WIN32)
 		/GL
 		/GS-
 		/Zi
+		/Gw
 		/diagnostics:caret
 	  )
 
@@ -237,6 +239,7 @@ if(WIN32)
 		/LTCG:NOSTATUS
 		/WX
 		/LTCG
+		/OPT:REF
 		/DEBUG # Generate a PDB even in Release
 	  )
   endif()
