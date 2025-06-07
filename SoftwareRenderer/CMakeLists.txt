@@ -39,95 +39,78 @@ if(WIN32)
 
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	  list(APPEND SoftwareRenderer_Compile_Options_Debug
-  		/Od
-		/Ob0
+        /Od
+        /Ob0
         /Oi
-		/source-charset:utf-8
-		/std:c++latest
-		/D_UNICODE
-		/GR-
-		/U_MBCS
-		/W4
-		/WX
-		/Zi
-		/diagnostics:caret
-		-Wno-ignored-qualifiers
-        -Wno-char-subscripts
+        /source-charset:utf-8
+        /std:c++latest
+        /D_UNICODE
+        /GR-
+        /U_MBCS
+        /W4
+        /WX
+        /Zi
+        /diagnostics:caret
         -Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
-        -Wno-reorder-ctor
-        -Wno-unused-but-set-variable
-        -Wno-unused-const-variable
-        -Wno-delete-non-abstract-non-virtual-dtor
-        -Wno-unused-private-field
         -mavx2
         -mfma
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_MinSizeRel
-  		/O1
-		/Ob1
-		/source-charset:utf-8
-		/std:c++latest
-		/D_UNICODE
-		/GR-
-		/U_MBCS
-		/W4
-		/WX
-		/Zi
-		/diagnostics:caret
+        /O1
+        /Ob1
+        /source-charset:utf-8
+        /std:c++latest
+        /D_UNICODE
+        /GR-
+        /U_MBCS
+        /W4
+        /WX
+        /Zi
+        /diagnostics:caret
+        -Wno-sign-compare
+        -Wno-deprecated-copy-with-user-provided-copy
+        -mavx2
+        -mfma
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
-  		/O2
-		/Ob1
-		/source-charset:utf-8
-		/std:c++latest
-		/D_UNICODE
-		/GR-
-		/U_MBCS
-		/W4
-		/WX
-		/Zi
-		/diagnostics:caret
-		-Wno-ignored-qualifiers
-        -Wno-char-subscripts
+        /O2
+        /Ob1
+        /source-charset:utf-8
+        /std:c++latest
+        /D_UNICODE
+        /GR-
+        /U_MBCS
+        /W4
+        /WX
+        /Zi
+        /diagnostics:caret
         -Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
-        -Wno-reorder-ctor
-        -Wno-unused-but-set-variable
-        -Wno-unused-const-variable
-        -Wno-delete-non-abstract-non-virtual-dtor
-        -Wno-unused-private-field
         -mavx2
         -mfma
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_Release
-  		/Os
-		/Ob2
-		/source-charset:utf-8
-		/std:c++latest
-		/D_UNICODE
-		/GR-
-		/U_MBCS
-		/W4
-		/WX
-		/sdl-
-		/GS-
-		/Zi
-		/diagnostics:caret
-		-flto
-		-fvirtual-function-elimination
-		-Wno-ignored-qualifiers
-        -Wno-char-subscripts
+        /Os
+        /Ob2
+        /source-charset:utf-8
+        /std:c++latest
+        /D_UNICODE
+        /GR-
+        /U_MBCS
+        /W4
+        /WX
+        /sdl-
+        /GS-
+        /Zi
+        /diagnostics:caret
+        -flto
+        -fvirtual-function-elimination
         -Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
-        -Wno-reorder-ctor
-        -Wno-unused-but-set-variable
-        -Wno-unused-const-variable
-        -Wno-delete-non-abstract-non-virtual-dtor
-        -Wno-unused-private-field
         -mavx2
         -mfma
 	  )
