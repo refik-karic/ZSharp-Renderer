@@ -107,6 +107,8 @@ if(WIN32)
         /GS-
         /Zi
         /diagnostics:caret
+		/Gw
+		/Gy
         -flto
         -fvirtual-function-elimination
         -Wno-sign-compare
@@ -201,6 +203,7 @@ if(WIN32)
 		/GS-
 		/Zi
 		/Gw
+		/Gy
 		/diagnostics:caret
 	  )
 
