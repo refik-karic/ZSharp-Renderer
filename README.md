@@ -6,38 +6,9 @@ https://github.com/refik-karic/ZSharp.git
 
 ## In Action
 
-### Physics
-_Color banding is a result of gif compression_
-![Physics](https://i.imgur.com/ZtY31vJ.gif)
+### Demo
 
-### Texture Mapped Triangle
-![TextureTriangle](https://user-images.githubusercontent.com/54491280/263252965-a3581a54-16ff-468d-b98b-58b8e75fe9de.png)
-
-### Texture Mapped Perspective Correct OBJ Blender model
-![OBJFlatUV](https://i.imgur.com/ZrFNIug.png)
-
-### RGB Shaded Perspective Correct OBJ Blender model
-![OBJFlatRGB](https://user-images.githubusercontent.com/54491280/271782726-cbed0fd5-fe08-4f70-aec5-2d0c9a64291d.png)
-
-### Wireframe Version
-![OBJWireframe](https://i.imgur.com/u9HKEoR.png)
-
-### Depth Vizualization
-![OBJDepth](https://i.imgur.com/CFmnvcH.png)
-
-### Developer Console
-![DevConsole](https://i.imgur.com/LJaHGZH.png)
-
-Can render the above 50K vert models (including texture mapping) consistently at <2ms (on an 11900K).
-
-### Flat Shaded Perspective Correct Triangle
-![flat](https://user-images.githubusercontent.com/54491280/263252971-57e83ee2-a00c-4a7a-b64b-355d6250f324.png)
-
-### Wireframe Perspective Correct Triangle
-![wireframe](https://user-images.githubusercontent.com/54491280/263252970-a0f96d3f-15b7-4050-9dbd-e82d70792bb8.png)
-
-## UI Front End
-![UIFrontEnd](https://i.imgur.com/is4PMPD.png)
+https://github.com/user-attachments/assets/46d612ac-333f-4a98-a9c8-dffcbc96f4ae
 
 ## Features
 - Perspective correct attribute interpolation
