@@ -127,7 +127,7 @@ if(WIN32)
 		/WX
 	  )
 
-	  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
+	  list(APPEND SoftwareRenderer_Link_Options_RelWithDebInfo
 		/INCREMENTAL:NO
 		/WX
 	  )
@@ -217,7 +217,7 @@ if(WIN32)
 		/WX
 	  )
 
-	  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
+	  list(APPEND SoftwareRenderer_Link_Options_RelWithDebInfo
 		/INCREMENTAL:NO
 		/WX
 	  )
