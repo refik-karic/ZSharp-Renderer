@@ -69,6 +69,7 @@ if(WIN32)
         /WX
         /Zi
         /diagnostics:caret
+		/jumptablerdata
         -Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
         -mavx2
@@ -76,7 +77,7 @@ if(WIN32)
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
-        /O2
+        /O1
         /Ob1
         /source-charset:utf-8
         /std:c++latest
@@ -87,6 +88,7 @@ if(WIN32)
         /WX
         /Zi
         /diagnostics:caret
+		/jumptablerdata
         -Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
         -mavx2
@@ -94,7 +96,7 @@ if(WIN32)
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_Release
-        /Os
+        /O1
         /Ob2
         /source-charset:utf-8
         /std:c++latest
@@ -109,6 +111,7 @@ if(WIN32)
         /diagnostics:caret
 		/Gw
 		/Gy
+		/jumptablerdata
         -flto
         -fvirtual-function-elimination
         -Wno-sign-compare
@@ -120,16 +123,19 @@ if(WIN32)
 	  list(APPEND SoftwareRenderer_Link_Options_Debug
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_MinSizeRel
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_RelWithDebInfo
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_Release
@@ -170,10 +176,11 @@ if(WIN32)
 		/WX
 		/Zi
 		/diagnostics:caret
+		/jumptablerdata
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_RelWithDebInfo
-  		/O2
+  		/O1
 		/Ob1
 		/source-charset:utf-8
 		/std:c++latest
@@ -185,10 +192,11 @@ if(WIN32)
 		/WX
 		/Zi
 		/diagnostics:caret
+		/jumptablerdata
 	  )
 
 	  list(APPEND SoftwareRenderer_Compile_Options_Release
-  		/Os
+  		/O1
 		/Ob2
 		/source-charset:utf-8
 		/std:c++latest
@@ -205,21 +213,25 @@ if(WIN32)
 		/Gw
 		/Gy
 		/diagnostics:caret
+		/jumptablerdata
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_Debug
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_MinSizeRel
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_RelWithDebInfo
 		/INCREMENTAL:NO
 		/WX
+		/DEBUG
 	  )
 
 	  list(APPEND SoftwareRenderer_Link_Options_Release
