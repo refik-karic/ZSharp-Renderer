@@ -14,6 +14,11 @@ target_sources(SoftwareRenderer
 target_include_directories(SoftwareRenderer SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/ZSharp/)
 target_link_libraries(SoftwareRenderer PUBLIC ZSharp)
 
+set(CMAKE_CXX_FLAGS_DEBUG "" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_MINSIZEREL "" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "" CACHE STRING "" FORCE)
+
 set(SoftwareRenderer_Compile_Options_Debug )
 
 set(SoftwareRenderer_Compile_Options_Release )
