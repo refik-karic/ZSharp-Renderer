@@ -31,15 +31,28 @@ set(SoftwareRenderer_Link_Options_RelWithDebInfo )
 
 set(SoftwareRenderer_Link_Options_Release )
 
-set(SoftwareRenderer_Preprocessor_Defines )
+set(SoftwareRenderer_Preprocessor_Defines_Debug HW_PLATFORM_X86)
+
+set(SoftwareRenderer_Preprocessor_Defines_Release HW_PLATFORM_X86)
 
 if(WIN32)
-  list(APPEND SoftwareRenderer_Preprocessor_Defines 
+  set(SoftwareRenderer_Preprocessor_Defines_Common 
     PLATFORM_WINDOWS
-	_CRT_SECURE_NO_WARNINGS
+    _CRT_SECURE_NO_WARNINGS
 	_HAS_EXCEPTIONS=0
-	WIN32_LEAN_AND_MEAN
+    WIN32_LEAN_AND_MEAN
     PLATFORM_MAX_PATH=260
+    BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+  )
+
+  list(APPEND SoftwareRenderer_Preprocessor_Defines_Debug
+    _DEBUG
+    ${SoftwareRenderer_Preprocessor_Defines_Common}
+  )
+
+  list(APPEND SoftwareRenderer_Preprocessor_Defines_Release 
+    NDEBUG
+    ${SoftwareRenderer_Preprocessor_Defines_Common}
   )
 
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
@@ -262,10 +275,6 @@ if(WIN32)
   target_link_libraries(SoftwareRenderer PRIVATE Winmm)
 endif()
 
-target_compile_definitions(SoftwareRenderer PRIVATE 
-  ${SoftwareRenderer_Preprocessor_Defines}
-)
-
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 		target_compile_options(SoftwareRenderer PRIVATE 
@@ -274,12 +283,18 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 		target_link_options(SoftwareRenderer PUBLIC 
 			${SoftwareRenderer_Link_Options_Debug})
 
+		target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Debug})
+
 	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
 		target_compile_options(SoftwareRenderer PRIVATE 
 			${SoftwareRenderer_Compile_Options_MinSizeRel})
 
 		target_link_options(SoftwareRenderer PUBLIC 
 			${SoftwareRenderer_Link_Options_MinSizeRel})
+
+		target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Debug})
 
 	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
 		target_compile_options(SoftwareRenderer PRIVATE 
@@ -288,6 +303,9 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 		target_link_options(SoftwareRenderer PUBLIC 
 			${SoftwareRenderer_Link_Options_RelWithDebInfo})
 
+		target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Debug})
+
 	elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		target_compile_options(SoftwareRenderer PRIVATE 
 			${SoftwareRenderer_Compile_Options_Release})
@@ -295,6 +313,8 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 		target_link_options(SoftwareRenderer PUBLIC 
 			${SoftwareRenderer_Link_Options_Release})
 
+		target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Release})
 	else()
 		message(FATAL_ERROR "Must specify -DCMAKE_BUILD_TYPE=Debug|MinSizeRel|RelWithDebInfo|Release when using Ninja.")
 	endif()
@@ -304,18 +324,38 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 
 else()
 	target_compile_options(SoftwareRenderer PRIVATE 
-		"$<$<CONFIG:DEBUG>:${SoftwareRenderer_Compile_Options_Debug}>"
-	)
+		"$<$<CONFIG:DEBUG>:${SoftwareRenderer_Compile_Options_Debug}>")
+
+	target_link_options(SoftwareRenderer PUBLIC 
+		"$<$<CONFIG:DEBUG>:${SoftwareRenderer_Link_Options_Debug}>")
+
+	target_compile_definitions(SoftwareRenderer PRIVATE 
+        "$<$<CONFIG:DEBUG>:${SoftwareRenderer_Preprocessor_Defines_Debug}>")
 
 	target_compile_options(SoftwareRenderer PRIVATE 
-		"$<$<CONFIG:RELEASE>:${SoftwareRenderer_Compile_Options_Release}>"
-	)
+		"$<$<CONFIG:MINSIZEREL>:${SoftwareRenderer_Compile_Options_MinSizeRel}>")
 
 	target_link_options(SoftwareRenderer PUBLIC 
-		"$<$<CONFIG:DEBUG>:${SoftwareRenderer_Link_Options_Debug}>"
-	)
+		"$<$<CONFIG:MINSIZEREL>:${SoftwareRenderer_Link_Options_MinSizeRel}>")
+
+	target_compile_definitions(SoftwareRenderer PRIVATE 
+        "$<$<CONFIG:MINSIZEREL>:${SoftwareRenderer_Preprocessor_Defines_Debug}>")
+
+	target_compile_options(SoftwareRenderer PRIVATE 
+		"$<$<CONFIG:RELWITHDEBINFO>:${SoftwareRenderer_Compile_Options_RelWithDebInfo}>")
 
 	target_link_options(SoftwareRenderer PUBLIC 
-		"$<$<CONFIG:RELEASE>:${SoftwareRenderer_Link_Options_Release}>"
-	)
+		"$<$<CONFIG:RELWITHDEBINFO>:${SoftwareRenderer_Link_Options_RelWithDebInfo}>")
+
+	target_compile_definitions(SoftwareRenderer PRIVATE 
+        "$<$<CONFIG:RELWITHDEBINFO>:${SoftwareRenderer_Preprocessor_Defines_Debug}>")
+
+	target_compile_options(SoftwareRenderer PRIVATE 
+		"$<$<CONFIG:RELEASE>:${SoftwareRenderer_Compile_Options_Release}>")
+
+	target_link_options(SoftwareRenderer PUBLIC 
+		"$<$<CONFIG:RELEASE>:${SoftwareRenderer_Link_Options_Release}>")
+
+	target_compile_definitions(SoftwareRenderer PRIVATE 
+        "$<$<CONFIG:RELEASE>:${SoftwareRenderer_Preprocessor_Defines_Release}>")
 endif()
