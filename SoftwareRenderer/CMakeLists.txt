@@ -21,6 +21,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "" CACHE STRING "" FORCE)
 
 set(SoftwareRenderer_Compile_Options_Debug )
 
+set(SoftwareRenderer_Compile_Options_MinSizeRel )
+
+set(SoftwareRenderer_Compile_Options_RelWithDebInfo )
+
 set(SoftwareRenderer_Compile_Options_Release )
 
 set(SoftwareRenderer_Link_Options_Debug )
@@ -55,7 +59,7 @@ if(WIN32)
     ${SoftwareRenderer_Preprocessor_Defines_Common}
   )
 
-  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+  if((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM"))
 	  list(APPEND SoftwareRenderer_Compile_Options_Debug
         /Od
         /Ob0
@@ -127,13 +131,18 @@ if(WIN32)
         /diagnostics:caret
 		/Gw
 		/Gy
-        -flto
-        -fvirtual-function-elimination
-        -Wno-sign-compare
+		-Wno-sign-compare
         -Wno-deprecated-copy-with-user-provided-copy
         -mavx2
         -mfma
 	  )
+
+	  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	    list(APPEND SoftwareRenderer_Compile_Options_Release
+          -flto
+          -fvirtual-function-elimination
+	    )
+	  endif()
 
 	  list(APPEND SoftwareRenderer_Link_Options_Debug
 		/INCREMENTAL:NO
@@ -315,6 +324,47 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 
 		target_compile_definitions(SoftwareRenderer PRIVATE 
             ${SoftwareRenderer_Preprocessor_Defines_Release})
+
+	elseif((${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM") AND ("${CMAKE_BUILD_TYPE}" STREQUAL "Release_PGO_Collect"))
+        set(SoftwareRenderer_Compile_Options_Release_PGO_Collect
+            ${SoftwareRenderer_Compile_Options_Release}
+        )
+
+		set(SoftwareRenderer_Link_Options_Release_PGO_Collect
+			/INCREMENTAL:NO
+			/WX
+			/DEBUG # Generate a PDB even in Release
+        )
+
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_Release_PGO_Collect})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_Release_PGO_Collect})
+
+        target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Release})
+
+    elseif((${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM") AND ("${CMAKE_BUILD_TYPE}" STREQUAL "Release_PGO_Optimize"))
+        set(SoftwareRenderer_Compile_Options_Release_PGO_Optimize
+            ${SoftwareRenderer_Compile_Options_Release}
+        )
+
+		set(SoftwareRenderer_Link_Options_Release_PGO_Optimize
+			/INCREMENTAL:NO
+			/WX
+			/DEBUG # Generate a PDB even in Release
+        )
+
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_Release_PGO_Optimize})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_Release_PGO_Optimize})
+
+        target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Release})
+
 	else()
 		message(FATAL_ERROR "Must specify -DCMAKE_BUILD_TYPE=Debug|MinSizeRel|RelWithDebInfo|Release when using Ninja.")
 	endif()
