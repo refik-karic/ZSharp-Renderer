@@ -325,6 +325,52 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
 		target_compile_definitions(SoftwareRenderer PRIVATE 
             ${SoftwareRenderer_Preprocessor_Defines_Release})
 
+	elseif((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") AND ("${CMAKE_BUILD_TYPE}" STREQUAL "Release_PGO_Collect"))
+        set(SoftwareRenderer_Compile_Options_Release_PGO_Collect
+            ${SoftwareRenderer_Compile_Options_Release}
+			-gdwarf
+			-gline-tables-only
+			/clang:-fdebug-info-for-profiling
+			/clang:-funique-internal-linkage-names
+        )
+
+		set(SoftwareRenderer_Link_Options_Release_PGO_Collect
+			/INCREMENTAL:NO
+			/LTCG:NOSTATUS
+			/WX
+			/LTCG
+			/OPT:REF
+			/DEBUG:dwarf # Generate a PDB even in Release
+        )
+
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_Release_PGO_Collect})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_Release_PGO_Collect})
+
+        target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Release})
+
+    elseif((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") AND ("${CMAKE_BUILD_TYPE}" STREQUAL "Release_PGO_Optimize"))
+        set(SoftwareRenderer_Compile_Options_Release_PGO_Optimize
+            ${SoftwareRenderer_Compile_Options_Release}
+			-fprofile-sample-use=${CMAKE_BINARY_DIR}/SoftwareRenderer/profile.prof
+        )
+
+		set(SoftwareRenderer_Link_Options_Release_PGO_Optimize
+			${SoftwareRenderer_Link_Options_Release}
+        )
+
+		target_compile_options(SoftwareRenderer PRIVATE 
+			${SoftwareRenderer_Compile_Options_Release_PGO_Optimize})
+
+		target_link_options(SoftwareRenderer PUBLIC 
+			${SoftwareRenderer_Link_Options_Release_PGO_Optimize})
+
+        target_compile_definitions(SoftwareRenderer PRIVATE 
+            ${SoftwareRenderer_Preprocessor_Defines_Release})
+
 	elseif((${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM") AND ("${CMAKE_BUILD_TYPE}" STREQUAL "Release_PGO_Collect"))
         set(SoftwareRenderer_Compile_Options_Release_PGO_Collect
             ${SoftwareRenderer_Compile_Options_Release}

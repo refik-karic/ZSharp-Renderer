@@ -141,6 +141,28 @@
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
     },
     {
+      "name": "x64-release-clang-pgo-collect",
+      "displayName": "x64 Release Clang PGO Collect",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release PGO Collect)",
+      "inherits": "clang-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release_PGO_Collect" }
+    },
+    {
+      "name": "x64-release-clang-pgo-optimize",
+      "displayName": "x64 Release Clang PGO Optimize",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release PGO Optimize)",
+      "inherits": "clang-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release_PGO_Optimize" }
+    },
+    {
       "name": "x64-release-icx-pgo-collect",
       "displayName": "x64 Release ICX PGO Collect",
       "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release PGO Collect)",
