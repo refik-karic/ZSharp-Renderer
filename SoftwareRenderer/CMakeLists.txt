@@ -139,9 +139,34 @@ if(WIN32)
 
 	  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	    list(APPEND SoftwareRenderer_Compile_Options_Release
-          -flto
+		  -flto
           -fvirtual-function-elimination
 	    )
+
+		list(APPEND SoftwareRenderer_Link_Options_Release
+		    /LTCG
+		    /LTCG:NOSTATUS
+			/OPT:REF
+		)
+	  endif()
+
+	  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM")
+		  # NOTE: ICX fails to generate a PDB unless the lowercase variant of "/debug" is set.
+		  list(APPEND SoftwareRenderer_Link_Options_Debug
+			/debug
+		  )
+
+		  list(APPEND SoftwareRenderer_Link_Options_MinSizeRel
+			/debug
+		  )
+
+		  list(APPEND SoftwareRenderer_Link_Options_RelWithDebInfo
+			/debug
+		  )
+
+		  list(APPEND SoftwareRenderer_Link_Options_Release
+			/debug
+		  )
 	  endif()
 
 	  list(APPEND SoftwareRenderer_Link_Options_Debug
@@ -164,10 +189,7 @@ if(WIN32)
 
 	  list(APPEND SoftwareRenderer_Link_Options_Release
 		/INCREMENTAL:NO
-		/LTCG:NOSTATUS
 		/WX
-		/LTCG
-		/OPT:REF
 		/DEBUG # Generate a PDB even in Release
 	  )
   else()

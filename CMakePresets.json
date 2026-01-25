@@ -40,6 +40,7 @@
       "description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
       "generator": "Ninja",
+      "toolset": "IntelLLVM",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
@@ -161,6 +162,50 @@
         "strategy": "external"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release_PGO_Optimize" }
+    },
+    {
+      "name": "x64-debug-icx",
+      "displayName": "x64 Debug ICX",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "inherits": "icx-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "x64-relwithdebinfo-icx",
+      "displayName": "x64 RelWithDebInfo ICX",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
+      "inherits": "icx-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
+    },
+    {
+      "name": "x64-minsizerel-icx",
+      "displayName": "x64 MinSizeRel ICX",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (MinSizeRel)",
+      "inherits": "icx-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "MinSizeRel" }
+    },
+    {
+      "name": "x64-release-icx",
+      "displayName": "x64 Release ICX",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "inherits": "icx-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
     },
     {
       "name": "x64-release-icx-pgo-collect",
