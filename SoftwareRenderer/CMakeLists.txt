@@ -306,8 +306,6 @@ if(WIN32)
 	  )
   endif()
 
-  # For high precision timing in main loop.
-  target_link_libraries(SoftwareRenderer PRIVATE Winmm)
 endif()
 
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
